@@ -1,4 +1,6 @@
 import '@testing-library/jest-dom'
+import type { ReactNode } from 'react'
+import { vi } from 'vitest'
 
 // Mock next/navigation
 vi.mock('next/navigation', () => ({
@@ -16,5 +18,5 @@ vi.mock('next/navigation', () => ({
 // Mock next-themes
 vi.mock('next-themes', () => ({
   useTheme: () => ({ theme: 'dark', setTheme: vi.fn() }),
-  ThemeProvider: ({ children }: { children: React.ReactNode }) => children,
+  ThemeProvider: ({ children }: { children: ReactNode }) => children,
 }))

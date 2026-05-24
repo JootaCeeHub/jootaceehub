@@ -31,6 +31,7 @@ export function useTranslations(namespace?: string) {
   const { messages } = ctx
 
   const t = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (key: string): any => {
       const path = namespace ? `${namespace}.${key}` : key
       const parts = path.split('.')

@@ -1,10 +1,8 @@
 import path from 'node:path'
 import type { NextConfig } from 'next'
+import createBundleAnalyzer from '@next/bundle-analyzer'
 
-const withAnalyzer =
-  process.env.ANALYZE === 'true'
-    ? require('@next/bundle-analyzer')({ enabled: true })
-    : (config: NextConfig) => config
+const withAnalyzer = createBundleAnalyzer({ enabled: process.env.ANALYZE === 'true' })
 
 const nextConfig: NextConfig = {
   output: 'export',
