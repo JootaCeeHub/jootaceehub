@@ -1,0 +1,352 @@
+{
+  "meta": {
+    "title": "JootaCee | AI Systems Architect",
+    "description": "Operational laboratory for AI systems, automation infrastructures, and modular digital ecosystems."
+  },
+  "nav": {
+    "systems": "Systems",
+    "labs": "Labs",
+    "infrastructure": "Infrastructure",
+    "github": "GitHub",
+    "about": "About",
+    "contact": "Contact",
+    "collaborate": "Collaborate",
+    "admin": "Admin"
+  },
+  "hero": {
+    "headline": "Architecting autonomous systems.",
+    "subheadline": "AI infrastructure, automation orchestration, and industrial intelligence. Built for the future, deployed today.",
+    "ctaPrimary": "Explore Systems",
+    "ctaSecondary": "View Labs"
+  },
+  "systems": {
+    "label": "Architecture",
+    "title": "Systems Overview",
+    "description": "Core intelligence layers, protocol fabrics, and operational runtimes that power autonomous infrastructure.",
+    "badge": "Architecture Intelligence",
+    "showcaseTitle": "Systems Architecture Showcase",
+    "showcaseDescription": "Operational architecture, protocol topologies and intelligence flows represented as living system maps.",
+    "views": {
+      "mcp": "MCP Map",
+      "aura": "AURA Visual",
+      "flow": "AI Flows",
+      "graph": "Graph Metrics"
+    },
+    "architectureNotes": "Architecture Notes",
+    "notes": [
+      "Protocol-first orchestration through MCP gateway and AURA arbitration.",
+      "Graph memory as persistent operational context for multi-agent continuity.",
+      "Runtime feedback loops feeding orchestration and reliability policies.",
+      "Infrastructure modeled as composable intelligence modules, not isolated apps."
+    ]
+  },
+  "labs": {
+    "label": "R&D",
+    "title": "Interactive Labs",
+    "description": "Experimental environments for trading AI, spatial computing, enterprise automation, and intelligent CRM.",
+    "badge": "Interactive Systems",
+    "labsTitle": "Labs",
+    "labsDescription": "From portfolio to platform: live operational modules showcasing AI products as dynamic systems.",
+    "moduleRegistry": "Module Registry",
+    "liveModule": "live module"
+  },
+  "infrastructure": {
+    "label": "Infrastructure",
+    "title": "Infrastructure Stack",
+    "description": "Containerized deployments, orchestration matrices, and continuous delivery pipelines.",
+    "badge": "Infrastructure Layer",
+    "commandCenterTitle": "Infrastructure Command Center",
+    "commandCenterDescription": "Operational runtime visibility across containers, deployments, logs and MCP node health.",
+    "labels": {
+      "uptime": "Uptime",
+      "region": "Region",
+      "orchestrator": "Orchestrator",
+      "source": "Source"
+    },
+    "tabs": {
+      "runtime": "Runtime",
+      "containers": "Containers",
+      "mcp": "MCP",
+      "logs": "Logs",
+      "deployments": "Deployments"
+    },
+    "tabLabels": {
+      "runtime": "Runtime",
+      "mcpNodesOnline": "MCP Nodes Online",
+      "containerRuntime": "Container Runtime",
+      "status": "Status"
+    }
+  },
+  "github": {
+    "label": "Intelligence",
+    "title": "GitHub Intelligence",
+    "description": "Live repository analytics, commit activity, and deployment telemetry.",
+    "badge": "GitHub Intelligence Layer",
+    "integrationTitle": "GitHub Integration",
+    "integrationDescription": "GitHub transformed into a dynamic backend for activity intelligence, releases, deployments and repository evolution.",
+    "stats": {
+      "totalStars": "Total Stars",
+      "totalForks": "Total Forks",
+      "commits30d": "Commits 30d",
+      "source": "Source"
+    },
+    "commitActivity": "Commit Activity",
+    "recentReleases": "Recent Releases",
+    "deployments": "Deployments",
+    "openRepository": "Open Repository"
+  },
+  "about": {
+    "label": "Identity",
+    "title": "About",
+    "description": "Systems architect specializing in AI infrastructure, multi-agent orchestration, and graph memory systems.",
+    "badge": "Narrative Layer",
+    "aboutTitle": "About",
+    "aboutDescription": "Building the operational core of next-generation AI products, from architecture to execution.",
+    "narrative": "This platform is my live architecture workspace: a place where AI systems, orchestration layers, and automation infrastructures are designed, tested, and operationalized. The goal is not to ship isolated demos, but to construct modular ecosystems that learn, adapt, and compound in value.",
+    "focusAreas": [
+      { "title": "Systems Thinking", "description": "Architecture first, implementation second: every system is built to survive complexity." },
+      { "title": "AI Infrastructure", "description": "Composable, protocol-driven infrastructure for scalable and resilient AI operations." },
+      { "title": "Automation", "description": "High-leverage automations that reduce friction and increase operational throughput." },
+      { "title": "Industrial Engineering", "description": "Engineering rigor, observability and process control adapted to digital ecosystems." },
+      { "title": "Strategic Architecture", "description": "Platform decisions aligned with long-term product and business outcomes." },
+      { "title": "Innovation Direction", "description": "Future-facing experimentation converted into practical, deployable systems." }
+    ]
+  },
+  "contact": {
+    "label": "Transmission",
+    "title": "Contact",
+    "description": "Initiate communication. All transmissions are encrypted and routed through secure channels.",
+    "form": {
+      "nameLabel": "Identity",
+      "namePlaceholder": "Your name",
+      "emailLabel": "Signal Address",
+      "emailPlaceholder": "your@email.com",
+      "messageLabel": "Mission Parameters",
+      "messagePlaceholder": "Project scope, goals, and timeline...",
+      "submit": "Initialize Collaboration",
+      "sending": "Encrypting...",
+      "successTitle": "Transmission Received",
+      "successMessage": "Your collaboration request has been queued. Response within 24 hours."
+    },
+    "services": [
+      "Architecture strategy for AI products",
+      "Automation infrastructure and orchestration",
+      "MCP ecosystems and multi-agent systems",
+      "Operational dashboards and runtime intelligence"
+    ],
+    "email": "contact@jootacee.com"
+  },
+  "footer": {
+    "tagline": "Operational laboratory for AI systems, automation infrastructures, and modular digital ecosystems.",
+    "copyright": "All systems operational.",
+    "navigation": "Navigation",
+    "systems": "Systems",
+    "status": "System Status",
+    "statusOperational": "Operational",
+    "statusHealthy": "Healthy",
+    "statusActive": "Active",
+    "statusNodes": "{count} Online",
+    "konamiHint": "Try the Konami code...",
+    "techStack": "Next.js 16 + React 19 + R3F + GSAP",
+    "easterTitle": "System Override",
+    "easterMessage": "Konami code detected. Admin privileges granted.",
+    "easterSub": "Welcome to the operational core, Architect."
+  },
+  "command": {
+    "placeholder": "Search JootaCee...",
+    "noResults": "No commands found for \"{search}\"",
+    "navigate": "Navigate",
+    "labs": "Labs",
+    "shortcut": "Shortcut",
+    "select": "Select",
+    "categories": {
+      "navigation": "Navigation",
+      "labs": "Labs"
+    }
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "toggle": "Toggle theme"
+  },
+  "language": {
+    "switch": "Switch language",
+    "en": "English",
+    "es": "Spanish"
+  },
+  "preloader": {
+    "initializing": "Initializing systems",
+    "role": "AI Systems Architect & Automation Engineer",
+    "version": "Operational Laboratory v2.0"
+  },
+  "statusBar": {
+    "online": "Online",
+    "fps": "FPS",
+    "cpu": "CPU",
+    "latency": "Latency",
+    "connections": "Conn",
+    "utc": "UTC"
+  },
+  "admin": {
+    "title": "Command Center",
+    "welcome": "Welcome to the admin dashboard",
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "config": "Config",
+      "blocks": "Blocks",
+      "navbar": "Navbar",
+      "design": "Design",
+      "personality": "Personality",
+      "results": "Results",
+      "collapse": "Collapse"
+    },
+    "header": {
+      "unsaved": "Unsaved",
+      "savedAt": "Saved",
+      "export": "Export",
+      "import": "Import",
+      "reset": "Reset"
+    },
+    "dashboard": {
+      "title": "Command Center",
+      "subtitle": "Operational dashboard and system overview",
+      "systemActivity": "System Activity",
+      "performance": "Performance",
+      "traffic": "Traffic Overview",
+      "overallScore": "Overall Performance Score"
+    },
+    "config": {
+      "title": "Configuration",
+      "subtitle": "Manage site settings, SEO metadata, and integrations.",
+      "site": "Site",
+      "seo": "SEO",
+      "whatsapp": "WhatsApp",
+      "features": "Features",
+      "security": "Security",
+      "siteName": "Site Name",
+      "siteUrl": "Site URL",
+      "description": "Description",
+      "businessFocus": "Business Focus",
+      "titleTemplate": "Title Template",
+      "defaultTitle": "Default Title",
+      "defaultDescription": "Default Description",
+      "ogImage": "OG Image Path",
+      "twitterHandle": "Twitter Handle",
+      "robots": "Robots",
+      "canonicalBase": "Canonical Base",
+      "phoneNumber": "Phone Number",
+      "defaultMessage": "Default Message",
+      "enableAnalytics": "Enable Analytics",
+      "enableTelemetry": "Enable Telemetry",
+      "maintenanceMode": "Maintenance Mode",
+      "trackingId": "Tracking ID"
+    },
+    "blocks": {
+      "title": "Blocks",
+      "subtitle": "Toggle sections and reorder their appearance on the page.",
+      "pageSections": "Page Sections",
+      "active": "active",
+      "previewOrder": "Preview Order"
+    },
+    "navbar": {
+      "title": "Navbar",
+      "subtitle": "Customize navigation layout, branding, and behavior.",
+      "branding": "Branding",
+      "behavior": "Behavior",
+      "navLinks": "Navigation Links",
+      "actionButtons": "Action Buttons",
+      "logoText": "Logo Text",
+      "logoUrl": "Logo URL (optional)",
+      "layout": "Layout",
+      "background": "Background",
+      "scrollBehavior": "Scroll Behavior",
+      "add": "Add",
+      "label": "Label",
+      "path": "Path",
+      "external": "External",
+      "variant": "Variant"
+    },
+    "design": {
+      "title": "Design System",
+      "subtitle": "Control visual identity, tokens, and live preview.",
+      "defaultTheme": "Default Theme",
+      "colorPalette": "Color Palette",
+      "typography": "Typography",
+      "shapesSpacing": "Shapes & Spacing",
+      "shadows": "Shadows",
+      "gradients": "Gradients",
+      "buttons": "Buttons",
+      "livePreview": "Live Preview",
+      "fontFamily": "Font Family",
+      "borderRadius": "Border Radius",
+      "spacingScale": "Spacing Scale",
+      "shadowIntensity": "Shadow Intensity",
+      "gradientStyle": "Gradient Style",
+      "buttonStyle": "Button Style"
+    },
+    "personality": {
+      "title": "Personality",
+      "subtitle": "Define the emotional tone and atmospheric effects of the experience.",
+      "designPersonality": "Design Personality",
+      "webEffects": "Web Effects",
+      "designGuide": "Design Guide"
+    },
+    "results": {
+      "title": "Results",
+      "subtitle": "Quality audits, metrics, performance scores, experiments, and alerts.",
+      "quality": "Quality",
+      "metrics": "Metrics",
+      "performance": "Performance",
+      "abTests": "A/B Tests",
+      "alerts": "Alerts",
+      "reports": "Reports",
+      "tracking": "Tracking",
+      "qualityAudit": "Quality Audit",
+      "overallScore": "Overall Performance Score",
+      "variantA": "Variant A",
+      "variantB": "Variant B",
+      "trafficSplit": "Traffic split",
+      "winner": "Winner",
+      "noAlerts": "No alerts",
+      "event": "Event",
+      "category": "Category",
+      "label": "Label",
+      "value": "Value",
+      "time": "Time"
+    },
+    "stats": {
+      "visitors": "Visitors",
+      "systems": "Active Systems",
+      "uptime": "Uptime",
+      "requests": "Requests"
+    },
+    "activity": {
+      "title": "System Activity",
+      "events": [
+        "NeuralNetworkScene rendered with high tier",
+        "MCP Ecosystem handshake completed",
+        "Graph Memory sync interval triggered",
+        "Telemetry batch uploaded",
+        "Adaptive quality reduced to balanced",
+        "Preloader sequence completed"
+      ]
+    },
+    "performance": {
+      "title": "Performance",
+      "lcp": "LCP",
+      "cls": "CLS",
+      "inp": "INP",
+      "fcp": "FCP"
+    },
+    "traffic": {
+      "title": "Traffic Overview"
+    }
+  },
+  "accessibility": {
+    "skipToContent": "Skip to main content",
+    "scrollToTop": "Scroll to top",
+    "openCommandPalette": "Open command palette",
+    "close": "Close"
+  }
+}

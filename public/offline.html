@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline — JootaCee</title>
+  <meta name="theme-color" content="#05060a">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #05060a;
+      --fg: #eef2ff;
+      --muted: #8ea2c5;
+      --primary: #49b7ff;
+      --card: #0a0d14;
+      --border: #1e2a3d;
+    }
+    * { box-sizing: border-box; margin: 0; }
+    body {
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .container {
+      text-align: center;
+      padding: 2rem;
+      max-width: 440px;
+    }
+    .icon {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 1.25rem;
+      border-radius: 14px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .icon svg { width: 28px; height: 28px; color: var(--primary); }
+    h1 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 0.5rem; }
+    p { font-size: 0.875rem; color: var(--muted); line-height: 1.6; margin-bottom: 1.5rem; }
+    .actions { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
+    button, a {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--fg);
+      padding: 0.55rem 1rem;
+      border-radius: 8px;
+      font-size: 0.8125rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color 0.2s ease;
+    }
+    button:hover, a:hover { border-color: var(--primary); }
+    .primary { background: var(--primary); color: #03111e; border-color: var(--primary); font-weight: 500; }
+    .primary:hover { opacity: 0.92; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2a10 10 0 1 0 10 10"/>
+        <path d="M2 12h20"/>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"/>
+        <path d="M12 2a15.3 15.3 0 0 0-4 10 15.3 15.3 0 0 0 4 10"/>
+      </svg>
+    </div>
+    <h1>You're offline</h1>
+    <p>It looks like your connection is down. Some pages may still be available from cache.</p>
+    <div class="actions">
+      <button class="primary" onclick="location.reload()">Retry</button>
+      <a href="/">Go Home</a>
+    </div>
+  </div>
+</body>
+</html>

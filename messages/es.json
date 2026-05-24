@@ -1,0 +1,352 @@
+{
+  "meta": {
+    "title": "JootaCee | Arquitecto de Sistemas IA",
+    "description": "Laboratorio operacional para sistemas de IA, infraestructuras de automatización y ecosistemas digitales modulares."
+  },
+  "nav": {
+    "systems": "Sistemas",
+    "labs": "Labs",
+    "infrastructure": "Infraestructura",
+    "github": "GitHub",
+    "about": "Nosotros",
+    "contact": "Contacto",
+    "collaborate": "Colaborar",
+    "admin": "Admin"
+  },
+  "hero": {
+    "headline": "Arquitectura de sistemas autónomos.",
+    "subheadline": "Infraestructura de IA, orquestación de automatización e inteligencia industrial. Construido para el futuro, desplegado hoy.",
+    "ctaPrimary": "Explorar Sistemas",
+    "ctaSecondary": "Ver Labs"
+  },
+  "systems": {
+    "label": "Arquitectura",
+    "title": "Visión General",
+    "description": "Capas de inteligencia central, telas de protocolo y runtimes operacionales que impulsan la infraestructura autónoma.",
+    "badge": "Inteligencia de Arquitectura",
+    "showcaseTitle": "Showcase de Arquitectura de Sistemas",
+    "showcaseDescription": "Arquitectura operacional, topologías de protocolo y flujos de inteligencia representados como mapas de sistema vivos.",
+    "views": {
+      "mcp": "Mapa MCP",
+      "aura": "Visual AURA",
+      "flow": "Flujos IA",
+      "graph": "Métricas de Grafo"
+    },
+    "architectureNotes": "Notas de Arquitectura",
+    "notes": [
+      "Orquestación protocol-first a través del gateway MCP y arbitraje AURA.",
+      "Memoria en grafo como contexto operacional persistente para continuidad multi-agente.",
+      "Bucles de retroalimentación runtime alimentando orquestación y políticas de fiabilidad.",
+      "Infraestructura modelada como módulos de inteligencia composables, no apps aisladas."
+    ]
+  },
+  "labs": {
+    "label": "I+D",
+    "title": "Labs Interactivos",
+    "description": "Entornos experimentales para trading IA, computación espacial, automatización empresarial y CRM inteligente.",
+    "badge": "Sistemas Interactivos",
+    "labsTitle": "Labs",
+    "labsDescription": "Del portafolio a la plataforma: módulos operacionales en vivo que muestran productos de IA como sistemas dinámicos.",
+    "moduleRegistry": "Registro de Módulos",
+    "liveModule": "módulo en vivo"
+  },
+  "infrastructure": {
+    "label": "Infraestructura",
+    "title": "Stack de Infraestructura",
+    "description": "Despliegues containerizados, matrices de orquestación y pipelines de entrega continua.",
+    "badge": "Capa de Infraestructura",
+    "commandCenterTitle": "Centro de Comando de Infraestructura",
+    "commandCenterDescription": "Visibilidad operacional runtime en contenedores, despliegues, logs y salud de nodos MCP.",
+    "labels": {
+      "uptime": "Disponibilidad",
+      "region": "Región",
+      "orchestrator": "Orquestador",
+      "source": "Fuente"
+    },
+    "tabs": {
+      "runtime": "Runtime",
+      "containers": "Contenedores",
+      "mcp": "MCP",
+      "logs": "Logs",
+      "deployments": "Despliegues"
+    },
+    "tabLabels": {
+      "runtime": "Runtime",
+      "mcpNodesOnline": "Nodos MCP en Línea",
+      "containerRuntime": "Runtime de Contenedores",
+      "status": "Estado"
+    }
+  },
+  "github": {
+    "label": "Inteligencia",
+    "title": "Inteligencia GitHub",
+    "description": "Analíticas de repositorios en tiempo real, actividad de commits y telemetría de despliegues.",
+    "badge": "Capa de Inteligencia GitHub",
+    "integrationTitle": "Integración GitHub",
+    "integrationDescription": "GitHub transformado en un backend dinámico para inteligencia de actividad, lanzamientos, despliegues y evolución de repositorios.",
+    "stats": {
+      "totalStars": "Stars Totales",
+      "totalForks": "Forks Totales",
+      "commits30d": "Commits 30d",
+      "source": "Fuente"
+    },
+    "commitActivity": "Actividad de Commits",
+    "recentReleases": "Lanzamientos Recientes",
+    "deployments": "Despliegues",
+    "openRepository": "Abrir Repositorio"
+  },
+  "about": {
+    "label": "Identidad",
+    "title": "Nosotros",
+    "description": "Arquitecto de sistemas especializado en infraestructura de IA, orquestación multi-agente y sistemas de memoria en grafos.",
+    "badge": "Capa Narrativa",
+    "aboutTitle": "Nosotros",
+    "aboutDescription": "Construyendo el núcleo operacional de productos de IA de próxima generación, desde la arquitectura hasta la ejecución.",
+    "narrative": "Esta plataforma es mi espacio de trabajo de arquitectura en vivo: un lugar donde sistemas de IA, capas de orquestación e infraestructuras de automatización se diseñan, prueban y operacionalizan. El objetivo no es lanzar demos aisladas, sino construir ecosistemas modulares que aprendan, se adapten y generen valor compuesto.",
+    "focusAreas": [
+      { "title": "Pensamiento de Sistemas", "description": "Arquitectura primero, implementación después: cada sistema se construye para sobrevivir la complejidad." },
+      { "title": "Infraestructura de IA", "description": "Infraestructura composable, impulsada por protocolos, para operaciones de IA escalables y resilientes." },
+      { "title": "Automatización", "description": "Automatizaciones de alto apalancamiento que reducen fricción e incrementan throughput operacional." },
+      { "title": "Ingeniería Industrial", "description": "Rigor de ingeniería, observabilidad y control de proceso adaptados a ecosistemas digitales." },
+      { "title": "Arquitectura Estratégica", "description": "Decisiones de plataforma alineadas con resultados de producto y negocio a largo plazo." },
+      { "title": "Dirección de Innovación", "description": "Experimentación orientada al futuro convertida en sistemas prácticos y desplegables." }
+    ]
+  },
+  "contact": {
+    "label": "Transmisión",
+    "title": "Contacto",
+    "description": "Iniciar comunicación. Todas las transmisiones están encriptadas y enrutadas a través de canales seguros.",
+    "form": {
+      "nameLabel": "Identidad",
+      "namePlaceholder": "Tu nombre",
+      "emailLabel": "Dirección de Señal",
+      "emailPlaceholder": "tu@email.com",
+      "messageLabel": "Parámetros de Misión",
+      "messagePlaceholder": "Alcance del proyecto, objetivos y cronograma...",
+      "submit": "Iniciar Colaboración",
+      "sending": "Encriptando...",
+      "successTitle": "Transmisión Recibida",
+      "successMessage": "Tu solicitud de colaboración ha sido encolada. Respuesta en menos de 24 horas."
+    },
+    "services": [
+      "Estrategia de arquitectura para productos de IA",
+      "Infraestructura de automatización y orquestación",
+      "Ecosistemas MCP y sistemas multi-agente",
+      "Dashboards operacionales e inteligencia runtime"
+    ],
+    "email": "contact@jootacee.com"
+  },
+  "footer": {
+    "tagline": "Laboratorio operacional para sistemas de IA, infraestructuras de automatización y ecosistemas digitales modulares.",
+    "copyright": "Todos los sistemas operativos.",
+    "navigation": "Navegación",
+    "systems": "Sistemas",
+    "status": "Estado del Sistema",
+    "statusOperational": "Operativo",
+    "statusHealthy": "Saludable",
+    "statusActive": "Activo",
+    "statusNodes": "{count} En línea",
+    "konamiHint": "Prueba el código Konami...",
+    "techStack": "Next.js 16 + React 19 + R3F + GSAP",
+    "easterTitle": "Anulación de Sistema",
+    "easterMessage": "Código Konami detectado. Privilegios de administrador concedidos.",
+    "easterSub": "Bienvenido al núcleo operacional, Arquitecto."
+  },
+  "command": {
+    "placeholder": "Buscar JootaCee...",
+    "noResults": "No se encontraron comandos para \"{search}\"",
+    "navigate": "Navegar",
+    "labs": "Labs",
+    "shortcut": "Atajo",
+    "select": "Seleccionar",
+    "categories": {
+      "navigation": "Navegación",
+      "labs": "Labs"
+    }
+  },
+  "theme": {
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema",
+    "toggle": "Cambiar tema"
+  },
+  "language": {
+    "switch": "Cambiar idioma",
+    "en": "Inglés",
+    "es": "Español"
+  },
+  "preloader": {
+    "initializing": "Inicializando sistemas",
+    "role": "Arquitecto de Sistemas IA & Ingeniero de Automatización",
+    "version": "Laboratorio Operacional v2.0"
+  },
+  "statusBar": {
+    "online": "En línea",
+    "fps": "FPS",
+    "cpu": "CPU",
+    "latency": "Latencia",
+    "connections": "Conex",
+    "utc": "UTC"
+  },
+  "admin": {
+    "title": "Centro de Comando",
+    "welcome": "Bienvenido al panel de administración",
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "config": "Configuración",
+      "blocks": "Bloques",
+      "navbar": "Navbar",
+      "design": "Diseño",
+      "personality": "Personalidad",
+      "results": "Resultados",
+      "collapse": "Colapsar"
+    },
+    "header": {
+      "unsaved": "Sin guardar",
+      "savedAt": "Guardado",
+      "export": "Exportar",
+      "import": "Importar",
+      "reset": "Reiniciar"
+    },
+    "dashboard": {
+      "title": "Centro de Comando",
+      "subtitle": "Panel operacional y vista general del sistema",
+      "systemActivity": "Actividad del Sistema",
+      "performance": "Rendimiento",
+      "traffic": "Vista General de Tráfico",
+      "overallScore": "Puntuación General de Rendimiento"
+    },
+    "config": {
+      "title": "Configuración",
+      "subtitle": "Administra ajustes del sitio, metadatos SEO e integraciones.",
+      "site": "Sitio",
+      "seo": "SEO",
+      "whatsapp": "WhatsApp",
+      "features": "Funciones",
+      "security": "Seguridad",
+      "siteName": "Nombre del Sitio",
+      "siteUrl": "URL del Sitio",
+      "description": "Descripción",
+      "businessFocus": "Enfoque de Negocio",
+      "titleTemplate": "Plantilla de Título",
+      "defaultTitle": "Título Predeterminado",
+      "defaultDescription": "Descripción Predeterminada",
+      "ogImage": "Ruta OG Image",
+      "twitterHandle": "Usuario de Twitter",
+      "robots": "Robots",
+      "canonicalBase": "Base Canónica",
+      "phoneNumber": "Número de Teléfono",
+      "defaultMessage": "Mensaje Predeterminado",
+      "enableAnalytics": "Habilitar Analytics",
+      "enableTelemetry": "Habilitar Telemetría",
+      "maintenanceMode": "Modo Mantenimiento",
+      "trackingId": "ID de Tracking"
+    },
+    "blocks": {
+      "title": "Bloques",
+      "subtitle": "Activa/desactiva secciones y reordena su aparición en la página.",
+      "pageSections": "Secciones de Página",
+      "active": "activas",
+      "previewOrder": "Vista Previa del Orden"
+    },
+    "navbar": {
+      "title": "Navbar",
+      "subtitle": "Personaliza el layout de navegación, branding y comportamiento.",
+      "branding": "Branding",
+      "behavior": "Comportamiento",
+      "navLinks": "Enlaces de Navegación",
+      "actionButtons": "Botones de Acción",
+      "logoText": "Texto del Logo",
+      "logoUrl": "URL del Logo (opcional)",
+      "layout": "Layout",
+      "background": "Fondo",
+      "scrollBehavior": "Comportamiento al Scroll",
+      "add": "Agregar",
+      "label": "Etiqueta",
+      "path": "Ruta",
+      "external": "Externo",
+      "variant": "Variante"
+    },
+    "design": {
+      "title": "Sistema de Diseño",
+      "subtitle": "Controla la identidad visual, tokens y vista previa en vivo.",
+      "defaultTheme": "Tema Predeterminado",
+      "colorPalette": "Paleta de Colores",
+      "typography": "Tipografía",
+      "shapesSpacing": "Formas y Espaciado",
+      "shadows": "Sombras",
+      "gradients": "Gradientes",
+      "buttons": "Botones",
+      "livePreview": "Vista Previa en Vivo",
+      "fontFamily": "Familia Tipográfica",
+      "borderRadius": "Radio de Borde",
+      "spacingScale": "Escala de Espaciado",
+      "shadowIntensity": "Intensidad de Sombra",
+      "gradientStyle": "Estilo de Gradiente",
+      "buttonStyle": "Estilo de Botón"
+    },
+    "personality": {
+      "title": "Personalidad",
+      "subtitle": "Define el tono emocional y los efectos atmosféricos de la experiencia.",
+      "designPersonality": "Personalidad de Diseño",
+      "webEffects": "Efectos Web",
+      "designGuide": "Guía de Diseño"
+    },
+    "results": {
+      "title": "Resultados",
+      "subtitle": "Auditorías de calidad, métricas, rendimiento, experimentos y alertas.",
+      "quality": "Calidad",
+      "metrics": "Métricas",
+      "performance": "Rendimiento",
+      "abTests": "Pruebas A/B",
+      "alerts": "Alertas",
+      "reports": "Reportes",
+      "tracking": "Tracking",
+      "qualityAudit": "Auditoría de Calidad",
+      "overallScore": "Puntuación General de Rendimiento",
+      "variantA": "Variante A",
+      "variantB": "Variante B",
+      "trafficSplit": "División de tráfico",
+      "winner": "Ganador",
+      "noAlerts": "Sin alertas",
+      "event": "Evento",
+      "category": "Categoría",
+      "label": "Etiqueta",
+      "value": "Valor",
+      "time": "Hora"
+    },
+    "stats": {
+      "visitors": "Visitantes",
+      "systems": "Sistemas Activos",
+      "uptime": "Disponibilidad",
+      "requests": "Peticiones"
+    },
+    "activity": {
+      "title": "Actividad del Sistema",
+      "events": [
+        "NeuralNetworkScene renderizado con tier alto",
+        "Handshake de MCP Ecosystem completado",
+        "Intervalo de sincronización Graph Memory activado",
+        "Lote de telemetría subido",
+        "Calidad adaptativa reducida a balanced",
+        "Secuencia de Preloader completada"
+      ]
+    },
+    "performance": {
+      "title": "Rendimiento",
+      "lcp": "LCP",
+      "cls": "CLS",
+      "inp": "INP",
+      "fcp": "FCP"
+    },
+    "traffic": {
+      "title": "Vista General de Tráfico"
+    }
+  },
+  "accessibility": {
+    "skipToContent": "Saltar al contenido principal",
+    "scrollToTop": "Volver arriba",
+    "openCommandPalette": "Abrir paleta de comandos",
+    "close": "Cerrar"
+  }
+}
