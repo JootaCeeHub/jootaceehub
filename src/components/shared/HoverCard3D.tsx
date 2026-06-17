@@ -40,14 +40,14 @@ export function HoverCard3D({ children, className, intensity = 8 }: HoverCard3DP
   return (
     <div
       ref={cardRef}
-      className={cn('relative transition-transform duration-200 ease-out', className)}
+      className={cn('relative cursor-default will-change-transform transition-transform duration-200 ease-out', className)}
       style={{ transform }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
       {children}
       <div
-        className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        className="pointer-events-none absolute inset-0 rounded-[inherit] transition-opacity"
         style={{
           background: `radial-gradient(circle at ${glowPosition.x}% ${glowPosition.y}%, rgba(73,183,255,0.12), transparent 60%)`,
         }}

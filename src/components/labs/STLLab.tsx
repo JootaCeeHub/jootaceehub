@@ -6,29 +6,23 @@ import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 
 function ProceduralMesh({ complexity }: { complexity: number }) {
-  const geometry = useMemo(() => {
-    return new THREE.IcosahedronGeometry(1, complexity)
-  }, [complexity])
-
+  const geometry = useMemo(() => new THREE.IcosahedronGeometry(1, complexity), [complexity])
   return (
     <mesh geometry={geometry} rotation={[0.6, 0.5, 0]}>
-      <meshStandardMaterial color="#6ec5ff" wireframe metalness={0.12} roughness={0.25} />
+      <meshStandardMaterial color="#a78bfa" wireframe metalness={0.15} roughness={0.2} />
     </mesh>
   )
 }
+
+const COMPLEXITY_LABELS = ['Low', 'Medium', 'High', 'Ultra']
+const VERTEX_COUNTS = [12, 42, 162, 642]
 
 export function STLLab() {
   const [prompt, setPrompt] = useState('Parametric drone hull with airflow channels')
   const [complexity, setComplexity] = useState(1)
 
   const handleExport = () => {
-    const payload = {
-      type: 'stl-export-simulated',
-      prompt,
-      complexity,
-      generatedAt: new Date().toISOString(),
-    }
-
+    const payload = { type: 'stl-export-simulated', prompt, complexity, generatedAt: new Date().toISOString() }
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -39,20 +33,35 @@ export function STLLab() {
   }
 
   return (
-    <div className="glass rounded-2xl p-5">
-      <p className="mb-4 font-mono text-xs uppercase tracking-[0.2em] text-primary">STL AI / Prompt + 3D + Export</p>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/30">
+          GEOMETRY ENGINE / SIMULATION
+        </span>
+        <span className="font-mono text-[10px] text-violet-400/70">
+          {VERTEX_COUNTS[complexity]} verts
+        </span>
+      </div>
 
-      <div className="mb-3 space-y-2">
-        <label htmlFor="stl-prompt" className="text-xs text-muted-foreground">Prompt</label>
+      {/* Prompt */}
+      <div className="space-y-1.5">
+        <label htmlFor="stl-prompt" className="font-mono text-[9px] uppercase tracking-[0.16em] text-white/25">
+          Natural Language Prompt
+        </label>
         <textarea
           id="stl-prompt"
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          className="h-20 w-full rounded-lg border border-border bg-card/60 px-3 py-2 text-sm outline-none ring-primary focus:ring-2"
+          rows={2}
+          className="w-full resize-none rounded-lg border border-white/8 bg-white/3 px-3 py-2 font-mono text-[12px] text-white/65 outline-none transition-colors focus:border-violet-400/25 focus:bg-white/4"
         />
       </div>
 
-      <div className="mb-4 grid grid-cols-[1fr_auto] items-center gap-3">
+      {/* Complexity control */}
+      <div className="flex items-center gap-3">
+        <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-white/25 w-20 shrink-0">
+          Complexity
+        </span>
         <input
           type="range"
           min={0}
@@ -60,26 +69,35 @@ export function STLLab() {
           step={1}
           value={complexity}
           onChange={(e) => setComplexity(Number(e.target.value))}
+          className="flex-1 accent-violet-400"
         />
-        <span className="rounded-full border border-border px-2 py-1 text-[11px] text-muted-foreground">detail {complexity}</span>
+        <span className="font-mono text-[10px] text-violet-400 w-14 text-right">
+          {COMPLEXITY_LABELS[complexity]}
+        </span>
       </div>
 
-      <div className="h-52 overflow-hidden rounded-lg border border-border bg-card/50">
+      {/* 3D Viewport */}
+      <div className="overflow-hidden rounded-lg border border-white/6 bg-black/40" style={{ height: '200px' }}>
         <Canvas camera={{ position: [0, 0, 3.3], fov: 55 }}>
-          <ambientLight intensity={0.6} />
-          <directionalLight position={[2, 2, 1]} intensity={0.75} />
+          <ambientLight intensity={0.5} />
+          <directionalLight position={[2, 2, 1]} intensity={0.8} />
           <ProceduralMesh complexity={complexity} />
-          <OrbitControls enablePan={false} minDistance={2.2} maxDistance={4.2} autoRotate autoRotateSpeed={0.7} />
+          <OrbitControls enablePan={false} minDistance={2.2} maxDistance={4.2} autoRotate autoRotateSpeed={0.8} />
         </Canvas>
       </div>
 
+      {/* Export */}
       <button
         type="button"
         onClick={handleExport}
-        className="mt-4 w-full rounded-lg border border-primary/45 bg-primary/15 px-3 py-2 text-xs uppercase tracking-[0.16em] text-primary transition hover:bg-primary/25"
+        className="w-full rounded-lg border border-violet-400/20 bg-violet-400/6 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.16em] text-violet-400 transition-colors hover:bg-violet-400/12"
       >
         Export STL Simulation
       </button>
+
+      <div className="font-mono text-[9px] uppercase tracking-[0.14em] text-white/15">
+        LLM prompt parsing · procedural mesh synthesis · simulation mode
+      </div>
     </div>
   )
 }

@@ -7,7 +7,9 @@ import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/ca
 import { ScrollReveal, StaggerReveal } from '@/components/shared/ScrollReveal'
 import { HoverCard3D } from '@/components/shared/HoverCard3D'
 import { useInfrastructureOverview } from '@/hooks/useInfrastructureOverview'
+import { cn } from '@/lib/utils'
 import { useTranslations } from '@/lib/i18n/context'
+import { SectionExploreCta } from '@/components/shared/SectionExploreCta'
 
 type InfraView = 'runtime' | 'containers' | 'mcp' | 'logs' | 'deployments'
 
@@ -20,12 +22,15 @@ const metricIcons: Record<string, React.ComponentType<{ className?: string }>> =
   runtime_alerts: Server,
 }
 
-const statusBadge = {
-  operational: 'text-emerald-200 border-emerald-400/40 bg-emerald-500/15',
-  stable: 'text-sky-200 border-sky-300/40 bg-sky-500/15',
-  warning: 'text-amber-200 border-amber-400/40 bg-amber-500/15',
-  critical: 'text-rose-200 border-rose-400/40 bg-rose-500/15',
-} as const
+function statusBadgeClass(status: 'operational' | 'stable' | 'warning' | 'critical') {
+  const map = {
+    operational: 'text-emerald-200 border-emerald-400/40 bg-emerald-500/15',
+    stable: 'text-sky-200 border-sky-300/40 bg-sky-500/15',
+    warning: 'text-amber-200 border-amber-400/40 bg-amber-500/15',
+    critical: 'text-rose-200 border-rose-400/40 bg-rose-500/15',
+  } as const
+  return `rounded-full border px-2 py-1 text-[10px] uppercase tracking-[0.14em] ${map[status]}`
+}
 
 export function InfrastructureSection() {
   const { data, source } = useInfrastructureOverview()
@@ -79,7 +84,7 @@ export function InfrastructureSection() {
                       <div className="rounded-lg border border-primary/30 bg-primary/10 p-2.5">
                         <Icon className="h-5 w-5 text-primary" />
                       </div>
-                      <span className={`rounded-full border px-2 py-1 text-[10px] uppercase tracking-[0.14em] ${statusBadge[metric.status]}`}>
+                      <span className={statusBadgeClass(metric.status)}>
                         {metric.status}
                       </span>
                     </div>
@@ -100,11 +105,12 @@ export function InfrastructureSection() {
               key={tab}
               type="button"
               onClick={() => setView(tab)}
-              className={`rounded-full border px-3 py-1.5 text-xs uppercase tracking-[0.16em] transition ${
+              className={cn(
+                'rounded-full border px-3 py-1.5 text-xs uppercase tracking-[0.16em] transition',
                 view === tab
                   ? 'border-primary/60 bg-primary/15 text-primary'
                   : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
-              }`}
+              )}
             >
               {tabLabels[tab]}
             </button>
@@ -190,6 +196,7 @@ export function InfrastructureSection() {
         <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
           revision: {data.revision} · generated: {data.generatedAt.slice(0, 19).replace('T', ' ')}
         </p>
+        <SectionExploreCta domainHref="/projects" label="Projects" statusLabel="5 projects deployed" />
       </div>
     </section>
   )

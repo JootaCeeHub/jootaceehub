@@ -4,12 +4,14 @@ import { useState, useEffect } from 'react'
 import { useTheme } from 'next-themes'
 import { Sun, Moon, Monitor } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { cn } from '@/lib/utils'
 
 export function ThemeToggle() {
-  const { theme, setTheme, resolvedTheme } = useTheme()
+  const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   const [open, setOpen] = useState(false)
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), [])
 
   if (!mounted) {
@@ -58,11 +60,12 @@ export function ThemeToggle() {
                       setTheme(option.id)
                       setOpen(false)
                     }}
-                    className={`flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm transition ${
+                    className={cn(
+                      'flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm transition',
                       isActive
                         ? 'bg-primary/15 text-foreground'
                         : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                    }`}
+                    )}
                   >
                     <Icon className="h-3.5 w-3.5" />
                     <span>{option.label}</span>

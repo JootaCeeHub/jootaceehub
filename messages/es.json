@@ -7,17 +7,23 @@
     "systems": "Sistemas",
     "labs": "Labs",
     "infrastructure": "Infraestructura",
+    "journal": "Diario",
     "github": "GitHub",
     "about": "Nosotros",
     "contact": "Contacto",
+    "playground": "Playground",
     "collaborate": "Colaborar",
-    "admin": "Admin"
+    "admin": "Admin",
+    "home": "Inicio",
+    "research": "Investigación",
+    "intelligence": "Inteligencia"
   },
   "hero": {
     "headline": "Arquitectura de sistemas autónomos.",
     "subheadline": "Infraestructura de IA, orquestación de automatización e inteligencia industrial. Construido para el futuro, desplegado hoy.",
     "ctaPrimary": "Explorar Sistemas",
-    "ctaSecondary": "Ver Labs"
+    "ctaSecondary": "Ver Labs",
+    "enterDomain": "Entrar a un dominio"
   },
   "systems": {
     "label": "Arquitectura",
@@ -75,7 +81,9 @@
       "mcpNodesOnline": "Nodos MCP en Línea",
       "containerRuntime": "Runtime de Contenedores",
       "status": "Estado"
-    }
+    },
+    "domainBadge": "Centro de Operaciones en Vivo",
+    "domainDescription": "Despliegues containerizados, matrices de orquestación y pipelines de entrega continua. Visibilidad operacional completa en toda la superficie del sistema."
   },
   "github": {
     "label": "Inteligencia",
@@ -93,7 +101,9 @@
     "commitActivity": "Actividad de Commits",
     "recentReleases": "Lanzamientos Recientes",
     "deployments": "Despliegues",
-    "openRepository": "Abrir Repositorio"
+    "openRepository": "Abrir Repositorio",
+    "domainBadge": "Inteligencia de Código",
+    "domainDescription": "Analíticas de repositorios, actividad de commits, telemetría de despliegues e inteligencia de lanzamientos. El registro técnico vivo del ecosistema operacional."
   },
   "about": {
     "label": "Identidad",
@@ -104,12 +114,76 @@
     "aboutDescription": "Construyendo el núcleo operacional de productos de IA de próxima generación, desde la arquitectura hasta la ejecución.",
     "narrative": "Esta plataforma es mi espacio de trabajo de arquitectura en vivo: un lugar donde sistemas de IA, capas de orquestación e infraestructuras de automatización se diseñan, prueban y operacionalizan. El objetivo no es lanzar demos aisladas, sino construir ecosistemas modulares que aprendan, se adapten y generen valor compuesto.",
     "focusAreas": [
-      { "title": "Pensamiento de Sistemas", "description": "Arquitectura primero, implementación después: cada sistema se construye para sobrevivir la complejidad." },
-      { "title": "Infraestructura de IA", "description": "Infraestructura composable, impulsada por protocolos, para operaciones de IA escalables y resilientes." },
-      { "title": "Automatización", "description": "Automatizaciones de alto apalancamiento que reducen fricción e incrementan throughput operacional." },
-      { "title": "Ingeniería Industrial", "description": "Rigor de ingeniería, observabilidad y control de proceso adaptados a ecosistemas digitales." },
-      { "title": "Arquitectura Estratégica", "description": "Decisiones de plataforma alineadas con resultados de producto y negocio a largo plazo." },
-      { "title": "Dirección de Innovación", "description": "Experimentación orientada al futuro convertida en sistemas prácticos y desplegables." }
+      {
+        "title": "Pensamiento de Sistemas",
+        "description": "Arquitectura primero, implementación después: cada sistema se construye para sobrevivir la complejidad."
+      },
+      {
+        "title": "Infraestructura de IA",
+        "description": "Infraestructura composable, impulsada por protocolos, para operaciones de IA escalables y resilientes."
+      },
+      {
+        "title": "Automatización",
+        "description": "Automatizaciones de alto apalancamiento que reducen fricción e incrementan throughput operacional."
+      },
+      {
+        "title": "Ingeniería Industrial",
+        "description": "Rigor de ingeniería, observabilidad y control de proceso adaptados a ecosistemas digitales."
+      },
+      {
+        "title": "Arquitectura Estratégica",
+        "description": "Decisiones de plataforma alineadas con resultados de producto y negocio a largo plazo."
+      },
+      {
+        "title": "Dirección de Innovación",
+        "description": "Experimentación orientada al futuro convertida en sistemas prácticos y desplegables."
+      }
+    ],
+    "sectionNarrative": "Narrativa",
+    "sectionFocusAreas": "Áreas de Enfoque",
+    "sectionSelectedWork": "Trabajo Seleccionado",
+    "sectionSpecializations": "Especializaciones",
+    "sectionContact": "Contacto",
+    "narrativePart2": "Creo que la próxima generación de sistemas digitales estará definida por su capacidad de orquestar inteligencia — no solo de computarla. Eso significa diseño protocol-first, arquitecturas composables e infraestructura que trata la IA como capa operacional, no como una función.",
+    "contactEmail": "Email",
+    "contactDomain": "Dominio",
+    "domainBadge": "Identidad & Misión",
+    "domainDescription": "Arquitecto de Sistemas IA & Ingeniero de Automatización. Construyendo el núcleo operacional de productos inteligentes de próxima generación — desde el diseño de protocolos hasta el despliegue en producción.",
+    "timeline": [
+      {
+        "year": "2024",
+        "label": "Núcleo de Orquestación AURA",
+        "description": "Construyó la capa de orquestación multi-modelo conectando Claude, GPT y herramientas MCP."
+      },
+      {
+        "year": "2024",
+        "label": "Ecosistema MCP",
+        "description": "Diseñó y desplegó el gateway del Model Context Protocol para integración herramienta-modelo."
+      },
+      {
+        "year": "2023",
+        "label": "Trading AI Beta",
+        "description": "Lanzó sistema de trading cuantitativo con análisis de señales IA y optimización de portafolio."
+      },
+      {
+        "year": "2023",
+        "label": "Sistema GraphRAG",
+        "description": "Implementó almacenamiento de conocimiento nativo en grafos reemplazando la recuperación vectorial plana."
+      },
+      {
+        "year": "2022",
+        "label": "Generador STL IA",
+        "description": "Lanzó pipeline de generación de modelos 3D desde lenguaje natural para fabricación digital."
+      }
+    ],
+    "specializations": [
+      "Orquestación IA",
+      "Ecosistemas MCP",
+      "Sistemas Multi-Agente",
+      "GraphRAG",
+      "Pipelines de Automatización",
+      "Diseño de Infraestructura",
+      "Sistemas Cuantitativos"
     ]
   },
   "contact": {
@@ -134,7 +208,359 @@
       "Ecosistemas MCP y sistemas multi-agente",
       "Dashboards operacionales e inteligencia runtime"
     ],
-    "email": "contact@jootacee.com"
+    "email": "contact@jootacee.com",
+    "domainBadge": "Iniciar Colaboración",
+    "domainDescription": "Todas las transmisiones se enrutan de forma segura. Respuesta en menos de 24 horas para colaboraciones cualificadas."
+  },
+  "journal": {
+    "label": "Publicación",
+    "title": "Diario",
+    "description": "Ensayos técnicos, análisis de IA y perspectivas de ingeniería desde el núcleo operacional.",
+    "badge": "Publicación Técnica",
+    "featured": "Destacado",
+    "recent": "Artículos Recientes",
+    "readMore": "Leer Artículo",
+    "readTime": "{n} min de lectura",
+    "allArticles": "Todos los Artículos",
+    "categories": {
+      "opinion": "Opinión",
+      "research": "Investigación",
+      "essays": "Ensayos",
+      "news": "Noticias"
+    },
+    "categoryDescriptions": {
+      "opinion": "Perspectivas y opiniones poco populares",
+      "research": "Análisis técnico profundo",
+      "essays": "Pensamiento de ingeniería de largo aliento",
+      "news": "Inteligencia de IA e infraestructura"
+    },
+    "backToJournal": "Volver al Diario",
+    "tagsLabel": "Etiquetas",
+    "featuredLabel": "Destacado",
+    "allLabel": "Todos",
+    "onListTitle": "Estás en la lista.",
+    "onListSubtitle": "Te notificaremos cuando el Playground se lance.",
+    "earlyAccess": "Acceso anticipado",
+    "notifyDesc": "Sé el primero en saber cuando las herramientas interactivas estén disponibles.",
+    "notifySuccess": "Estás en la lista. Estaremos en contacto."
+  },
+  "research": {
+    "label": "Investigación",
+    "badge": "Base de Conocimiento",
+    "title": "Investigación y Análisis",
+    "description": "Investigación técnica, ensayos y análisis arquitectónico desde la primera línea de los sistemas de IA.",
+    "allLabel": "Todo",
+    "featuredLabel": "Destacado",
+    "minReadLabel": "min lectura",
+    "cta": "Leer Investigación",
+    "archiveCta": "Ver Archivo Completo",
+    "categories": {
+      "opinion": "Opinión",
+      "research": "Investigación",
+      "essays": "Ensayos",
+      "news": "Noticias"
+    },
+    "activeBadge": "Publicación Activa",
+    "vol": "Vol.",
+    "entries": "entradas",
+    "leadSection": "Publicación Principal",
+    "filterLabel": "Filtrar por tipo",
+    "readPublication": "Leer Publicación",
+    "emptyState": "No hay entradas en esta categoría todavía.",
+    "mastheadDesc": "Reportes de campo, ensayos arquitectónicos e inteligencia técnica desde el frente operativo de ingeniería de sistemas IA. Analítico. Preciso. Arquitectónico.",
+    "titleAccent": "Análisis",
+    "titlePrimary": "Investigación &"
+  },
+  "playground": {
+    "label": "Sandbox",
+    "title": "Playground",
+    "description": "Entorno de experimentación interactiva — próximamente.",
+    "badge": "Sandbox Interactivo",
+    "comingSoon": "Próximamente",
+    "roadmapTitle": "Qué viene",
+    "notifyTitle": "Recibe una notificación cuando el Playground se lance",
+    "notifyPlaceholder": "tu@email.com",
+    "notifySubmit": "Notificarme",
+    "tools": [
+      {
+        "name": "Interfaz de Chat IA",
+        "status": "roadmap",
+        "description": "Playground de LLM interactivo con prompts de sistema personalizados"
+      },
+      {
+        "name": "Constructor de Automatizaciones",
+        "status": "roadmap",
+        "description": "Construcción y prueba visual de flujos de trabajo"
+      },
+      {
+        "name": "Explorador GraphRAG",
+        "status": "roadmap",
+        "description": "Consulta y visualiza la memoria de grafos en tiempo real"
+      },
+      {
+        "name": "Simulador de Agentes",
+        "status": "roadmap",
+        "description": "Despliega y prueba escenarios de coordinación multi-agente"
+      }
+    ],
+    "earlyAccess": "Acceso anticipado",
+    "notifyDesc": "Sé el primero en saber cuando las herramientas interactivas estén disponibles.",
+    "onListTitle": "Estás en la lista.",
+    "onListSubtitle": "Te notificaremos cuando el Playground se lance."
+  },
+  "domainSystems": {
+    "mcp": {
+      "title": "Ecosistema MCP",
+      "subtitle": "Capa de orquestación protocol-first",
+      "description": "El gateway del Model Context Protocol que conecta modelos de IA, herramientas y flujos de datos operacionales en una tela de orquestación unificada.",
+      "status": "Operativo",
+      "badge": "Capa de Protocolo",
+      "notes": [
+        "Diseño protocol-first: todas las llamadas de herramientas IA son estandarizadas con MCP, haciendo el sistema agnóstico al modelo.",
+        "Contexto bidireccional: tanto herramientas como modelos pueden enviar/recibir contexto a través del mismo protocolo.",
+        "El gateway mantiene un registro de todas las herramientas disponibles con metadatos de capacidad.",
+        "Aislamiento de fallos: los errores de herramientas se contienen y se exponen sin cascada al contexto del modelo."
+      ]
+    },
+    "graphrag": {
+      "title": "GraphRAG",
+      "subtitle": "Sistema de memoria y recuperación en grafo",
+      "description": "Un sistema RAG nativo en grafos que almacena y consulta conocimiento como entidades interconectadas en lugar de vectores planos.",
+      "status": "Operativo",
+      "badge": "Sistema de Memoria",
+      "notes": [
+        "Las entidades y relaciones son ciudadanos de primera clase — no solo fragmentos de texto.",
+        "El traversal multi-salto permite cadenas de razonamiento que el RAG plano no puede soportar.",
+        "Contexto temporal: los nodos de conocimiento llevan marcas de tiempo habilitando recuperación consciente de la recencia.",
+        "La estructura del grafo sobrevive los límites de sesión — la IA recuerda entre invocaciones."
+      ]
+    },
+    "agents": {
+      "title": "Agentes IA",
+      "subtitle": "Tela de orquestación multi-agente",
+      "description": "Agentes autónomos coordinados con roles definidos, acceso a herramientas y protocolos de comunicación entre agentes para ejecución de tareas complejas.",
+      "status": "Activo",
+      "badge": "Red de Agentes",
+      "notes": [
+        "Cada agente tiene una definición de rol, un manifiesto de herramientas y un presupuesto de contexto.",
+        "AURA arbitra la creación de agentes basándose en la complejidad de la tarea y los recursos disponibles.",
+        "Los agentes se comunican a través de un bus de mensajes compartido, no llamadas directas a funciones.",
+        "Los agentes de larga duración guardan su estado en GraphRAG para ejecución resiliente."
+      ]
+    },
+    "automation": {
+      "title": "Automatización",
+      "subtitle": "Infraestructura de flujos de trabajo inteligente",
+      "description": "Pipelines de automatización dirigidos por eventos que reducen la fricción operacional e incrementan el throughput en toda la superficie del sistema.",
+      "status": "Operativo",
+      "badge": "Capa de Automatización",
+      "notes": [
+        "Arquitectura event-first: cada automatización es disparada por un evento operacional real.",
+        "Nodos de decisión IA embebidos en flujos de trabajo para lógica de ramificación dinámica.",
+        "Todas las ejecuciones de automatización se registran con visibilidad completa de entrada/salida.",
+        "Políticas de reintento y colas de mensajes muertos aseguran que ningún evento se pierda silenciosamente."
+      ]
+    },
+    "shared": {
+      "sidebarNotes": "Notas de Arquitectura",
+      "sidebarIntegrations": "Integraciones"
+    }
+  },
+  "domainLabs": {
+    "tradingAi": {
+      "title": "Trading AI",
+      "subtitle": "Motor de inteligencia cuantitativa",
+      "description": "Sistema de trading cuantitativo impulsado por IA que combina análisis de señales de mercado, optimización de portafolio y gestión de riesgo en un pipeline unificado.",
+      "status": "Beta",
+      "badge": "IA Financiera",
+      "roadmap": [
+        {
+          "label": "Pipeline de ingesta de señales de mercado",
+          "done": true
+        },
+        {
+          "label": "Motor de optimización de portafolio",
+          "done": true
+        },
+        {
+          "label": "Capa de gestión de riesgo",
+          "done": true
+        },
+        {
+          "label": "Integración de trading en papel en vivo",
+          "done": false,
+          "description": "Conexión API Binance/Alpaca"
+        },
+        {
+          "label": "Constructor de estrategias multi-activo",
+          "done": false
+        },
+        {
+          "label": "Framework de backtesting v2",
+          "done": false
+        },
+        {
+          "label": "Agente de rebalanceo autónomo",
+          "done": false
+        }
+      ]
+    },
+    "stlGenerator": {
+      "title": "Generador STL IA",
+      "subtitle": "Herramienta de fabricación con IA espacial",
+      "description": "Generación de modelos 3D a partir de lenguaje natural — convierte la intención de diseño en archivos STL listos para producción mediante modelado paramétrico guiado por IA.",
+      "status": "Beta",
+      "badge": "IA Espacial",
+      "roadmap": [
+        {
+          "label": "Pipeline principal texto-a-geometría",
+          "done": true
+        },
+        {
+          "label": "Exportación STL con validación",
+          "done": true
+        },
+        {
+          "label": "Renderizador de vista previa 3D",
+          "done": true
+        },
+        {
+          "label": "Sistema de restricciones paramétricas",
+          "done": false,
+          "description": "Define relaciones entre dimensiones del modelo"
+        },
+        {
+          "label": "Generación de ensamblajes multi-parte",
+          "done": false
+        },
+        {
+          "label": "Anotación de propiedades de material",
+          "done": false
+        },
+        {
+          "label": "Exportación G-code para impresión 3D",
+          "done": false
+        }
+      ]
+    },
+    "crm": {
+      "title": "Plataforma CRM",
+      "subtitle": "Inteligencia de clientes inteligente",
+      "description": "Un CRM de próxima generación que usa IA para modelar relaciones con clientes, predecir abandono y automatizar secuencias de comunicación de alto impacto.",
+      "status": "Desarrollo",
+      "badge": "Inteligencia de Clientes",
+      "roadmap": [
+        {
+          "label": "Modelo de datos de contactos y empresas",
+          "done": true
+        },
+        {
+          "label": "Línea de tiempo de actividad",
+          "done": true
+        },
+        {
+          "label": "Modelo IA de predicción de abandono",
+          "done": false,
+          "description": "Puntuación de abandono basada en señales"
+        },
+        {
+          "label": "Secuencias de comunicación automatizadas",
+          "done": false
+        },
+        {
+          "label": "Gestión de pipeline",
+          "done": false
+        },
+        {
+          "label": "Conectores de integración (Slack, email)",
+          "done": false
+        },
+        {
+          "label": "Dashboard de analíticas de ingresos",
+          "done": false
+        }
+      ]
+    },
+    "erp": {
+      "title": "Plataforma ERP",
+      "subtitle": "Suite de automatización empresarial",
+      "description": "Una plataforma de recursos empresariales modular construida sobre principios de automatización-first, datos enlazados en grafo y observabilidad operacional.",
+      "status": "Desarrollo",
+      "badge": "Automatización Empresarial",
+      "roadmap": [
+        {
+          "label": "Modelo de datos central (entidades, relaciones)",
+          "done": true
+        },
+        {
+          "label": "Módulo de gestión de inventario",
+          "done": false
+        },
+        {
+          "label": "Flujo de trabajo de órdenes de compra",
+          "done": false
+        },
+        {
+          "label": "Integración de automatización n8n",
+          "done": false,
+          "description": "Automatización de flujos dirigida por eventos"
+        },
+        {
+          "label": "Capa de reportes financieros",
+          "done": false
+        },
+        {
+          "label": "Soporte multi-entidad",
+          "done": false
+        },
+        {
+          "label": "Detección de anomalías impulsada por IA",
+          "done": false
+        }
+      ]
+    },
+    "aura": {
+      "title": "AURA",
+      "subtitle": "Plataforma central de orquestación IA",
+      "description": "La capa fundacional de orquestación IA — gestiona enrutamiento, contexto, despacho de herramientas y coordinación multi-modelo.",
+      "status": "Activo",
+      "badge": "Plataforma Central",
+      "roadmap": [
+        {
+          "label": "Motor de orquestación central",
+          "done": true
+        },
+        {
+          "label": "Enrutamiento multi-modelo (Claude, GPT, Gemini)",
+          "done": true
+        },
+        {
+          "label": "Integración de herramientas MCP",
+          "done": true
+        },
+        {
+          "label": "Gestión de contexto persistente",
+          "done": true
+        },
+        {
+          "label": "Ciclo de vida y creación de agentes",
+          "done": false,
+          "description": "Creación y terminación dinámica de agentes"
+        },
+        {
+          "label": "Protocolo de comunicación entre agentes",
+          "done": false
+        },
+        {
+          "label": "Políticas de enrutamiento auto-optimizadas",
+          "done": false
+        }
+      ]
+    },
+    "shared": {
+      "sidebarStack": "Stack Tecnológico",
+      "sidebarRoadmap": "Hoja de Ruta"
+    }
   },
   "footer": {
     "tagline": "Laboratorio operacional para sistemas de IA, infraestructuras de automatización y ecosistemas digitales modulares.",
@@ -348,5 +774,58 @@
     "scrollToTop": "Volver arriba",
     "openCommandPalette": "Abrir paleta de comandos",
     "close": "Cerrar"
+  },
+  "home": {
+    "systems": {
+      "badge": "Sistemas Activos",
+      "title": "Arquitectura autónoma a escala.",
+      "description": "Orquestación MCP, memoria GraphRAG, coordinación multi-agente e infraestructura de automatización — interconectados y operacionales.",
+      "stat1Label": "Herramientas MCP",
+      "stat1Value": "18",
+      "stat2Label": "Modelos",
+      "stat2Value": "4",
+      "stat3Label": "Latencia Media",
+      "stat3Value": "240ms",
+      "stat4Label": "Disponibilidad",
+      "stat4Value": "99.9%",
+      "cta": "Explorar Arquitectura",
+      "statusAll": "Todos los Sistemas Nominales"
+    },
+    "labs": {
+      "badge": "Experimentos Activos",
+      "title": "Productos forjados en producción.",
+      "description": "Módulos de IA de grado investigación desplegados como software real — desde inteligencia en trading hasta herramientas de diseño generativo.",
+      "cta": "Entrar a Labs",
+      "liveLabel": "live",
+      "betaLabel": "beta",
+      "rdLabel": "I+D"
+    },
+    "infra": {
+      "badge": "Operaciones en Vivo",
+      "title": "Siempre operacional.",
+      "description": "Infraestructura containerizada, pipelines de entrega continua y observabilidad en tiempo real en toda la superficie del sistema.",
+      "cta": "Ver Centro de Ops",
+      "statusOnline": "En Línea",
+      "uptimeLabel": "Disponibilidad",
+      "regionLabel": "Región",
+      "orchestratorLabel": "Orquestador",
+      "containersLabel": "Contenedores"
+    },
+    "journal": {
+      "badge": "Diario Técnico",
+      "title": "Pensando en público.",
+      "description": "Opiniones sobre diseño de sistemas, arquitectura de IA y el futuro del software autónomo.",
+      "cta": "Abrir Diario",
+      "featuredLabel": "Destacado",
+      "minReadLabel": "min lectura"
+    },
+    "collab": {
+      "badge": "Abierto a Colaborar",
+      "title": "¿Listo para arquitectar algo extraordinario?",
+      "description": "Proyectos cualificados en sistemas de IA, infraestructura de automatización y plataformas inteligentes. Respuesta en menos de 24 horas.",
+      "cta": "Iniciar Colaboración",
+      "ctaSecondary": "Ver Trabajo",
+      "email": "contact@jootacee.com"
+    }
   }
 }

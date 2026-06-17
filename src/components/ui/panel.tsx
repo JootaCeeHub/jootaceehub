@@ -2,6 +2,12 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
+const panelVariants = {
+  default: 'bg-card border-border',
+  glass: 'glass',
+  'glass-strong': 'glass-strong',
+} as const
+
 interface PanelProps {
   children: React.ReactNode
   className?: string
@@ -9,19 +15,9 @@ interface PanelProps {
 }
 
 export function Panel({ children, className, variant = 'default' }: PanelProps) {
-  const variants = {
-    default: 'bg-card border-border',
-    glass: 'glass',
-    'glass-strong': 'glass-strong',
-  }
-
   return (
     <motion.div
-      className={cn(
-        'rounded-2xl border p-8',
-        variants[variant],
-        className
-      )}
+      className={cn('rounded-2xl border p-8', panelVariants[variant], className)}
       initial={{ opacity: 0, scale: 0.95 }}
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
@@ -47,11 +43,7 @@ interface PanelTitleProps {
 }
 
 export function PanelTitle({ children, className }: PanelTitleProps) {
-  return (
-    <h2 className={cn('text-3xl font-bold text-foreground gradient-text', className)}>
-      {children}
-    </h2>
-  )
+  return <h2 className={cn('text-3xl font-bold text-foreground gradient-text', className)}>{children}</h2>
 }
 
 interface PanelSubtitleProps {
@@ -60,11 +52,7 @@ interface PanelSubtitleProps {
 }
 
 export function PanelSubtitle({ children, className }: PanelSubtitleProps) {
-  return (
-    <p className={cn('text-lg text-muted-foreground mt-2', className)}>
-      {children}
-    </p>
-  )
+  return <p className={cn('text-lg text-muted-foreground mt-2', className)}>{children}</p>
 }
 
 interface PanelContentProps {

@@ -1,0 +1,92 @@
+import type { Article } from '@/lib/journal/types'
+
+const article: Article = {
+  slug: 'autonomous-infrastructure-observability',
+  title: 'Observability as a First-Class Citizen in Autonomous Infrastructure',
+  excerpt:
+    'When the system operates itself, you cannot afford to watch it with human eyes. Observability must be designed into the fabric of autonomous infrastructure from the start.',
+  abstract:
+    'Autonomous infrastructure systems present a fundamental observability challenge: the entities being observed are also capable of modifying the observation framework itself. This field report examines the design constraints, instrumentation patterns, and feedback loop architectures required to maintain genuine operational visibility when AI agents control the infrastructure layer.',
+  date: '2026-05-18T00:00:00.000Z',
+  category: 'research',
+  depth: 'deep-read',
+  series: 'Infrastructure Intelligence',
+  tags: ['observability', 'autonomous systems', 'infrastructure', 'telemetry', 'OpenTelemetry'],
+  readTime: 11,
+  content: `
+<p>There is a moment in every autonomous infrastructure deployment when an engineer realizes they are no longer the primary observer. The agent is watching. The agent is deciding. And the dashboards, lovingly built over years of operational experience, are now one step removed from the real control loop.</p>
+
+<p>This is not a failure of tooling. It is a structural property of autonomous systems. Understanding it — and designing around it — is one of the defining engineering challenges of this decade.</p>
+
+<h2>The Observer-Agent Tension</h2>
+
+<p>In classical infrastructure operations, observability is designed for humans. Metrics, logs, and traces are surfaced to dashboards that humans interpret. Humans decide when to act. The loop is:</p>
+
+<blockquote>State → Signal → Human → Decision → Action</blockquote>
+
+<p>In autonomous infrastructure, the loop collapses:</p>
+
+<blockquote>State → Signal → Agent → Decision → Action</blockquote>
+
+<p>The human is now observing the loop itself, not participating in it. This changes everything about what "observability" means. We are no longer building visibility for decision-makers. We are building audit trails for a system that decides faster than we can read.</p>
+
+<h2>The Three Layers of Autonomous Observability</h2>
+
+<p>After studying and instrumenting several production autonomous infrastructure deployments, I have found that robust observability in this paradigm requires three distinct layers, each with different retention strategies and consumer profiles.</p>
+
+<h3>Layer 1: Operational Telemetry</h3>
+
+<p>This is the classic layer — metrics and traces from the infrastructure services themselves. Container start times, memory pressure, network throughput. The difference in autonomous contexts is that this telemetry must be consumed by the agent, not just exported to a human-readable sink.</p>
+
+<p>The practical implication: your telemetry pipeline must have a real-time consumer API. Not just Prometheus scrape targets. Not just Loki log streams. A queryable interface that an LLM-backed agent can interrogate synchronously during a decision cycle.</p>
+
+<p>OpenTelemetry's collector architecture handles this well if you expose the OTLP gRPC endpoint to your agent runtime. The agent makes a query, the collector responds, the agent incorporates the result into its reasoning context. Latency here matters — anything above 200ms starts to degrade decision quality in tight feedback loops.</p>
+
+<h3>Layer 2: Agent Reasoning Traces</h3>
+
+<p>This is the layer most teams miss. When an agent makes a decision — to scale a service, to reroute traffic, to defer a batch job — that reasoning process must be captured as a structured artifact. Not just the action. The reasoning.</p>
+
+<p>Why? Because operational incidents in autonomous systems rarely look like traditional outages. They look like a sequence of individually-correct decisions that compound into an unexpected system state. Understanding that sequence requires replaying the agent's reasoning, not just the infrastructure state changes.</p>
+
+<p>The schema I use for agent reasoning traces:</p>
+
+<ul>
+  <li><strong>decision_id</strong>: UUID, immutable reference for downstream correlation</li>
+  <li><strong>context_snapshot</strong>: The telemetry state the agent observed at decision time</li>
+  <li><strong>reasoning_chain</strong>: The intermediate conclusions the agent reached</li>
+  <li><strong>action_taken</strong>: What was executed and with what parameters</li>
+  <li><strong>confidence</strong>: Agent's self-reported confidence (useful for alerting on low-confidence decisions)</li>
+  <li><strong>duration_ms</strong>: How long the decision cycle took</li>
+</ul>
+
+<p>These traces must be written to an append-only store. The agent should not be able to modify or delete its own reasoning history. This is not paranoia — it is a basic audit requirement for any system that operates infrastructure autonomously.</p>
+
+<h3>Layer 3: Intervention Markers</h3>
+
+<p>The third layer is often overlooked because it seems obvious: track every human intervention in the autonomous system. Every time an operator overrides a decision, pauses the agent, or manually adjusts a parameter — that event must be written to the same temporal store as the agent's own traces.</p>
+
+<p>Without this, post-incident analysis becomes impossible. You cannot distinguish between a state change caused by the agent and a state change caused by an operator. The causal graph collapses.</p>
+
+<h2>The Feedback Loop Problem</h2>
+
+<p>The most dangerous failure mode in autonomous infrastructure observability is feedback loop corruption. This happens when the agent's actions affect the observability signals the agent uses to make future decisions.</p>
+
+<p>A concrete example: an agent monitors CPU utilization across a cluster. When utilization exceeds a threshold, it scales the workload to more nodes. This scaling action changes the per-node CPU metrics. If the agent does not account for this causal dependency, it will misinterpret the post-scaling telemetry as a change in workload demand rather than as the result of its own intervention.</p>
+
+<p>The solution is causal tagging. Every infrastructure change made by the agent must propagate a causal marker through the telemetry pipeline. When the agent queries telemetry and finds a causal marker from one of its own recent actions, it weights that signal differently — or excludes it from its immediate decision context.</p>
+
+<p>This is similar to the econometric problem of controlling for policy interventions when measuring policy effects. The tooling is not the same, but the conceptual structure is identical.</p>
+
+<h2>What "Full Observability" Means in This Context</h2>
+
+<p>Full observability in autonomous infrastructure does not mean you can see everything happening in real time. It means that after any event — expected or unexpected — you can reconstruct the complete causal chain: what state the agent observed, what it decided, what it did, and what changed as a result.</p>
+
+<p>This is a higher bar than traditional operational observability, which asks only whether the system is currently healthy. Autonomous infrastructure observability asks whether the system's decision history is coherent and auditable.</p>
+
+<p>Building to this bar is expensive upfront. Every team I have seen skip it has paid the cost later, in incidents that took weeks to diagnose because the decision trail had not been preserved.</p>
+
+<p>The engineering cost of observability is fixed. The debugging cost of its absence is unbounded.</p>
+`,
+}
+
+export default article

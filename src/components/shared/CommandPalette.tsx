@@ -1,10 +1,12 @@
 'use client'
+/* eslint-disable react-hooks/set-state-in-effect */
 
-import { useEffect, useState, useRef, useCallback } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, Command, ArrowRight, Cpu, Network, Code2, User, Mail, FlaskConical, Box, Building2, TrendingUp, Workflow } from 'lucide-react'
+import { Search, ArrowRight, Cpu, Network, Code2, User, Mail, FlaskConical, Box, Building2, TrendingUp, Workflow } from 'lucide-react'
 import { brand } from '@/lib/config/brand'
 import { useTranslations } from '@/lib/i18n/context'
+import { cn } from '@/lib/utils'
 
 interface CommandItem {
   id: string
@@ -79,7 +81,7 @@ export function CommandPalette() {
     }
   }, [open])
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault()
       setSelectedIndex((prev) => (prev + 1) % flatItems.length)
@@ -90,7 +92,7 @@ export function CommandPalette() {
       e.preventDefault()
       flatItems[selectedIndex]?.action()
     }
-  }, [flatItems, selectedIndex])
+  }
 
   return (
     <>
@@ -150,7 +152,7 @@ export function CommandPalette() {
                     <p className="px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
                       {category}
                     </p>
-                    {categoryItems.map((item, idx) => {
+                    {categoryItems.map((item) => {
                       const globalIdx = flatItems.indexOf(item)
                       const isSelected = globalIdx === selectedIndex
                       const Icon = item.icon
@@ -159,11 +161,10 @@ export function CommandPalette() {
                           key={item.id}
                           onClick={item.action}
                           onMouseEnter={() => setSelectedIndex(globalIdx)}
-                          className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition ${
-                            isSelected
-                              ? 'bg-primary/15 text-foreground'
-                              : 'text-muted-foreground hover:text-foreground'
-                          }`}
+                          className={cn(
+                            'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition',
+                            isSelected ? 'bg-primary/15 text-foreground' : 'text-muted-foreground hover:text-foreground'
+                          )}
                         >
                           <Icon className="h-4 w-4" aria-hidden="true" />
                           <span className="flex-1 text-sm">{item.label}</span>

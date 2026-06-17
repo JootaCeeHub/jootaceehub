@@ -1,11 +1,11 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import { Brain, Network, Zap, Cpu, Target, Rocket } from 'lucide-react'
 import { SectionHeader } from '@/components/shared/SectionHeader'
 import { ScrollReveal, StaggerReveal } from '@/components/shared/ScrollReveal'
 import { HoverCard3D } from '@/components/shared/HoverCard3D'
 import { useTranslations } from '@/lib/i18n/context'
+import { SectionExploreCta } from '@/components/shared/SectionExploreCta'
 
 const focusIcons = [
   Brain,
@@ -59,6 +59,7 @@ export function AboutSection() {
             )
           })}
         </StaggerReveal>
+        <SectionExploreCta domainHref="/about" label="About" statusLabel="Identity & mission" />
       </div>
     </section>
   )

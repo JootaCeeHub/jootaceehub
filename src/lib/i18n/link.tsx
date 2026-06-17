@@ -6,5 +6,5 @@ import { useLocale } from './context'
 export function LocaleLink({ href, ...props }: React.ComponentProps<typeof Link>) {
   const locale = useLocale()
   const localizedHref = typeof href === 'string' && !href.startsWith('/') ? `/${locale}${href}` : href
-  return <Link href={localizedHref} {...props} />
+  return <Link prefetch={false} href={localizedHref} {...props} />
 }

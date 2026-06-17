@@ -129,10 +129,23 @@ function NeuralLines({ count, animated }: { count: number; animated: boolean }) 
   )
 }
 
-function HolographicCore({ radius, opacity, animated }: { radius: number; opacity: number; animated: boolean }) {
+function HolographicCore({ radius, opacity, animated, colorA = '#49b7ff', colorB = '#6ef7ff' }: {
+  radius: number; opacity: number; animated: boolean; colorA?: string; colorB?: string
+}) {
   const coreRef = useRef<THREE.Mesh>(null)
   const shellRef = useRef<THREE.Mesh>(null)
   const shellMaterial = useMemo(() => new HoloMaterial(), [])
+
+  // Update holo colors when they change
+  useFrame(() => {
+    const mat = shellMaterial as unknown as { uColorA: THREE.Color; uColorB: THREE.Color }
+    if (mat.uColorA && !mat.uColorA.equals(new THREE.Color(colorA))) {
+      mat.uColorA.set(colorA)
+    }
+    if (mat.uColorB && !mat.uColorB.equals(new THREE.Color(colorB))) {
+      mat.uColorB.set(colorB)
+    }
+  })
 
   useFrame(({ clock }) => {
     if (!animated) return
@@ -250,21 +263,13 @@ function ControlPanel({
 
   return (
     <>
-      <button
-        type="button"
-        onClick={onToggle}
-        className="absolute left-5 top-5 z-20 rounded-md border border-border bg-background/70 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground"
-      >
+      <button type="button" onClick={onToggle} className="absolute left-5 top-5 z-20 rounded-md border border-border bg-background/70 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
         3D Panel
       </button>
       {open ? (
         <div className="absolute left-5 top-14 z-20 w-[280px] rounded-lg border border-border bg-background/85 p-3 font-mono text-[11px] text-muted-foreground backdrop-blur-md">
           <p className="mb-2 text-foreground">Runtime Controls</p>
-          <button
-            type="button"
-            onClick={onQualityReset}
-            className="mb-3 rounded-md border border-border px-2 py-1 text-[10px] uppercase tracking-[0.18em] hover:border-primary/40"
-          >
+          <button type="button" onClick={onQualityReset} className="mb-3 rounded-md border border-border px-2 py-1 text-[10px] uppercase tracking-[0.18em] hover:border-primary/40">
             Reset Adaptive Quality
           </button>
           <div className="space-y-1">
@@ -279,7 +284,7 @@ function ControlPanel({
 }
 
 export default function NeuralNetworkScene({ initialTier }: { initialTier?: DeviceTier }) {
-  const { config, source } = useSceneConfig(initialTier)
+  const { config, source, sceneEnabled, colorA, colorB, animated: adminAnimated } = useSceneConfig(initialTier)
   const reducedMotion = usePrefersReducedMotion()
   const [adaptiveQuality, setAdaptiveQuality] = useState(1)
   const [panelOpen, setPanelOpen] = useState(false)
@@ -332,6 +337,8 @@ export default function NeuralNetworkScene({ initialTier }: { initialTier?: Devi
     }
   }, [config.tier, counts.lines, counts.particles, panelEnabled, panelOpen, quality, reducedMotion, sessionId, source])
 
+  if (!sceneEnabled) return null
+
   return (
     <div className="absolute inset-0 -z-10">
       <ControlPanel
@@ -355,16 +362,18 @@ export default function NeuralNetworkScene({ initialTier }: { initialTier?: Devi
 
         <AdaptiveBudget onQualityChange={setAdaptiveQuality} />
 
-        <ParallaxGroup parallaxStrength={config.parallaxStrength * quality} animated={!reducedMotion}>
-          <AmbientParticles count={counts.particles} animated={!reducedMotion} />
-          <NeuralLines count={counts.lines} animated={!reducedMotion} />
-          <HolographicCore radius={config.sphereRadius} opacity={config.backgroundOpacity} animated={!reducedMotion} />
+        <ParallaxGroup parallaxStrength={config.parallaxStrength * quality} animated={!reducedMotion && adminAnimated}>
+          <AmbientParticles count={counts.particles} animated={!reducedMotion && adminAnimated} />
+          <NeuralLines count={counts.lines} animated={!reducedMotion && adminAnimated} />
+          <HolographicCore radius={config.sphereRadius} opacity={config.backgroundOpacity} animated={!reducedMotion && adminAnimated} colorA={colorA} colorB={colorB} />
         </ParallaxGroup>
       </Canvas>
 
-      <div className="pointer-events-none absolute bottom-5 right-5 rounded-md border border-border bg-background/45 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-        3D {config.tier} / {source} / q{quality.toFixed(2)}
-      </div>
+      {panelEnabled && (
+        <div className="pointer-events-none absolute bottom-5 right-5 rounded-md border border-border bg-background/45 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+          3D {config.tier} / {source} / q{quality.toFixed(2)}
+        </div>
+      )}
     </div>
   )
 }

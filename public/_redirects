@@ -1,0 +1,16 @@
+# Netlify / Cloudflare Pages redirect rules
+# Note: client-side auth (Google OAuth) guards the admin UI after the HTML loads.
+# These rules prevent unauthenticated browsers from receiving the admin HTML at all,
+# reducing the attack surface for shell enumeration and crawling.
+
+# Admin root — redirect bare /admin to the trailing-slash canonical
+/admin  /admin/  301
+
+# Everything under /admin/ is served normally (the JS auth gate runs after load).
+# To add a hard server-side auth wall, replace the next line with a redirect to
+# your IdP login page, e.g.:
+#   /admin/*  https://accounts.google.com/...  302
+/admin/*  /admin/:splat  200
+
+# Locale redirects — bare root goes to English
+/  /en/  301

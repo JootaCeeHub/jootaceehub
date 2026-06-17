@@ -1,4 +1,3 @@
-'use client'
 
 export { BrandMark } from './BrandMark';
 export { CommandPalette } from './CommandPalette';
@@ -12,4 +11,13 @@ export { SectionErrorBoundary } from './SectionErrorBoundary';
 export { SectionHeader } from './SectionHeader';
 export { ServiceWorkerRegister } from './ServiceWorkerRegister';
 export { StatusBar } from './StatusBar';
-export { ThemeToggle } from './ThemeToggle';
+export { ThemeToggle } from './ThemeToggle'
+export { SectionExploreCta } from './SectionExploreCta'
+export { AmbientBackground } from './AmbientBackground'
+export { GlitchText } from './GlitchText'
+export { OperationalGrid } from './OperationalGrid'
+export { ScrollProgressBar } from './ScrollProgressBar'
+export { SmoothScroll } from './SmoothScroll'
+export { Meteors } from './Meteors'
+export { BorderBeam } from './BorderBeam'
+export { SpotlightCard } from './SpotlightCard'

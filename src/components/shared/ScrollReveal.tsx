@@ -1,11 +1,12 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useRef, Children } from 'react'
+import { motion, useInView } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
-gsap.registerPlugin(ScrollTrigger)
+// GSAP + ScrollTrigger replaced with framer-motion useInView + motion.div.
+// Same props, same scroll-trigger behaviour, zero extra bundle weight
+// (framer-motion is already in the critical bundle for other animations).
 
 interface ScrollRevealProps {
   children: React.ReactNode
@@ -27,45 +28,26 @@ export function ScrollReveal({
   once = true,
 }: ScrollRevealProps) {
   const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref, { once, margin: '-12% 0px' })
 
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
+  const offset =
+    direction === 'up'    ? { y:  distance } :
+    direction === 'down'  ? { y: -distance } :
+    direction === 'left'  ? { x:  distance } :
+                            { x: -distance }
 
-    const fromVars: gsap.TweenVars = {
-      opacity: 0,
-      duration,
-      delay,
-      ease: 'power3.out',
-    }
-
-    if (direction === 'up') fromVars.y = distance
-    if (direction === 'down') fromVars.y = -distance
-    if (direction === 'left') fromVars.x = distance
-    if (direction === 'right') fromVars.x = -distance
-
-    const tween = gsap.from(el, {
-      ...fromVars,
-      scrollTrigger: {
-        trigger: el,
-        start: 'top 88%',
-        end: 'top 20%',
-        toggleActions: once ? 'play none none none' : 'play reverse play reverse',
-      },
-    })
-
-    return () => {
-      tween.kill()
-      ScrollTrigger.getAll().forEach((t) => {
-        if (t.trigger === el) t.kill()
-      })
-    }
-  }, [direction, delay, duration, distance, once])
+  const reset = direction === 'up' || direction === 'down' ? { y: 0 } : { x: 0 }
 
   return (
-    <div ref={ref} className={cn(className)}>
+    <motion.div
+      ref={ref}
+      className={cn(className)}
+      initial={{ opacity: 0, ...offset }}
+      animate={inView ? { opacity: 1, ...reset } : { opacity: 0, ...offset }}
+      transition={{ duration, delay, ease: [0.215, 0.61, 0.355, 1.0] }}
+    >
       {children}
-    </div>
+    </motion.div>
   )
 }
 
@@ -81,36 +63,34 @@ export function StaggerReveal({
   delay?: number
 }) {
   const ref = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-
-    const children = el.children
-    if (!children.length) return
-
-    const tween = gsap.from(children, {
-      opacity: 0,
-      y: 30,
-      duration: 0.7,
-      stagger,
-      delay,
-      ease: 'power3.out',
-      scrollTrigger: {
-        trigger: el,
-        start: 'top 85%',
-        toggleActions: 'play none none none',
-      },
-    })
-
-    return () => {
-      tween.kill()
-    }
-  }, [stagger, delay])
+  const inView = useInView(ref, { once: true, margin: '-15% 0px' })
 
   return (
-    <div ref={ref} className={cn(className)}>
-      {children}
-    </div>
+    <motion.div
+      ref={ref}
+      className={cn(className)}
+      initial="hidden"
+      animate={inView ? 'visible' : 'hidden'}
+      variants={{
+        hidden: {},
+        visible: { transition: { staggerChildren: stagger, delayChildren: delay } },
+      }}
+    >
+      {Children.map(children, (child, i) => (
+        <motion.div
+          key={i}
+          variants={{
+            hidden: { opacity: 0, y: 30 },
+            visible: {
+              opacity: 1,
+              y: 0,
+              transition: { duration: 0.7, ease: [0.215, 0.61, 0.355, 1.0] },
+            },
+          }}
+        >
+          {child}
+        </motion.div>
+      ))}
+    </motion.div>
   )
 }

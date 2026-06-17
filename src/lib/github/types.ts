@@ -9,6 +9,8 @@ export interface RepositoryCard {
   updatedAt: string
   href: string
   commitVelocity: string
+  isFork?: boolean
+  topics?: string[]
 }
 
 export interface GitHubReleaseInfo {
@@ -30,10 +32,23 @@ export interface GitHubActivityPoint {
   commits: number
 }
 
+export interface GitHubProfile {
+  username: string
+  displayName: string
+  bio: string
+  location: string
+  url: string
+  avatarUrl: string
+  followers: number
+  following: number
+  publicRepos: number
+}
+
 export interface GitHubIntelligence {
   revision: string
   generatedAt: string
-  source: 'live' | 'mock'
+  source: 'static' | 'live' | 'mock'
+  profile?: GitHubProfile
   repositories: RepositoryCard[]
   totalStars: number
   totalForks: number

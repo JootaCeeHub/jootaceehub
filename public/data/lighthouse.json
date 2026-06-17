@@ -1,0 +1,176 @@
+{
+  "generatedAt": "2026-06-16T01:50:02.748Z",
+  "url": "http://127.0.0.1:4099/en/",
+  "mobile": {
+    "url": "http://127.0.0.1:4099/en/",
+    "strategy": "mobile",
+    "fetchedAt": "2026-06-16T01:49:46.608Z",
+    "scores": [
+      {
+        "label": "Performance",
+        "score": 61
+      },
+      {
+        "label": "Accessibility",
+        "score": 100
+      },
+      {
+        "label": "Best Practices",
+        "score": 96
+      },
+      {
+        "label": "SEO",
+        "score": 100
+      }
+    ],
+    "audits": {
+      "first-contentful-paint": {
+        "title": "First Contentful Paint",
+        "score": 89,
+        "displayValue": "1.8 s"
+      },
+      "largest-contentful-paint": {
+        "title": "Largest Contentful Paint",
+        "score": 44,
+        "displayValue": "4.2 s"
+      },
+      "total-blocking-time": {
+        "title": "Total Blocking Time",
+        "score": 21,
+        "displayValue": "1,180 ms"
+      },
+      "cumulative-layout-shift": {
+        "title": "Cumulative Layout Shift",
+        "score": 100,
+        "displayValue": "0"
+      },
+      "speed-index": {
+        "title": "Speed Index",
+        "score": 94,
+        "displayValue": "3.0 s"
+      },
+      "interactive": {
+        "title": "Time to Interactive",
+        "score": 68,
+        "displayValue": "5.7 s"
+      },
+      "server-response-time": {
+        "title": "Initial server response time was short",
+        "score": 100,
+        "displayValue": "Root document took 10 ms"
+      }
+    },
+    "lcpElement": null,
+    "renderBlockMs": null,
+    "unusedJsKb": 66,
+    "mainThreadWork": [
+      {
+        "group": "Other",
+        "duration": 2874
+      },
+      {
+        "group": "Script Evaluation",
+        "duration": 1152
+      },
+      {
+        "group": "Style & Layout",
+        "duration": 769
+      },
+      {
+        "group": "Rendering",
+        "duration": 217
+      },
+      {
+        "group": "Script Parsing & Compilation",
+        "duration": 102
+      }
+    ],
+    "lighthouseVersion": "13.3.0"
+  },
+  "desktop": {
+    "url": "http://127.0.0.1:4099/en/",
+    "strategy": "desktop",
+    "fetchedAt": "2026-06-16T01:50:02.709Z",
+    "scores": [
+      {
+        "label": "Performance",
+        "score": 86
+      },
+      {
+        "label": "Accessibility",
+        "score": 96
+      },
+      {
+        "label": "Best Practices",
+        "score": 96
+      },
+      {
+        "label": "SEO",
+        "score": 100
+      }
+    ],
+    "audits": {
+      "first-contentful-paint": {
+        "title": "First Contentful Paint",
+        "score": 100,
+        "displayValue": "0.4 s"
+      },
+      "largest-contentful-paint": {
+        "title": "Largest Contentful Paint",
+        "score": 94,
+        "displayValue": "1.0 s"
+      },
+      "total-blocking-time": {
+        "title": "Total Blocking Time",
+        "score": 61,
+        "displayValue": "290 ms"
+      },
+      "cumulative-layout-shift": {
+        "title": "Cumulative Layout Shift",
+        "score": 100,
+        "displayValue": "0"
+      },
+      "speed-index": {
+        "title": "Speed Index",
+        "score": 92,
+        "displayValue": "1.2 s"
+      },
+      "interactive": {
+        "title": "Time to Interactive",
+        "score": 96,
+        "displayValue": "1.9 s"
+      },
+      "server-response-time": {
+        "title": "Initial server response time was short",
+        "score": 100,
+        "displayValue": "Root document took 0 ms"
+      }
+    },
+    "lcpElement": null,
+    "renderBlockMs": null,
+    "unusedJsKb": 234,
+    "mainThreadWork": [
+      {
+        "group": "Other",
+        "duration": 1319
+      },
+      {
+        "group": "Script Evaluation",
+        "duration": 545
+      },
+      {
+        "group": "Style & Layout",
+        "duration": 284
+      },
+      {
+        "group": "Rendering",
+        "duration": 64
+      },
+      {
+        "group": "Script Parsing & Compilation",
+        "duration": 60
+      }
+    ],
+    "lighthouseVersion": "13.3.0"
+  }
+}

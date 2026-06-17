@@ -1,4 +1,4 @@
-name: CI
+name: CI / CD
 
 on:
   push:
@@ -8,9 +8,16 @@ on:
 
 permissions:
   contents: read
+  deployments: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
+  # ── Stage 1: Quality gates ──────────────────────────────────────────────
   quality:
+    name: Quality Gates
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,15 +34,56 @@ jobs:
       - name: Type check
         run: npx tsc --noEmit
 
+      - name: Validate MDX frontmatter
+        run: npm run validate:content
+
       - name: Lint
         run: npm run lint
 
-      - name: Run tests
-        run: npm run test
+      - name: Run tests with coverage
+        run: npx vitest run --coverage
+        env:
+          NODE_ENV: test
 
+      - name: Verify coverage ≥ 40%
+        run: |
+          if [ ! -f coverage/coverage-summary.json ]; then
+            echo "⚠️  coverage-summary.json not found — skipping threshold check"
+            exit 0
+          fi
+          COVERAGE=$(node -e "
+            const d = require('./coverage/coverage-summary.json');
+            console.log(Math.round(d.total.statements.pct));
+          " 2>/dev/null || echo "0")
+          echo "Statement coverage: ${COVERAGE}%"
+          if [ "$COVERAGE" -lt 40 ]; then
+            echo "❌ Coverage ${COVERAGE}% is below the 40% threshold"
+            exit 1
+          fi
+          echo "✅ Coverage ${COVERAGE}% meets the 40% threshold"
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+
+  # ── Stage 2: Build ─────────────────────────────────────────────────────
   build:
+    name: Build & Export
     needs: quality
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SITE_URL: https://jootacee.com
+      NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
+      NEXT_PUBLIC_SENTRY_RELEASE: ${{ github.sha }}
+      NEXT_PUBLIC_PLAUSIBLE_DOMAIN: ${{ secrets.NEXT_PUBLIC_PLAUSIBLE_DOMAIN }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+      SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
     steps:
       - uses: actions/checkout@v4
 
@@ -48,16 +96,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
+      - name: Build + postbuild (sitemap, RSS, OG, Pagefind index)
         run: npm run build
 
-      - name: Upload build artifact
+      - name: Upload dist artifact
         uses: actions/upload-artifact@v4
         with:
           name: dist
           path: dist
+          retention-days: 7
 
+  # ── Stage 3: Lighthouse ────────────────────────────────────────────────
   lighthouse:
+    name: Lighthouse CI
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -72,12 +123,50 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
-        run: npm run build
+      - name: Download dist artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
 
       - name: Run Lighthouse CI
-        run: |
-          npm install -g @lhci/cli@0.14.x
-          lhci autorun
+        run: npx lhci autorun
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+  # ── Stage 4: Deploy to Cloudflare Pages (main branch only) ─────────────
+  deploy:
+    name: Deploy → Cloudflare Pages
+    needs: [quality, build]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download dist artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=jootacee --commit-dirty=true
+
+      - name: Finalize Sentry release
+        if: ${{ env.SENTRY_AUTH_TOKEN != '' }}
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        run: |
+          npx @sentry/cli releases new ${{ github.sha }}
+          npx @sentry/cli releases set-commits ${{ github.sha }} --auto
+          npx @sentry/cli releases finalize ${{ github.sha }}
+          npx @sentry/cli releases deploys ${{ github.sha }} new -e production

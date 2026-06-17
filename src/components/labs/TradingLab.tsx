@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { motion } from 'framer-motion'
 
 function generateInitialSeries(size: number) {
   const points: number[] = []
@@ -13,9 +12,18 @@ function generateInitialSeries(size: number) {
   return points
 }
 
+type Signal = 'BUY' | 'SELL' | 'HOLD'
+
+const SIGNAL_STYLES: Record<Signal, string> = {
+  BUY: 'text-emerald-300 border-emerald-400/30 bg-emerald-500/10',
+  SELL: 'text-rose-300 border-rose-400/30 bg-rose-500/10',
+  HOLD: 'text-sky-300 border-sky-300/30 bg-sky-500/10',
+}
+
 export function TradingLab() {
   const [series, setSeries] = useState<number[]>(() => generateInitialSeries(40))
-  const [signal, setSignal] = useState<'BUY' | 'SELL' | 'HOLD'>('HOLD')
+  const [signal, setSignal] = useState<Signal>('HOLD')
+  const [tick, setTick] = useState(0)
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -23,16 +31,13 @@ export function TradingLab() {
         const last = prev[prev.length - 1] ?? 100
         const drift = (Math.random() - 0.45) * 0.9
         const next = Number((last + drift).toFixed(2))
-        const nextSeries = [...prev.slice(-39), next]
-
         if (drift > 0.22) setSignal('BUY')
         else if (drift < -0.22) setSignal('SELL')
         else setSignal('HOLD')
-
-        return nextSeries
+        setTick((t) => t + 1)
+        return [...prev.slice(-39), next]
       })
     }, 1400)
-
     return () => clearInterval(id)
   }, [])
 
@@ -40,7 +45,6 @@ export function TradingLab() {
     const min = Math.min(...series)
     const max = Math.max(...series)
     const range = max - min || 1
-
     return series
       .map((point, i) => {
         const x = (i / (series.length - 1)) * 100
@@ -50,48 +54,63 @@ export function TradingLab() {
       .join(' ')
   }, [series])
 
+  const fillPath = chartPath + ` L 100 100 L 0 100 Z`
+
   const confidence = useMemo(() => {
     const recent = series.slice(-5)
-    const slope = recent[recent.length - 1] - recent[0]
+    const slope = recent[recent.length - 1]! - recent[0]!
     return Math.min(98, Math.max(52, Math.round(70 + slope * 8)))
   }, [series])
 
-  const signalClass =
-    signal === 'BUY'
-      ? 'text-emerald-200 border-emerald-400/40 bg-emerald-500/15'
-      : signal === 'SELL'
-        ? 'text-rose-200 border-rose-400/40 bg-rose-500/15'
-        : 'text-sky-200 border-sky-300/40 bg-sky-500/15'
+  const last = series[series.length - 1]?.toFixed(2)
+  const prev = series[series.length - 2]?.toFixed(2)
+  const priceUp = last !== undefined && prev !== undefined && parseFloat(last) >= parseFloat(prev)
 
   return (
-    <div className="glass rounded-2xl p-5">
-      <div className="mb-4 flex items-center justify-between">
-        <p className="font-mono text-xs uppercase tracking-[0.2em] text-primary">Trading AI / Live Simulation</p>
-        <span className={`rounded-full border px-2 py-1 text-[10px] uppercase tracking-[0.15em] ${signalClass}`}>{signal}</span>
+    <div className="space-y-4">
+      {/* Chart header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/30">
+            SYNTHETIC FEED · TICK {tick}
+          </span>
+        </div>
+        <span className={`rounded-full border px-3 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] ${SIGNAL_STYLES[signal]}`}>
+          {signal}
+        </span>
       </div>
 
-      <svg viewBox="0 0 100 40" className="h-40 w-full rounded-lg border border-border bg-card/65 p-2">
-        <path d={chartPath} fill="none" stroke="rgba(110,247,255,0.9)" strokeWidth="1.25" />
-      </svg>
-
-      <div className="mt-4 grid grid-cols-3 gap-3 text-xs">
-        <div className="rounded-lg border border-border bg-card/55 p-2">
-          <p className="text-muted-foreground">Last Price</p>
-          <p className="text-sm font-semibold text-foreground">{series[series.length - 1]?.toFixed(2)}</p>
-        </div>
-        <div className="rounded-lg border border-border bg-card/55 p-2">
-          <p className="text-muted-foreground">Signal Confidence</p>
-          <p className="text-sm font-semibold text-foreground">{confidence}%</p>
-        </div>
-        <div className="rounded-lg border border-border bg-card/55 p-2">
-          <p className="text-muted-foreground">Cycle</p>
-          <p className="text-sm font-semibold text-foreground">1.4s</p>
-        </div>
+      {/* Chart */}
+      <div className="rounded-lg border border-white/6 bg-black/40 p-3">
+        <svg viewBox="0 0 100 40" className="h-36 w-full" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#49b7ff" stopOpacity="0.15" />
+              <stop offset="100%" stopColor="#49b7ff" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          <path d={fillPath} fill="url(#chart-fill)" />
+          <path d={chartPath} fill="none" stroke="#49b7ff" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
       </div>
 
-      <motion.p initial={{ opacity: 0.6 }} animate={{ opacity: 1 }} className="mt-4 text-xs text-muted-foreground">
-        Synthetic execution feed · signal engine running in simulation mode.
-      </motion.p>
+      {/* Metrics */}
+      <div className="grid grid-cols-3 gap-2">
+        {[
+          { label: 'Last Price', value: last ?? '—', accent: priceUp ? 'text-emerald-400' : 'text-rose-400' },
+          { label: 'Confidence', value: `${confidence}%`, accent: 'text-sky-400' },
+          { label: 'Cycle', value: '1.4s', accent: 'text-white/60' },
+        ].map((m) => (
+          <div key={m.label} className="rounded-lg border border-white/6 bg-white/2 p-3">
+            <div className="mb-1 font-mono text-[9px] uppercase tracking-[0.14em] text-white/25">{m.label}</div>
+            <div className={`font-mono text-sm font-semibold ${m.accent}`}>{m.value}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="font-mono text-[9px] uppercase tracking-[0.14em] text-white/15">
+        Synthetic execution feed · signal engine running in simulation mode
+      </div>
     </div>
   )
 }

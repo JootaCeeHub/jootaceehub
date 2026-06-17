@@ -7,12 +7,14 @@ import { SectionHeader } from '@/components/shared/SectionHeader'
 import { ScrollReveal } from '@/components/shared/ScrollReveal'
 import { HoverCard3D } from '@/components/shared/HoverCard3D'
 import { useLabsOverview } from '@/hooks/useLabsOverview'
+import { cn } from '@/lib/utils'
 import { useTranslations } from '@/lib/i18n/context'
 import type { LabModule } from '@/lib/labs/types'
 import { TradingLab } from '@/components/labs/TradingLab'
 import { STLLab } from '@/components/labs/STLLab'
 import { ERPLab } from '@/components/labs/ERPLab'
 import { CRMLab } from '@/components/labs/CRMLab'
+import { SectionExploreCta } from '@/components/shared/SectionExploreCta'
 
 const iconMap = {
   'trading-ai': TrendingUp,
@@ -38,10 +40,13 @@ export function LabsSection() {
     [activeModuleId, overview.modules]
   )
 
-  const statusClass = {
-    live: 'text-emerald-200 border-emerald-400/40 bg-emerald-500/15',
-    'r-and-d': 'text-amber-200 border-amber-400/40 bg-amber-500/15',
-    production: 'text-sky-200 border-sky-300/40 bg-sky-500/15',
+  const moduleStatusBadgeClass = (status: 'live' | 'r-and-d' | 'production') => {
+    const map = {
+      live: 'text-emerald-200 border-emerald-400/40 bg-emerald-500/15',
+      'r-and-d': 'text-amber-200 border-amber-400/40 bg-amber-500/15',
+      production: 'text-sky-200 border-sky-300/40 bg-sky-500/15',
+    } as const
+    return `rounded-full border px-2 py-1 text-[10px] uppercase tracking-[0.14em] ${map[status]}`
   }
 
   return (
@@ -71,9 +76,10 @@ export function LabsSection() {
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: index * 0.05 }}
-                      className={`w-full rounded-xl border p-3 text-left transition ${
+                      className={cn(
+                        'w-full rounded-xl border p-3 text-left transition',
                         selected ? 'border-primary/50 bg-primary/10' : 'border-border bg-card/55 hover:border-primary/35'
-                      }`}
+                      )}
                     >
                       <div className="mb-2 flex items-center justify-between">
                         <div className="flex items-center gap-2">
@@ -82,7 +88,7 @@ export function LabsSection() {
                           </span>
                           <span className="text-sm font-semibold text-foreground">{module.name}</span>
                         </div>
-                        <span className={`rounded-full border px-2 py-1 text-[10px] uppercase tracking-[0.14em] ${statusClass[module.status]}`}>
+                        <span className={moduleStatusBadgeClass(module.status)}>
                           {module.status}
                         </span>
                       </div>
@@ -124,6 +130,7 @@ export function LabsSection() {
             </div>
           </ScrollReveal>
         </div>
+        <SectionExploreCta domainHref="/projects" label="Projects" statusLabel="5 projects deployed" />
       </div>
     </section>
   )

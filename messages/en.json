@@ -7,17 +7,23 @@
     "systems": "Systems",
     "labs": "Labs",
     "infrastructure": "Infrastructure",
+    "journal": "Journal",
     "github": "GitHub",
     "about": "About",
     "contact": "Contact",
+    "playground": "Playground",
     "collaborate": "Collaborate",
-    "admin": "Admin"
+    "admin": "Admin",
+    "home": "Home",
+    "research": "Research",
+    "intelligence": "Intelligence"
   },
   "hero": {
     "headline": "Architecting autonomous systems.",
     "subheadline": "AI infrastructure, automation orchestration, and industrial intelligence. Built for the future, deployed today.",
     "ctaPrimary": "Explore Systems",
-    "ctaSecondary": "View Labs"
+    "ctaSecondary": "View Labs",
+    "enterDomain": "Enter a domain"
   },
   "systems": {
     "label": "Architecture",
@@ -75,7 +81,9 @@
       "mcpNodesOnline": "MCP Nodes Online",
       "containerRuntime": "Container Runtime",
       "status": "Status"
-    }
+    },
+    "domainBadge": "Live Ops Center",
+    "domainDescription": "Containerized deployments, orchestration matrices, and continuous delivery pipelines. Full operational visibility across the entire system surface."
   },
   "github": {
     "label": "Intelligence",
@@ -93,7 +101,9 @@
     "commitActivity": "Commit Activity",
     "recentReleases": "Recent Releases",
     "deployments": "Deployments",
-    "openRepository": "Open Repository"
+    "openRepository": "Open Repository",
+    "domainBadge": "Code Intelligence",
+    "domainDescription": "Repository analytics, commit activity, deployment telemetry, and release intelligence. The living technical record of the operational ecosystem."
   },
   "about": {
     "label": "Identity",
@@ -104,12 +114,76 @@
     "aboutDescription": "Building the operational core of next-generation AI products, from architecture to execution.",
     "narrative": "This platform is my live architecture workspace: a place where AI systems, orchestration layers, and automation infrastructures are designed, tested, and operationalized. The goal is not to ship isolated demos, but to construct modular ecosystems that learn, adapt, and compound in value.",
     "focusAreas": [
-      { "title": "Systems Thinking", "description": "Architecture first, implementation second: every system is built to survive complexity." },
-      { "title": "AI Infrastructure", "description": "Composable, protocol-driven infrastructure for scalable and resilient AI operations." },
-      { "title": "Automation", "description": "High-leverage automations that reduce friction and increase operational throughput." },
-      { "title": "Industrial Engineering", "description": "Engineering rigor, observability and process control adapted to digital ecosystems." },
-      { "title": "Strategic Architecture", "description": "Platform decisions aligned with long-term product and business outcomes." },
-      { "title": "Innovation Direction", "description": "Future-facing experimentation converted into practical, deployable systems." }
+      {
+        "title": "Systems Thinking",
+        "description": "Architecture first, implementation second: every system is built to survive complexity."
+      },
+      {
+        "title": "AI Infrastructure",
+        "description": "Composable, protocol-driven infrastructure for scalable and resilient AI operations."
+      },
+      {
+        "title": "Automation",
+        "description": "High-leverage automations that reduce friction and increase operational throughput."
+      },
+      {
+        "title": "Industrial Engineering",
+        "description": "Engineering rigor, observability and process control adapted to digital ecosystems."
+      },
+      {
+        "title": "Strategic Architecture",
+        "description": "Platform decisions aligned with long-term product and business outcomes."
+      },
+      {
+        "title": "Innovation Direction",
+        "description": "Future-facing experimentation converted into practical, deployable systems."
+      }
+    ],
+    "sectionNarrative": "Narrative",
+    "sectionFocusAreas": "Focus Areas",
+    "sectionSelectedWork": "Selected Work",
+    "sectionSpecializations": "Specializations",
+    "sectionContact": "Contact",
+    "narrativePart2": "I believe the next generation of digital systems will be defined by their ability to orchestrate intelligence — not just compute it. That means protocol-first design, composable architectures, and infrastructure that treats AI as an operational layer, not a feature.",
+    "contactEmail": "Email",
+    "contactDomain": "Domain",
+    "domainBadge": "Identity & Mission",
+    "domainDescription": "AI Systems Architect & Automation Engineer. Building the operational core of next-generation intelligent products — from protocol design to production deployment.",
+    "timeline": [
+      {
+        "year": "2024",
+        "label": "AURA Orchestration Core",
+        "description": "Built the multi-model orchestration layer connecting Claude, GPT, and MCP tools."
+      },
+      {
+        "year": "2024",
+        "label": "MCP Ecosystem",
+        "description": "Designed and deployed the Model Context Protocol gateway for tool-model integration."
+      },
+      {
+        "year": "2023",
+        "label": "Trading AI Beta",
+        "description": "Released quantitative trading system with AI signal analysis and portfolio optimization."
+      },
+      {
+        "year": "2023",
+        "label": "GraphRAG System",
+        "description": "Implemented graph-native knowledge storage replacing flat vector retrieval."
+      },
+      {
+        "year": "2022",
+        "label": "STL AI Generator",
+        "description": "Launched natural language to 3D model generation pipeline for digital fabrication."
+      }
+    ],
+    "specializations": [
+      "AI Orchestration",
+      "MCP Ecosystems",
+      "Multi-Agent Systems",
+      "GraphRAG",
+      "Automation Pipelines",
+      "Infrastructure Design",
+      "Quantitative Systems"
     ]
   },
   "contact": {
@@ -134,7 +208,359 @@
       "MCP ecosystems and multi-agent systems",
       "Operational dashboards and runtime intelligence"
     ],
-    "email": "contact@jootacee.com"
+    "email": "contact@jootacee.com",
+    "domainBadge": "Initiate Collaboration",
+    "domainDescription": "All transmissions are routed securely. Response within 24 hours for qualified collaborations."
+  },
+  "journal": {
+    "label": "Publication",
+    "title": "Journal",
+    "description": "Technical essays, AI analysis, and engineering perspectives from the operational core.",
+    "badge": "Technical Publication",
+    "featured": "Featured",
+    "recent": "Recent Articles",
+    "readMore": "Read Article",
+    "readTime": "{n} min read",
+    "allArticles": "All Articles",
+    "categories": {
+      "opinion": "Opinion",
+      "research": "Research",
+      "essays": "Essays",
+      "news": "News"
+    },
+    "categoryDescriptions": {
+      "opinion": "Perspectives & unpopular takes",
+      "research": "Deep technical analysis",
+      "essays": "Long-form engineering thinking",
+      "news": "AI & infrastructure intelligence"
+    },
+    "backToJournal": "Back to Journal",
+    "tagsLabel": "Tags",
+    "featuredLabel": "Featured",
+    "allLabel": "All",
+    "onListTitle": "You're on the list.",
+    "onListSubtitle": "We'll notify you when Playground launches.",
+    "earlyAccess": "Get early access",
+    "notifyDesc": "Be the first to know when the interactive tools go live.",
+    "notifySuccess": "You're on the list. We'll be in touch."
+  },
+  "research": {
+    "label": "Research",
+    "badge": "Knowledge Base",
+    "title": "Research & Analysis",
+    "description": "Technical research, essays and architectural analysis from the operational frontlines of AI systems.",
+    "allLabel": "All",
+    "featuredLabel": "Featured",
+    "minReadLabel": "min read",
+    "cta": "Read Research",
+    "archiveCta": "View Full Archive",
+    "categories": {
+      "opinion": "Opinion",
+      "research": "Research",
+      "essays": "Essays",
+      "news": "News"
+    },
+    "activeBadge": "Active Publication",
+    "vol": "Vol.",
+    "entries": "entries",
+    "leadSection": "Lead Publication",
+    "filterLabel": "Filter by type",
+    "readPublication": "Read Publication",
+    "emptyState": "No entries in this category yet.",
+    "mastheadDesc": "Field reports, architectural essays, and technical intelligence from the operational frontline of AI systems engineering. Analytical. Precise. Architectural.",
+    "titleAccent": "Analysis",
+    "titlePrimary": "Research &"
+  },
+  "playground": {
+    "label": "Sandbox",
+    "title": "Playground",
+    "description": "Interactive experimentation environment — coming soon.",
+    "badge": "Interactive Sandbox",
+    "comingSoon": "Coming Soon",
+    "roadmapTitle": "What's Coming",
+    "notifyTitle": "Get notified when Playground launches",
+    "notifyPlaceholder": "your@email.com",
+    "notifySubmit": "Notify Me",
+    "tools": [
+      {
+        "name": "AI Chat Interface",
+        "status": "roadmap",
+        "description": "Interactive LLM playground with custom system prompts"
+      },
+      {
+        "name": "Automation Builder",
+        "status": "roadmap",
+        "description": "Visual workflow construction and testing environment"
+      },
+      {
+        "name": "GraphRAG Explorer",
+        "status": "roadmap",
+        "description": "Query and visualize graph memory in real-time"
+      },
+      {
+        "name": "Agent Simulator",
+        "status": "roadmap",
+        "description": "Deploy and test multi-agent coordination scenarios"
+      }
+    ],
+    "earlyAccess": "Get early access",
+    "notifyDesc": "Be the first to know when the interactive tools go live.",
+    "onListTitle": "You're on the list.",
+    "onListSubtitle": "We'll notify you when Playground launches."
+  },
+  "domainSystems": {
+    "mcp": {
+      "title": "MCP Ecosystem",
+      "subtitle": "Protocol-first orchestration layer",
+      "description": "The Model Context Protocol gateway that connects AI models, tools, and operational data streams into a unified orchestration fabric.",
+      "status": "Operational",
+      "badge": "Protocol Layer",
+      "notes": [
+        "Protocol-first design: all AI tool calls are MCP-standardized, making the system model-agnostic.",
+        "Bidirectional context: both tools and models can push/pull context through the same protocol.",
+        "The gateway maintains a registry of all available tools with capability metadata.",
+        "Failure isolation: tool errors are contained and surfaced without cascading to model context."
+      ]
+    },
+    "graphrag": {
+      "title": "GraphRAG",
+      "subtitle": "Graph memory & retrieval system",
+      "description": "A graph-native retrieval-augmented generation system that stores and queries knowledge as interconnected entities rather than flat vectors.",
+      "status": "Operational",
+      "badge": "Memory System",
+      "notes": [
+        "Entities and relationships are first-class citizens — not just text chunks.",
+        "Multi-hop traversal enables reasoning chains that flat RAG cannot support.",
+        "Temporal context: knowledge nodes carry timestamps enabling recency-aware retrieval.",
+        "Graph structure survives session boundaries — the AI remembers across invocations."
+      ]
+    },
+    "agents": {
+      "title": "AI Agents",
+      "subtitle": "Multi-agent orchestration fabric",
+      "description": "Coordinated autonomous agents with defined roles, tool access, and inter-agent communication protocols for complex task execution.",
+      "status": "Active",
+      "badge": "Agent Network",
+      "notes": [
+        "Each agent has a role definition, a tool manifest, and a context budget.",
+        "AURA arbitrates agent spawning based on task complexity and available resources.",
+        "Agents communicate through a shared message bus, not direct function calls.",
+        "Long-running agents checkpoint state to GraphRAG for resilient execution."
+      ]
+    },
+    "automation": {
+      "title": "Automation",
+      "subtitle": "Intelligent workflow infrastructure",
+      "description": "Event-driven automation pipelines that reduce operational friction and increase throughput across the entire system surface.",
+      "status": "Operational",
+      "badge": "Automation Layer",
+      "notes": [
+        "Event-first architecture: every automation is triggered by a real operational event.",
+        "AI decision nodes embedded in workflows for dynamic branching logic.",
+        "All automation runs are logged with full input/output visibility.",
+        "Retry policies and dead-letter queues ensure no event is silently dropped."
+      ]
+    },
+    "shared": {
+      "sidebarNotes": "Architecture Notes",
+      "sidebarIntegrations": "Integrations"
+    }
+  },
+  "domainLabs": {
+    "tradingAi": {
+      "title": "Trading AI",
+      "subtitle": "Quantitative intelligence engine",
+      "description": "An AI-powered quantitative trading system combining market signal analysis, portfolio optimization, and risk management in a unified pipeline.",
+      "status": "Beta",
+      "badge": "Financial AI",
+      "roadmap": [
+        {
+          "label": "Market signal ingestion pipeline",
+          "done": true
+        },
+        {
+          "label": "Portfolio optimization engine",
+          "done": true
+        },
+        {
+          "label": "Risk management layer",
+          "done": true
+        },
+        {
+          "label": "Live paper trading integration",
+          "done": false,
+          "description": "Binance/Alpaca API connection"
+        },
+        {
+          "label": "Multi-asset strategy builder",
+          "done": false
+        },
+        {
+          "label": "Backtesting framework v2",
+          "done": false
+        },
+        {
+          "label": "Autonomous rebalancing agent",
+          "done": false
+        }
+      ]
+    },
+    "stlGenerator": {
+      "title": "STL AI Generator",
+      "subtitle": "Spatial AI fabrication tool",
+      "description": "Natural language to 3D model generation — converts design intent into production-ready STL files using AI-guided parametric modeling.",
+      "status": "Beta",
+      "badge": "Spatial AI",
+      "roadmap": [
+        {
+          "label": "Text-to-geometry core pipeline",
+          "done": true
+        },
+        {
+          "label": "STL export with validation",
+          "done": true
+        },
+        {
+          "label": "3D preview renderer",
+          "done": true
+        },
+        {
+          "label": "Parametric constraint system",
+          "done": false,
+          "description": "Define relationships between model dimensions"
+        },
+        {
+          "label": "Multi-part assembly generation",
+          "done": false
+        },
+        {
+          "label": "Material property annotation",
+          "done": false
+        },
+        {
+          "label": "G-code export for 3D printing",
+          "done": false
+        }
+      ]
+    },
+    "crm": {
+      "title": "CRM Platform",
+      "subtitle": "Intelligent customer intelligence",
+      "description": "A next-generation CRM that uses AI to model customer relationships, predict churn, and automate high-leverage communication sequences.",
+      "status": "Development",
+      "badge": "Customer Intelligence",
+      "roadmap": [
+        {
+          "label": "Contact and company data model",
+          "done": true
+        },
+        {
+          "label": "Activity timeline",
+          "done": true
+        },
+        {
+          "label": "AI churn prediction model",
+          "done": false,
+          "description": "Signals-based churn scoring"
+        },
+        {
+          "label": "Automated communication sequences",
+          "done": false
+        },
+        {
+          "label": "Pipeline management",
+          "done": false
+        },
+        {
+          "label": "Integration connectors (Slack, email)",
+          "done": false
+        },
+        {
+          "label": "Revenue analytics dashboard",
+          "done": false
+        }
+      ]
+    },
+    "erp": {
+      "title": "ERP Platform",
+      "subtitle": "Enterprise automation suite",
+      "description": "A modular enterprise resource platform built around automation-first principles, graph-linked data, and operational observability.",
+      "status": "Development",
+      "badge": "Enterprise Automation",
+      "roadmap": [
+        {
+          "label": "Core data model (entities, relations)",
+          "done": true
+        },
+        {
+          "label": "Inventory management module",
+          "done": false
+        },
+        {
+          "label": "Purchase order workflow",
+          "done": false
+        },
+        {
+          "label": "n8n automation integration",
+          "done": false,
+          "description": "Event-driven workflow automation"
+        },
+        {
+          "label": "Financial reporting layer",
+          "done": false
+        },
+        {
+          "label": "Multi-entity support",
+          "done": false
+        },
+        {
+          "label": "AI-powered anomaly detection",
+          "done": false
+        }
+      ]
+    },
+    "aura": {
+      "title": "AURA",
+      "subtitle": "AI orchestration core platform",
+      "description": "The foundational AI orchestration layer — handles routing, context management, tool dispatch, and multi-model coordination.",
+      "status": "Active",
+      "badge": "Core Platform",
+      "roadmap": [
+        {
+          "label": "Core orchestration engine",
+          "done": true
+        },
+        {
+          "label": "Multi-model routing (Claude, GPT, Gemini)",
+          "done": true
+        },
+        {
+          "label": "MCP tool integration",
+          "done": true
+        },
+        {
+          "label": "Persistent context management",
+          "done": true
+        },
+        {
+          "label": "Agent spawning and lifecycle",
+          "done": false,
+          "description": "Dynamic agent creation and termination"
+        },
+        {
+          "label": "Cross-agent communication protocol",
+          "done": false
+        },
+        {
+          "label": "Self-optimizing routing policies",
+          "done": false
+        }
+      ]
+    },
+    "shared": {
+      "sidebarStack": "Tech Stack",
+      "sidebarRoadmap": "Roadmap"
+    }
   },
   "footer": {
     "tagline": "Operational laboratory for AI systems, automation infrastructures, and modular digital ecosystems.",
@@ -348,5 +774,58 @@
     "scrollToTop": "Scroll to top",
     "openCommandPalette": "Open command palette",
     "close": "Close"
+  },
+  "home": {
+    "systems": {
+      "badge": "Systems Active",
+      "title": "Autonomous architecture at scale.",
+      "description": "MCP orchestration, GraphRAG memory, multi-agent coordination and automation infrastructure — interconnected and operational.",
+      "stat1Label": "MCP Tools",
+      "stat1Value": "18",
+      "stat2Label": "Models",
+      "stat2Value": "4",
+      "stat3Label": "Avg Latency",
+      "stat3Value": "240ms",
+      "stat4Label": "Uptime",
+      "stat4Value": "99.9%",
+      "cta": "Explore Architecture",
+      "statusAll": "All Systems Nominal"
+    },
+    "labs": {
+      "badge": "Active Experiments",
+      "title": "Products forged in production.",
+      "description": "Research-grade AI modules deployed as real software — from trading intelligence to generative design tools.",
+      "cta": "Enter Labs",
+      "liveLabel": "live",
+      "betaLabel": "beta",
+      "rdLabel": "R&D"
+    },
+    "infra": {
+      "badge": "Live Operations",
+      "title": "Always operational.",
+      "description": "Containerized infrastructure, continuous delivery pipelines and real-time observability across the full system surface.",
+      "cta": "View Ops Center",
+      "statusOnline": "Online",
+      "uptimeLabel": "Uptime",
+      "regionLabel": "Region",
+      "orchestratorLabel": "Orchestrator",
+      "containersLabel": "Containers"
+    },
+    "journal": {
+      "badge": "Technical Journal",
+      "title": "Thinking in public.",
+      "description": "Opinions on systems design, AI architecture and the future of autonomous software.",
+      "cta": "Open Journal",
+      "featuredLabel": "Featured",
+      "minReadLabel": "min read"
+    },
+    "collab": {
+      "badge": "Open to Collaboration",
+      "title": "Ready to architect something extraordinary?",
+      "description": "Qualified projects in AI systems, automation infrastructure and intelligent platforms. Response within 24 hours.",
+      "cta": "Initialize Collaboration",
+      "ctaSecondary": "View Work",
+      "email": "contact@jootacee.com"
+    }
   }
 }

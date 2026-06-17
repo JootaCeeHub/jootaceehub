@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+  xmlns:atom="http://www.w3.org/2005/Atom"
+  xmlns:content="http://purl.org/rss/1.0/modules/content/"
+  xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>JootaCee</title>
+    <link>https://jootacee.com</link>
+    <description>AI Systems Architect — insights on autonomous infrastructure, AI agents, and modern engineering</description>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 16 Jun 2026 01:51:48 GMT</lastBuildDate>
+    <atom:link href="https://jootacee.com/rss.xml" rel="self" type="application/rss+xml" />
+    <managingEditor>contact@jootacee.com (JootaCee)</managingEditor>
+    <webMaster>contact@jootacee.com (JootaCee)</webMaster>
+    <ttl>60</ttl>
+    <image>
+      <url>https://jootacee.com/icon-192x192.png</url>
+      <title>JootaCee</title>
+      <link>https://jootacee.com</link>
+    </image>
+
+  </channel>
+</rss>

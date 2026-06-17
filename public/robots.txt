@@ -1,0 +1,14 @@
+# robots.txt — jootacee.com
+# https://jootacee.com/robots.txt
+
+User-agent: *
+Allow: /
+
+# Exclude admin dashboard from indexing
+Disallow: /admin/
+Disallow: /admin
+
+# Exclude Next.js internals
+Disallow: /_next/
+
+Sitemap: https://jootacee.com/sitemap.xml

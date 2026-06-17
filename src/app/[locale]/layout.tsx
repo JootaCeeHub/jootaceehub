@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { I18nProvider, DocumentLang } from '@/lib/i18n'
+import { ScrollProgressBar } from '@/components/shared/ScrollProgressBar'
+import { profile, defaultMeta } from '@/lib/config/brand'
 
 import messagesEn from '../../../messages/en.json'
 import messagesEs from '../../../messages/es.json'
@@ -32,6 +34,9 @@ export async function generateMetadata({
         en: '/en/',
         es: '/es/',
       },
+      types: {
+        'application/rss+xml': `${defaultMeta.canonicalBase}/rss.xml`,
+      },
     },
     icons: {
       icon: '/favicon.ico',
@@ -47,24 +52,39 @@ export async function generateMetadata({
     manifest: '/manifest.webmanifest',
     twitter: {
       card: 'summary_large_image',
-      title: meta?.title || 'JootaCee',
-      description: meta?.description || '',
+      site: defaultMeta.twitterHandle,
+      creator: defaultMeta.twitterHandle,
+      title: meta?.title || defaultMeta.title,
+      description: meta?.description || defaultMeta.description,
+      images: [
+        {
+          url: `${defaultMeta.canonicalBase}${defaultMeta.ogImage}`,
+          width: 1200,
+          height: 630,
+          alt: meta?.title || defaultMeta.title,
+        },
+      ],
     },
     openGraph: {
       type: 'website',
       locale: locale === 'es' ? 'es_ES' : 'en_US',
-      url: `https://jootacee.com/${locale}/`,
+      url: `${defaultMeta.canonicalBase}/${locale}/`,
       siteName: 'JootaCee',
-      title: meta?.title || 'JootaCee',
-      description: meta?.description || '',
+      title: meta?.title || defaultMeta.title,
+      description: meta?.description || defaultMeta.description,
+      images: [
+        {
+          url: `${defaultMeta.canonicalBase}${defaultMeta.ogImage}`,
+          width: 1200,
+          height: 630,
+          alt: meta?.title || defaultMeta.title,
+          type: 'image/png',
+        },
+      ],
     },
     robots: {
       index: true,
       follow: true,
-    },
-    other: {
-      'Content-Security-Policy':
-        "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'",
     },
   }
 }
@@ -79,6 +99,35 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
 }
 
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'JootaCee',
+  url: defaultMeta.canonicalBase,
+  description: defaultMeta.description,
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: `${defaultMeta.canonicalBase}/en/journal/?q={search_term_string}`,
+    },
+    'query-input': 'required name=search_term_string',
+  },
+}
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.name,
+  url: defaultMeta.canonicalBase,
+  email: profile.email,
+  jobTitle: profile.role,
+  description: profile.bio,
+  image: `${defaultMeta.canonicalBase}${defaultMeta.ogImage}`,
+  sameAs: profile.social.map((s) => s.href),
+  knowsAbout: profile.expertise.map((e) => e.title),
+}
+
 export default async function LocaleLayout({
   children,
   params,
@@ -90,9 +139,21 @@ export default async function LocaleLayout({
   const messages = messagesMap[locale] || messagesEn
 
   return (
-    <I18nProvider key={locale} locale={locale} messages={messages}>
-      <DocumentLang locale={locale} />
-      {children}
-    </I18nProvider>
+    <>
+      {/* JSON-LD structured data — must live outside Client Components to render in React 19 */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+      />
+      <I18nProvider key={locale} locale={locale} messages={messages}>
+        <DocumentLang locale={locale} />
+        <ScrollProgressBar />
+        <div data-pagefind-body>{children}</div>
+      </I18nProvider>
+    </>
   )
 }

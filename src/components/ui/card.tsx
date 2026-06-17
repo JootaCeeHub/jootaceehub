@@ -2,6 +2,14 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
+const cardBase = 'rounded-2xl border p-6'
+const cardHover = 'transition duration-300 hover:-translate-y-1 hover:border-primary/40'
+const cardVariants = {
+  default: 'bg-card border-border',
+  glass: 'glass',
+  glow: 'glass glow',
+} as const
+
 interface CardProps {
   children: React.ReactNode
   className?: string
@@ -10,20 +18,9 @@ interface CardProps {
 }
 
 export function Card({ children, className, variant = 'default', hover = true }: CardProps) {
-  const variants = {
-    default: 'bg-card border-border',
-    glass: 'glass',
-    glow: 'glass glow',
-  }
-
   return (
     <motion.article
-      className={cn(
-        'rounded-2xl border p-6',
-        variants[variant],
-        hover && 'transition duration-300 hover:-translate-y-1 hover:border-primary/40',
-        className
-      )}
+      className={cn(cardBase, cardVariants[variant], hover && cardHover, className)}
       initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-60px' }}

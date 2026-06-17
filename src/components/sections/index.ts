@@ -1,4 +1,3 @@
-'use client'
 
 export { AboutSection } from './AboutSection';
 export { ContactSection } from './ContactSection';

@@ -1,18 +1,19 @@
 'use client'
 
-import { useMemo, useState } from 'react'
-import { motion } from 'framer-motion'
+import { useState } from 'react'
 import { Cpu, Network, Bot, Database, Container, Activity, Factory, Layers } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { SectionHeader } from '@/components/shared/SectionHeader'
 import { ScrollReveal, StaggerReveal } from '@/components/shared/ScrollReveal'
 import { HoverCard3D } from '@/components/shared/HoverCard3D'
 import { useArchitectureOverview } from '@/hooks/useArchitectureOverview'
+import { cn } from '@/lib/utils'
 import { useTranslations } from '@/lib/i18n/context'
 import { MCPMap } from '@/components/architecture/MCPMap'
 import { AuraSignalPanel } from '@/components/architecture/AuraSignalPanel'
 import { GraphMetricsPanel } from '@/components/architecture/GraphMetricsPanel'
 import { FlowTimeline } from '@/components/architecture/FlowTimeline'
+import { SectionExploreCta } from '@/components/shared/SectionExploreCta'
 
 const iconMap = {
   aura: Cpu,
@@ -47,14 +48,14 @@ export function SystemsSection() {
     graph: t('views.graph') as string,
   }
 
-  const statusClass = useMemo(
-    () => ({
+  const statusBadgeClass = (status: 'active' | 'stable' | 'running') => {
+    const map = {
       active: 'text-cyan-200 border-cyan-300/40 bg-cyan-400/10',
       stable: 'text-sky-200 border-sky-300/40 bg-sky-400/10',
       running: 'text-indigo-200 border-indigo-300/40 bg-indigo-400/10',
-    }),
-    []
-  )
+    } as const
+    return `rounded-full border px-2 py-1 text-xs uppercase tracking-[0.14em] ${map[status]}`
+  }
 
   return (
     <section id="systems" className="relative py-24">
@@ -76,7 +77,7 @@ export function SystemsSection() {
                       <div className="rounded-lg border border-primary/30 bg-primary/10 p-2.5">
                         <Icon className="h-5 w-5 text-primary" />
                       </div>
-                      <span className={`rounded-full border px-2 py-1 text-xs uppercase tracking-[0.14em] ${statusClass[system.status]}`}>
+                      <span className={statusBadgeClass(system.status)}>
                         {system.status}
                       </span>
                     </div>
@@ -100,11 +101,12 @@ export function SystemsSection() {
               key={view.id}
               type="button"
               onClick={() => setActiveView(view.id)}
-              className={`rounded-full border px-3 py-1.5 text-xs uppercase tracking-[0.16em] transition ${
+              className={cn(
+                'rounded-full border px-3 py-1.5 text-xs uppercase tracking-[0.16em] transition',
                 activeView === view.id
                   ? 'border-primary/60 bg-primary/15 text-primary'
                   : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
-              }`}
+              )}
             >
               {viewLabels[view.id]}
             </button>
@@ -133,6 +135,7 @@ export function SystemsSection() {
             </div>
           </ScrollReveal>
         </div>
+        <SectionExploreCta domainHref="/projects" label="Projects" statusLabel="5 projects deployed" />
       </div>
     </section>
   )

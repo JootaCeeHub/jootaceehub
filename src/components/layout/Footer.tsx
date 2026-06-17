@@ -34,6 +34,7 @@ export function Footer() {
   const t = useTranslations('footer')
   const ta = useTranslations('accessibility')
   const [showScrollTop, setShowScrollTop] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [konami, setKonami] = useState<string[]>([])
   const [showEaster, setShowEaster] = useState(false)
   const easterRef = useRef<HTMLDivElement>(null)
@@ -85,7 +86,7 @@ export function Footer() {
 
   return (
     <>
-      <footer className="relative border-t border-border/60 bg-background/50 pt-16 pb-8">
+      <footer className="relative border-t border-border/60 bg-background/50 pt-16 pb-8" data-pagefind-ignore="all">
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-4">
             {/* Brand */}
@@ -153,28 +154,28 @@ export function Footer() {
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">Platform</span>
                   <span className="flex items-center gap-1.5 text-emerald-400">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-beacon" />
                     {t('statusOperational')}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">API</span>
                   <span className="flex items-center gap-1.5 text-emerald-400">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-beacon" />
                     {t('statusHealthy')}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">3D Engine</span>
                   <span className="flex items-center gap-1.5 text-emerald-400">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-beacon" />
                     {t('statusActive')}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">MCP Nodes</span>
                   <span className="flex items-center gap-1.5 text-emerald-400">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-beacon" />
                     {t('statusNodes').replace('{count}', '8')}
                   </span>
                 </div>
@@ -188,11 +189,39 @@ export function Footer() {
             </div>
           </div>
 
-          <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border/60 pt-8 md:flex-row">
-            <p className="text-xs text-muted-foreground">
+          {/* Tech ticker tape */}
+          <div className="relative mt-12 overflow-hidden border-y border-border/40 py-3" aria-hidden="true">
+            <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-background to-transparent z-10" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-background to-transparent z-10" />
+            <div className="flex gap-6 animate-ticker whitespace-nowrap">
+              {[
+                'Next.js 16', 'React 19', 'TypeScript', 'TailwindCSS v4', 'Claude API',
+                'Anthropic MCP', 'GraphRAG', 'Python', 'FastAPI', 'Docker', 'Kubernetes',
+                'GSAP', 'Framer Motion', 'Three.js', 'R3F', 'Zod', 'Supabase', 'Bun',
+                'Turso', 'Vercel', 'Railway', 'n8n', 'LangChain', 'OpenAI', 'Ollama',
+                /* duplicate for seamless loop */
+                'Next.js 16', 'React 19', 'TypeScript', 'TailwindCSS v4', 'Claude API',
+                'Anthropic MCP', 'GraphRAG', 'Python', 'FastAPI', 'Docker', 'Kubernetes',
+                'GSAP', 'Framer Motion', 'Three.js', 'R3F', 'Zod', 'Supabase', 'Bun',
+                'Turso', 'Vercel', 'Railway', 'n8n', 'LangChain', 'OpenAI', 'Ollama',
+              ].map((tech, i) => (
+                <span key={`${tech}-${i}`} className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground/50">
+                  <span className="h-1 w-1 rounded-full bg-primary/40" />
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-6 flex flex-col items-center justify-between gap-4 border-t border-border/60 pt-8 md:flex-row">
+            <p className="text-xs text-muted-foreground" suppressHydrationWarning>
               &copy; {new Date().getFullYear()} {brand.name}. {t('copyright')}
             </p>
             <div className="flex items-center gap-4">
+              <span className="hidden items-center gap-1 rounded border border-border/50 bg-card/50 px-2 py-0.5 font-mono text-[10px] text-muted-foreground/60 md:inline-flex">
+                <span className="text-primary/60">⌘K</span>
+                Command palette
+              </span>
               <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground/60">
                 {t('techStack')}
               </span>

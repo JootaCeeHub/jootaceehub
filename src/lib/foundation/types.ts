@@ -23,3 +23,45 @@ export interface FoundationIdentity {
   generatedAt: string
 }
 
+// ─── Extended Profile ─────────────────────────────────────────────────────────
+
+export type AvailabilityStatus = 'available' | 'limited' | 'unavailable'
+
+export interface SocialLink {
+  platform: string
+  label: string
+  href: string
+  icon: string
+}
+
+export interface ExpertiseArea {
+  title: string
+  description: string
+  tags: string[]
+}
+
+export interface ServiceOffering {
+  title: string
+  description: string
+  deliverables: string[]
+  engagement: 'project' | 'retainer' | 'advisory'
+}
+
+export interface ProfileData {
+  name: string
+  displayName: string
+  role: string
+  tagline: string
+  bio: string
+  bioExtended: string
+  location: string
+  timezone: string
+  availability: AvailabilityStatus
+  availabilityNote: string
+  email: string
+  social: SocialLink[]
+  expertise: ExpertiseArea[]
+  services: ServiceOffering[]
+  philosophy: string[]
+  openSourceUrl: string
+}

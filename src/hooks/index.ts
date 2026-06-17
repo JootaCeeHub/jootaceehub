@@ -1,4 +1,6 @@
 export { useArchitectureOverview } from './useArchitectureOverview';
+export { useCopyToClipboard } from './useCopyToClipboard';
+export { useCountUp } from './useCountUp';
 export { useFoundationIdentity } from './useFoundationIdentity';
 export { useGitHubIntelligence } from './useGitHubIntelligence';
 export { useInfrastructureOverview } from './useInfrastructureOverview';
@@ -7,3 +9,4 @@ export { useLiveStats } from './useLiveStats';
 export { useMockData } from './useMockData';
 export { usePrefersReducedMotion } from './usePrefersReducedMotion';
 export { useSceneConfig } from './useSceneConfig';
+export { useVisualConfig } from './useVisualConfig';

@@ -25,6 +25,8 @@ function shouldLog(level: LogLevel) {
 const SILENCED_PATTERNS = [
   /THREE\.Clock.*deprecated/i,
   /Detected `scroll-behavior: smooth`/i,
+  /Encountered a script tag while rendering React component/i,
+  /Scripts inside React components are never executed/i,
 ]
 
 function isSilenced(message: unknown) {
@@ -35,22 +37,18 @@ function isSilenced(message: unknown) {
 export const logger = {
   debug: (message: unknown, ...rest: unknown[]) => {
     if (!shouldLog('debug') || isSilenced(message)) return
-    // eslint-disable-next-line no-console
     console.debug('[debug]', message, ...rest)
   },
   info: (message: unknown, ...rest: unknown[]) => {
     if (!shouldLog('info') || isSilenced(message)) return
-    // eslint-disable-next-line no-console
     console.info('[info]', message, ...rest)
   },
   warn: (message: unknown, ...rest: unknown[]) => {
     if (!shouldLog('warn') || isSilenced(message)) return
-    // eslint-disable-next-line no-console
     console.warn('[warn]', message, ...rest)
   },
   error: (message: unknown, ...rest: unknown[]) => {
     if (!shouldLog('error')) return
-    // eslint-disable-next-line no-console
     console.error('[error]', message, ...rest)
   },
 }
@@ -66,5 +64,14 @@ export function installConsoleFilter() {
   console.warn = (...args: unknown[]) => {
     if (args.some((a) => isSilenced(a))) return
     originalWarn.apply(console, args)
+  }
+
+  // next-themes injects a <script> tag in its React tree (React 19 reports this as a
+  // console.error) — it does not affect functionality and cannot be fixed without
+  // forking the library.
+  const originalError = console.error
+  console.error = (...args: unknown[]) => {
+    if (args.some((a) => isSilenced(a))) return
+    originalError.apply(console, args)
   }
 }

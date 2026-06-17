@@ -4,6 +4,7 @@ import { useLocaleRouter } from '@/lib/i18n/router'
 import { Globe } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
+import { cn } from '@/lib/utils'
 
 const labels: Record<string, string> = {
   en: 'EN',
@@ -45,11 +46,12 @@ export function LanguageSwitcher() {
                 <button
                   key={loc}
                   onClick={() => handleSwitch(loc)}
-                  className={`flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm transition ${
+                  className={cn(
+                    'flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm transition',
                     currentLocale === loc
                       ? 'bg-primary/15 text-foreground'
                       : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                  }`}
+                  )}
                 >
                   <span className="font-mono text-xs">{labels[loc]}</span>
                   <span className="capitalize">{loc}</span>

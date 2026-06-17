@@ -8,10 +8,13 @@ import { ScrollReveal, StaggerReveal } from '@/components/shared/ScrollReveal'
 import { HoverCard3D } from '@/components/shared/HoverCard3D'
 import { useGitHubIntelligence } from '@/hooks/useGitHubIntelligence'
 import { useTranslations } from '@/lib/i18n/context'
+import { SectionExploreCta } from '@/components/shared/SectionExploreCta'
 
 export function GitHubSection() {
   const { data, source } = useGitHubIntelligence()
   const t = useTranslations('github')
+
+  if (!data) return null
 
   const maxCommits = Math.max(...data.activity.map((point) => point.commits), 1)
 
@@ -140,6 +143,7 @@ export function GitHubSection() {
             </div>
           </ScrollReveal>
         </div>
+        <SectionExploreCta domainHref="/github" label="GitHub" statusLabel="Repository intelligence" />
       </div>
     </section>
   )

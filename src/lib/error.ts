@@ -54,17 +54,21 @@ export function isAppError(err: unknown): err is AppError {
 }
 
 /**
- * Safe error reporter. In production this could POST to an endpoint;
- * in dev it logs to the console. Never throws.
+ * Safe error reporter. Routes to Sentry in production, console in dev.
+ * Never throws — safe to call from error boundaries and catch blocks.
  */
 export function reportError(err: unknown, context?: Record<string, unknown>) {
   try {
     if (isAppError(err)) {
       if (process.env.NODE_ENV === 'development') {
-        // eslint-disable-next-line no-console
         console.error('[AppError]', err.toJSON())
       }
-      // TODO: production sink (Sentry, LogRocket, custom endpoint)
+      // Route to Sentry — dynamic import keeps bundle clean when DSN is absent
+      if (process.env.NEXT_PUBLIC_SENTRY_DSN && typeof window !== 'undefined') {
+        import('@/lib/monitoring/sentry').then(({ captureException }) =>
+          captureException(err, { ...err.context, ...context })
+        )
+      }
       return
     }
 
@@ -74,8 +78,13 @@ export function reportError(err: unknown, context?: Record<string, unknown>) {
         : { name: 'Unknown', message: String(err), stack: undefined }
 
     if (process.env.NODE_ENV === 'development') {
-      // eslint-disable-next-line no-console
       console.error('[Unhandled]', { ...normalized, context })
+    }
+
+    if (process.env.NEXT_PUBLIC_SENTRY_DSN && typeof window !== 'undefined') {
+      import('@/lib/monitoring/sentry').then(({ captureException }) =>
+        captureException(err instanceof Error ? err : new Error(String(err)), context)
+      )
     }
   } catch {
     // Reporting must never throw.

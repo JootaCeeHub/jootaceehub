@@ -1,9 +1,28 @@
-'use client'
 
-export { default as BlocksPanel } from './BlocksPanel';
-export { default as ConfigPanel } from './ConfigPanel';
-export { default as DashboardPanel } from './DashboardPanel';
-export { default as DesignPanel } from './DesignPanel';
-export { default as NavbarPanel } from './NavbarPanel';
-export { default as PersonalityPanel } from './PersonalityPanel';
-export { default as ResultsPanel } from './ResultsPanel';
+export { default as CommandPanel } from './CommandPanel'
+export { default as SiteCorePanel } from './SiteCorePanel'
+export { default as SystemsManagerPanel } from './SystemsManagerPanel'
+export { default as LabsManagerPanel } from './LabsManagerPanel'
+export { default as ResearchManagerPanel } from './ResearchManagerPanel'
+export { default as InfraManagerPanel } from './InfraManagerPanel'
+export { default as GitHubLayerPanel } from './GitHubLayerPanel'
+export { default as AIAssistantPanel } from './AIAssistantPanel'
+export { default as IntegrationsPanel } from './IntegrationsPanel'
+export { default as ShowcasePanel } from './ShowcasePanel'
+export { default as SEOPanel } from './SEOPanel'
+export { default as DesignPanel } from './DesignPanel'
+export { default as PersonalityPanel } from './PersonalityPanel'
+export { default as AnalyticsPanel } from './AnalyticsPanel'
+export { default as BlocksPanel } from './BlocksPanel'
+export { default as ContentPanel } from './ContentPanel'
+export { default as NavbarConfigPanel } from './NavbarConfigPanel'
+export { default as FooterConfigPanel } from './FooterConfigPanel'
+export { default as ProjectsPanel } from './ProjectsPanel'
+export { default as DesignLabPanel } from './DesignLabPanel'
+export { default as IntelligenceFeedsPanel } from './IntelligenceFeedsPanel'
+export { default as IntakePanel } from './IntakePanel'
+export { default as PagesPanel } from './PagesPanel'
+export { default as DesignStudioPanel } from './DesignStudioPanel'
+export { default as PagesDashboard } from './PagesDashboard'
+export { default as AboutPanel } from './AboutPanel'
+export { default as CapabilitiesPanel } from './CapabilitiesPanel'
