@@ -6,6 +6,29 @@ import { createInitialState, defaultStudioConfig } from './state'
 import { AdminStateSchema } from './schema'
 import { reportError } from '@/lib/error'
 import { saveToIDB, loadFromIDB } from './idb'
+import { uiHandler } from './slices/ui'
+import { siteHandler } from './slices/site'
+import { registriesHandler } from './slices/registries'
+import { infrastructureHandler } from './slices/infrastructure'
+import { contentHandler } from './slices/content'
+import { designHandler } from './slices/design'
+import { integrationsHandler } from './slices/integrations'
+import { aiHandler } from './slices/ai'
+import { capabilitiesHandler } from './slices/capabilities'
+import { studioHandler } from './slices/studio'
+
+const SLICE_HANDLERS = [
+  uiHandler,
+  siteHandler,
+  registriesHandler,
+  infrastructureHandler,
+  contentHandler,
+  designHandler,
+  integrationsHandler,
+  aiHandler,
+  capabilitiesHandler,
+  studioHandler,
+] as const
 
 const STORAGE_KEY = 'jootacee-command-v2'
 
@@ -113,6 +136,31 @@ function saveState(state: AdminState) {
 }
 
 export function adminReducer(state: AdminState, action: AdminAction): AdminState {
+  // Meta actions: handled inline because they touch persistence directly
+  if (action.type === 'MARK_SAVED') {
+    return { ...state, unsaved: false, lastSaved: new Date().toISOString() }
+  }
+  if (action.type === 'IMPORT_STATE') {
+    const next = { ...action.payload, unsaved: false, lastSaved: new Date().toISOString() }
+    saveState(next)
+    return next
+  }
+  if (action.type === 'RESET_STATE') {
+    const next = createInitialState()
+    saveState(next)
+    return next
+  }
+
+  // Delegate to domain slice handlers — first match wins
+  for (const handler of SLICE_HANDLERS) {
+    const result = handler(state, action)
+    if (result !== null) return result
+  }
+
+  return state
+}
+
+function _unused_adminReducer_legacy(state: AdminState, action: AdminAction): AdminState {
   switch (action.type) {
     case 'SET_PANEL':
       return { ...state, panel: action.payload }
@@ -940,19 +988,6 @@ export function adminReducer(state: AdminState, action: AdminAction): AdminState
     case 'STUDIO_RESET':
       return { ...state, studioConfig: defaultStudioConfig, unsaved: true }
 
-    // Meta
-    case 'MARK_SAVED':
-      return { ...state, unsaved: false, lastSaved: new Date().toISOString() }
-    case 'IMPORT_STATE': {
-      const next = { ...action.payload, unsaved: false, lastSaved: new Date().toISOString() }
-      saveState(next)
-      return next
-    }
-    case 'RESET_STATE': {
-      const next = createInitialState()
-      saveState(next)
-      return next
-    }
     default:
       return state
   }
