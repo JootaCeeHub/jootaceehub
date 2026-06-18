@@ -1,9 +1,11 @@
 # ADR-006: Content Source of Truth — Dual-Track CMS
 
-**Status:** Accepted  
+**Status:** Superseded by [ADR-008](ADR-008-git-first-cms-architecture.md) (2026-06-18)  
 **Date:** 2026-06-17  
 **Deciders:** JootaCee  
 **Related:** ADR-002 (static export), ADR-004 (admin state persistence)
+
+> **This ADR is superseded.** The three-track CMS model accepted here proved to add more complexity than it resolved. Supabase is now deprecated (frozen, no new features). Git is the canonical content source. See ADR-008 for the new architecture and migration plan.
 
 ---
 

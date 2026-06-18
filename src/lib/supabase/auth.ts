@@ -1,3 +1,4 @@
+// @deprecated — see ADR-008. Frozen: no new features. Removal: Phase 3.
 import { supabase } from './client'
 import type { User, Session, AuthError } from '@supabase/supabase-js'
 

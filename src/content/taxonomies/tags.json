@@ -1,0 +1,21 @@
+{
+  "tags": [
+    { "slug": "ai", "label": "AI", "color": "#22d3ee", "description": "Artificial intelligence, LLMs, agents" },
+    { "slug": "architecture", "label": "Architecture", "color": "#a78bfa", "description": "System design, distributed systems" },
+    { "slug": "infrastructure", "label": "Infrastructure", "color": "#60a5fa", "description": "VPS, Nginx, CI/CD, DevOps" },
+    { "slug": "research", "label": "Research", "color": "#34d399", "description": "Technical research, experiments" },
+    { "slug": "trading", "label": "Trading", "color": "#fb923c", "description": "Algorithmic trading, finance" },
+    { "slug": "mcp", "label": "MCP", "color": "#f472b6", "description": "Model Context Protocol" },
+    { "slug": "open-source", "label": "Open Source", "color": "#fbbf24", "description": "Open source tools and contributions" },
+    { "slug": "typescript", "label": "TypeScript", "color": "#818cf8", "description": "TypeScript, type systems" },
+    { "slug": "nextjs", "label": "Next.js", "color": "#e2e8f0", "description": "Next.js, React, web frameworks" },
+    { "slug": "rust", "label": "Rust", "color": "#fb923c", "description": "Rust language, systems programming" }
+  ],
+  "categories": [
+    { "slug": "lab", "label": "Lab", "parent": null },
+    { "slug": "system", "label": "System", "parent": null },
+    { "slug": "project", "label": "Project", "parent": null },
+    { "slug": "article", "label": "Article", "parent": null },
+    { "slug": "resource", "label": "Resource", "parent": null }
+  ]
+}

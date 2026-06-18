@@ -1,3 +1,9 @@
+/**
+ * @deprecated Supabase is deprecated per ADR-008 (2026-06-18).
+ * Freeze: no new features, no new imports from this module.
+ * Removal target: Phase 3 (Content API on VPS replaces auth).
+ * See: docs/adr/ADR-008-git-first-cms-architecture.md
+ */
 import { createClient } from '@supabase/supabase-js'
 import type { Database } from './types'
 

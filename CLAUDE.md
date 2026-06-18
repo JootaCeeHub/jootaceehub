@@ -6,6 +6,22 @@
 
 ---
 
+## 🚧 PHASE GIT-FIRST CMS — ACTIVE (started 2026-06-18)
+
+**Architecture decision**: Supabase is deprecated. Git is the canonical content source. See [ADR-008](docs/adr/ADR-008-git-first-cms-architecture.md).
+
+**Freeze rules (effective immediately, enforced as ANTI-PATTERNS below):**
+- No new `import` from `@supabase/supabase-js` or `src/lib/supabase/`
+- No new Supabase tables, RPC calls, or schema changes
+- Content canonical location: `src/content/` (committed to Git)
+- Admin panel writes: read-only until Content API (Phase 3) is implemented
+
+**Phase 1 (Decision + Freeze) complete:** ADR-008 written, `src/content/` scaffolded, Supabase frozen.
+**Phase 2 (Content migration):** Move journal MDX → `src/content/articles/`, migrate AdminState data to JSON files.
+**Phase 3 (VPS backend):** Content API on Hostinger VPS — file ops, Git commit, media upload, JWT auth.
+
+---
+
 ## ✅ PHASE 2 — ARCHITECTURE CONSOLIDATION (completed 2026-06-17)
 
 Phase 1 feature freeze has been **lifted**. All 10 architecture consolidation steps are complete.
@@ -252,6 +268,8 @@ Types: `feat`, `fix`, `refactor`, `style`, `test`, `docs`, `chore`
 | Multiple `.styles.ts` imports | Old pattern, abolished | Single file, inline |
 | Nested ternaries in JSX | Unreadable | Extract to variable or `cn()` |
 | `// TODO:` without ticket | Forgotten forever | Fix it now or open a GitHub issue |
+| **New Supabase imports** | **Deprecated per ADR-008 — frozen** | **Git content files in `src/content/`** |
+| **Content in localStorage as canonical** | **Not versionable, not SEO, not portable** | **`src/content/*.{mdx,json}` committed to Git** |
 
 ---
 
@@ -269,11 +287,23 @@ src/
 │   ├── layout/             # Navigation, footer, domain layout
 │   ├── sections/           # Landing page sections
 │   └── shared/             # Truly reusable UI primitives
+├── content/                # ← CANONICAL CONTENT (Git source of truth)
+│   ├── _schema/            # JSON Schema definitions for content types
+│   ├── articles/           # Journal / blog posts (.mdx)
+│   ├── research/           # Research articles (.mdx)
+│   ├── projects/           # Project registry (.json)
+│   ├── resources/          # Resource registry (.json)
+│   ├── labs/               # Lab entries (.json)
+│   ├── systems/            # Systems entries (.json)
+│   ├── collections/        # Curated collections (.json)
+│   ├── taxonomies/         # Tags + categories (tags.json)
+│   └── journal/            # ← Legacy path (Phase 2: migrate to articles/)
 ├── hooks/                  # Custom React hooks
 ├── lib/
 │   ├── admin/              # types.ts · store.tsx · schema.ts · state.ts
 │   ├── error.ts            # Centralized error taxonomy
 │   ├── i18n/               # Custom i18n (no next-intl)
+│   ├── supabase/           # ← DEPRECATED (ADR-008). Freeze. No new features.
 │   └── logger.ts           # Safe logger with noise filter
 ├── styles/
 │   └── ui.ts               # Shared CVA design tokens (THE source of truth)

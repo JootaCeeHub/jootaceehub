@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "article.schema.json",
+  "title": "Article (MDX frontmatter)",
+  "description": "Frontmatter schema for src/content/articles/*.mdx and src/content/research/*.mdx",
+  "type": "object",
+  "required": ["id", "title", "slug", "description", "status", "locale", "publishedAt", "updatedAt"],
+  "additionalProperties": false,
+  "properties": {
+    "id":                  { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "title":               { "type": "string", "minLength": 1, "maxLength": 120 },
+    "slug":                { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "description":         { "type": "string", "minLength": 60, "maxLength": 160 },
+    "status":              { "type": "string", "enum": ["draft", "published", "archived"] },
+    "locale":              { "type": "string", "enum": ["en", "es"] },
+    "tags":                { "type": "array", "items": { "type": "string" }, "default": [] },
+    "publishedAt":         { "type": "string", "format": "date-time" },
+    "updatedAt":           { "type": "string", "format": "date-time" },
+    "featured":            { "type": "boolean", "default": false },
+    "coverImage":          { "type": ["string", "null"], "default": null },
+    "readingTimeMinutes":  { "type": "integer", "minimum": 1 }
+  }
+}

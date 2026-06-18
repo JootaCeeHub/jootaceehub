@@ -1,4 +1,5 @@
 'use client'
+// @deprecated — see ADR-008. Frozen: no new features. Removal: Phase 3.
 
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import type { User } from '@supabase/supabase-js'
