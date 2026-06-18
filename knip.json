@@ -1,0 +1,35 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "entry": [
+    "src/app/**/{page,layout,template,loading,error,not-found,route}.tsx",
+    "src/app/**/{page,layout,template,loading,error,not-found,route}.ts",
+    "src/app/manifest.ts",
+    "src/app/robots.ts",
+    "src/app/sitemap.ts",
+    "src/app/opengraph-image.tsx",
+    "mdx-components.tsx",
+    "next.config.ts",
+    "vitest.config.ts",
+    "tailwind.config.*",
+    "scripts/**/*.{ts,mjs,js}"
+  ],
+  "project": [
+    "src/**/*.{ts,tsx}",
+    "!src/**/*.test.{ts,tsx}",
+    "!src/test/**"
+  ],
+  "ignore": [
+    "src/content/**",
+    "public/**",
+    "dist/**"
+  ],
+  "ignoreDependencies": [
+    "mdx/types",
+    "chrome-launcher",
+    "unified",
+    "remark-parse",
+    "remark-rehype",
+    "rehype-stringify"
+  ],
+  "ignoreExportsUsedInFile": true
+}
