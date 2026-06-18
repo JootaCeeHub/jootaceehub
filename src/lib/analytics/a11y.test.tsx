@@ -129,6 +129,7 @@ describe('Semantic HTML — WCAG best practices', () => {
   it('images have alt text or are aria-hidden', async () => {
     const { container } = render(
       <div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/icon-192x192.png" alt="JootaCee logo" />
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/og-image.png" alt="" aria-hidden="true" />

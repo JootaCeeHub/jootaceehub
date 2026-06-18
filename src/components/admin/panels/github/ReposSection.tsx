@@ -155,7 +155,7 @@ export function LiveSyncCard({ username }: { username: string }) {
   }, [dispatch, liveRepos, selected, username])
 
   const toggleRepo = (name: string) =>
-    setSelected(prev => { const s = new Set(prev); s.has(name) ? s.delete(name) : s.add(name); return s })
+    setSelected(prev => { const s = new Set(prev); if (s.has(name)) s.delete(name); else s.add(name); return s })
 
   return (
     <div className="rounded-xl border border-cyan-400/15 bg-cyan-400/[0.03] overflow-hidden">

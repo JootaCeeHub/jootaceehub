@@ -95,7 +95,7 @@ export function runSecuritySurfaceAudit(): ProjectCheck[] {
   const extLinks     = document.querySelectorAll('a[target="_blank"]:not([rel*="noopener"])').length
   const inlineHandlers = document.querySelectorAll('[onclick],[onload],[onerror]').length
   const inputsNoAutoComplete = document.querySelectorAll('input:not([autocomplete])').length
-  const formsNoAction = document.querySelectorAll('form:not([action])').length
+  const _formsNoAction = document.querySelectorAll('form:not([action])').length
   const hasRobots    = !!document.querySelector('meta[name="robots"]')
 
   return [
@@ -139,7 +139,7 @@ export function runStructuredDataAudit(): ProjectCheck[] {
   const canonicalSelf = canonical?.href === window.location.href ||
                         canonical?.href?.replace(/\/$/, '') === window.location.href.replace(/\/$/, '')
 
-  const hasSchema     = ldJsonCount > 0
+  const _hasSchema     = ldJsonCount > 0
   const ogLocale      = !!document.querySelector('meta[property="og:locale"]')
   const ogLocaleAlt   = !!document.querySelector('meta[property="og:locale:alternate"]')
 
@@ -216,7 +216,7 @@ export function runPerformanceDeepAudit(): ProjectCheck[] {
 export function runRuntimeDXAudit(): ProjectCheck[] {
   if (typeof window === 'undefined') return []
 
-  const hasConsoleError = typeof console.error === 'function'
+  const _hasConsoleError = typeof console.error === 'function'
   const hasResizeObs    = 'ResizeObserver' in window
   const hasIntersectObs = 'IntersectionObserver' in window
   const hasWebWorker    = 'Worker' in window

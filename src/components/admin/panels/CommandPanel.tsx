@@ -327,8 +327,8 @@ export default function CommandPanel() {
 
   const onlineSystems = state.systemsRegistry.filter(s => s.status === 'operational').length
   const runningNodes  = state.infraConfig.nodes.filter(n => n.status === 'running').length
-  const dataSources   = state.integrations?.dataSources?.length ?? 0
-  const indexedSources= state.integrations?.dataSources?.filter(s => s.status === 'ready').length ?? 0
+  const _dataSources   = state.integrations?.dataSources?.length ?? 0
+  const _indexedSources= state.integrations?.dataSources?.filter(s => s.status === 'ready').length ?? 0
 
   const publishedProjects = state.projectsRegistry?.filter(p => p.published).length ?? state.labsRegistry.filter(l => l.visible).length
   const liveProjects      = state.projectsRegistry?.filter(p => p.status === 'live').length ?? state.labsRegistry.filter(l => l.status === 'live').length

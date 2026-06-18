@@ -72,12 +72,12 @@ function Toggle({ enabled, onToggle }: { enabled: boolean; onToggle: () => void 
 export default function IntegrationsPanel({ initialTab }: { initialTab?: Tab } = {}) {
   const { state, dispatch } = useAdmin()
   const { integrations, capabilities } = state
-  const { github, dataSources } = integrations
+  const { github: _github, dataSources } = integrations
 
   const hermes   = capabilities.hermes
   const platforms = capabilities.platforms
   const agents   = capabilities.skills.filter((sk: CapabilitySkill) => sk.type === 'agent')
-  const skills   = capabilities.skills.filter((sk: CapabilitySkill) => sk.type === 'skill')
+  const _skills   = capabilities.skills.filter((sk: CapabilitySkill) => sk.type === 'skill')
 
   const [tab,           setTab]           = useState<Tab>(initialTab ?? 'platforms')
   const [openPromptId,  setOpenPromptId]  = useState<string | null>(null)
@@ -139,7 +139,7 @@ export default function IntegrationsPanel({ initialTab }: { initialTab?: Tab } =
 
   // ── Tab render ───────────────────────────────────────────────────────────────
   const isAgentTab = (t: Tab) => ['agentes','hermes','mcp','skills','bots'].includes(t)
-  const isSourceTab = (t: Tab) => !isAgentTab(t)
+  const _isSourceTab = (t: Tab) => !isAgentTab(t)
 
   const tabCls = (id: Tab) => {
     const active = tab === id

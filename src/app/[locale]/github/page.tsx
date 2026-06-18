@@ -401,6 +401,7 @@ export default function GitHubPage() {
               ) : ghData?.profile ? (
                 <>
                   {ghData.profile.avatarUrl && (
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={ghData.profile.avatarUrl}
                       alt={ghData.profile.displayName}

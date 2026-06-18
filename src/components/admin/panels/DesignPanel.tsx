@@ -18,7 +18,7 @@ const PALETTES = [
   { id: 'custom',  name: 'Custom',  primary: '',        accent: '',        bars: [] },
 ] as const
 
-type PaletteId = typeof PALETTES[number]['id']
+type _PaletteId = typeof PALETTES[number]['id']
 
 function getPaletteColors(design: DesignConfig) {
   if (design.palette === 'custom') {
@@ -249,7 +249,7 @@ function WebsiteColorTokens({ compact = false }: { compact?: boolean }) {
       <div className={cn('grid gap-1.5', compact ? 'grid-cols-5' : 'grid-cols-5')}>
         {COLOR_GROUPS.map(({ label, cssVar }) => {
           const color = liveTokens[cssVar] || 'transparent'
-          const isLight = /^#[def]/i.test(color)
+          const _isLight = /^#[def]/i.test(color)
           return (
             <div key={cssVar} className="rounded-lg overflow-hidden border border-white/8 group cursor-default"
               title={`${cssVar}: ${color}`}>
@@ -1018,7 +1018,7 @@ export default function DesignPanel() {
                 <SubLabel>Shadow intensity</SubLabel>
                 <OptionRow value={tokens.shadowIntensity} options={SHADOW_OPTS} onChange={v => updateToken({ shadowIntensity: v })} />
                 {(() => {
-                  const s = parseFloat({ none:'0', subtle:'0.6', normal:'1', dramatic:'1.8' }[tokens.shadowIntensity ?? 'normal'] ?? '1')
+                  const _s = parseFloat({ none:'0', subtle:'0.6', normal:'1', dramatic:'1.8' }[tokens.shadowIntensity ?? 'normal'] ?? '1')
                   return (
                     <div className="mt-2 flex gap-2">
                       {(['none','subtle','normal','dramatic'] as const).map((k) => {

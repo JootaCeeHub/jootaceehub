@@ -3,7 +3,7 @@ import type { AdminState, AdminPanel } from '@/lib/admin/types'
 import {
   CheckCircle2, AlertTriangle, Database, GitBranch, Bot, Rocket,
   LayoutDashboard, BarChart3, FlaskConical, Search, Palette, Blocks,
-  Layers, Globe, Wand2, Network, Server, Plug, Cpu, Settings2,
+  Layers, Globe, Wand2, Network, Server, Plug, Settings2,
   FolderOpen, BookOpen, Microscope, User, Zap,
 } from 'lucide-react'
 

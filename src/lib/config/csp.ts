@@ -19,7 +19,7 @@ const cspDirectives: Record<string, string[]> = {
                      'https://plausible.io'],
   'style-src':      ["'self'", "'unsafe-inline'"],
   'img-src':        ["'self'", 'data:', 'blob:', 'https:'],
-  'font-src':       ["'self'", 'data:', 'https://fonts.gstatic.com'],
+  'font-src':       ["'self'", 'data:'],
   'connect-src':    ["'self'", 'https:', 'ws:', 'wss:',
                      'https://*.sentry.io',
                      'https://o*.ingest.sentry.io',

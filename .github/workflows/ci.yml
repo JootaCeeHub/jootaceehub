@@ -38,7 +38,7 @@ jobs:
         run: npm run validate:content
 
       - name: Lint
-        run: npm run lint
+        run: npm run lint -- --max-warnings=0
 
       - name: Run tests with coverage
         run: npx vitest run --coverage
@@ -48,8 +48,8 @@ jobs:
       - name: Verify coverage ≥ 40%
         run: |
           if [ ! -f coverage/coverage-summary.json ]; then
-            echo "⚠️  coverage-summary.json not found — skipping threshold check"
-            exit 0
+            echo "❌ coverage-summary.json not found — run 'npm run test' with @vitest/coverage-v8 installed"
+            exit 1
           fi
           COVERAGE=$(node -e "
             const d = require('./coverage/coverage-summary.json');
@@ -98,6 +98,9 @@ jobs:
 
       - name: Build + postbuild (sitemap, RSS, OG, Pagefind index)
         run: npm run build
+
+      - name: Content QA (placeholder scan + route check)
+        run: npm run qa:content
 
       - name: Upload dist artifact
         uses: actions/upload-artifact@v4

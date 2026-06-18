@@ -7,8 +7,8 @@ import { cn } from '@/lib/utils'
 import {
   Search, X, ArrowRight, Zap, FolderOpen, BookOpen, GitBranch, User, Microscope,
   LayoutDashboard, BarChart3, FlaskConical, Globe, Palette, Wand2, Layers, Blocks,
-  Network, Server, Plug, Bot, Settings2, Search as SearchIcon, HardDrive, Cpu,
-  FileText, Tag, Package, ChevronRight, SlidersHorizontal,
+  Network, Server, Plug, Bot, Settings2, Search as SearchIcon, Cpu,
+  Tag, Package, ChevronRight, SlidersHorizontal,
 } from 'lucide-react'
 
 // ─── Search Index ─────────────────────────────────────────────────────────────

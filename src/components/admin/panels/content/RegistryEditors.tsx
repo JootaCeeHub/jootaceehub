@@ -4,10 +4,10 @@ import { useState } from 'react'
 import { ChevronDown, Plus, Star, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAdmin } from '@/lib/admin/store'
-import type { ProjectEntry, ResearchEntry, TrackedSourceType } from '@/lib/admin/types'
+import type { ProjectEntry, ResearchEntry } from '@/lib/admin/types'
 import {
   inp, area, F, Tog,
-  STATUS_COL_PROJ, CAT_COL, SOURCE_TYPE_COL,
+  STATUS_COL_PROJ, CAT_COL,
 } from './primitives'
 
 // ─── Projects editor (full CRUD) ──────────────────────────────────────────────

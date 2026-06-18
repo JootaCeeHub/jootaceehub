@@ -19,7 +19,7 @@ export function PlatformsTab() {
   const toggleCat = (cat: string) => {
     setOpenCat((prev) => {
       const next = new Set(prev)
-      next.has(cat) ? next.delete(cat) : next.add(cat)
+      if (next.has(cat)) next.delete(cat); else next.add(cat)
       return next
     })
   }

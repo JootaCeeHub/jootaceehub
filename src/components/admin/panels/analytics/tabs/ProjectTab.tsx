@@ -27,7 +27,7 @@ function scoreOf(checks: { pass: boolean }[]): number {
   return Math.round(checks.filter((c) => c.pass).length / checks.length * 100)
 }
 
-function ScoreBar({ score, color }: { score: number; color: string }) {
+function ScoreBar({ score, color: _color }: { score: number; color: string }) {
   const barColor = score >= 80 ? '#34d399' : score >= 55 ? '#fb923c' : '#f87171'
   return (
     <div className="mt-2.5 h-1 w-full overflow-hidden rounded-full bg-white/6">

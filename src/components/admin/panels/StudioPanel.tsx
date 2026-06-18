@@ -19,7 +19,7 @@ import {
   Globe, Wand2, Layers, Blocks, Network, Server, Plug, Bot, Settings2, Search,
   ChevronDown, ChevronUp, Check, X, Filter, Pin, PinOff,
   AlertTriangle, Download, Copy, FileJson,
-  Clipboard, User2, BookMarked, ShieldCheck, Activity,
+  Clipboard, BookMarked, ShieldCheck, Activity,
 } from 'lucide-react'
 
 // reason: icon components need style prop for accent color rendering
@@ -57,7 +57,7 @@ function hslToHex(h: number, s: number, l: number): string {
   return `#${f(0)}${f(8)}${f(4)}`
 }
 
-function getHarmonics(hex: string) {
+function _getHarmonics(hex: string) {
   if (!/^#[0-9a-f]{6}$/i.test(hex)) return null
   const [h, s, l] = hexToHsl(hex)
   return [
@@ -69,7 +69,7 @@ function getHarmonics(hex: string) {
   ]
 }
 
-function getTintScale(hex: string): Array<{ lightness: number; color: string }> {
+function _getTintScale(hex: string): Array<{ lightness: number; color: string }> {
   if (!/^#[0-9a-f]{6}$/i.test(hex)) return []
   const [h, s] = hexToHsl(hex)
   return [12, 20, 30, 40, 50, 60, 68, 76, 84].map(l => ({
@@ -94,7 +94,7 @@ type Tab = typeof TABS[number]['id']
 
 // ─── Built-in workspace profiles ──────────────────────────────────────────────
 
-const BUILTIN_WORKSPACE_PROFILES: Array<{
+const _BUILTIN_WORKSPACE_PROFILES: Array<{
   id: string; name: string; icon: string; description: string
   accentColor: string; snapshot: Partial<StudioConfig>
 }> = [
@@ -157,7 +157,7 @@ interface BuiltinPreset {
   borderRadius: StudioConfig['borderRadius']; glowEffect: boolean; sidebarBorder: boolean
 }
 
-const BUILTIN_PRESETS: BuiltinPreset[] = [
+const _BUILTIN_PRESETS: BuiltinPreset[] = [
   { id: 'cyber-ocean', name: 'Cyber Ocean', description: 'Cyan on deep midnight, glass sidebar',    accent: '#22d3ee', bg: 'midnight', sidebar: 'glass',  borderRadius: 'rounded', glowEffect: true,  sidebarBorder: false },
   { id: 'void',        name: 'Void',        description: 'Pure black, high contrast, border lines', accent: '#22d3ee', bg: 'void',     sidebar: 'border', borderRadius: 'sharp',   glowEffect: false, sidebarBorder: true  },
   { id: 'violet-haze', name: 'Violet Haze', description: 'Purple accents on dark, glass sidebar',   accent: '#a78bfa', bg: 'dark',     sidebar: 'glass',  borderRadius: 'normal',  glowEffect: true,  sidebarBorder: false },
@@ -237,7 +237,7 @@ const RESET_SECTIONS: { label: string; color: string; keys: (keyof StudioConfig)
 
 // ─── Emoji picker options ─────────────────────────────────────────────────────
 
-const PROFILE_ICONS = ['⚡', '🎯', '🌑', '📊', '🚀', '🧠', '🛠️', '🌊', '🔥', '🎨', '🔭', '💡', '⚙️', '🌿', '🎭']
+const _PROFILE_ICONS = ['⚡', '🎯', '🌑', '📊', '🚀', '🧠', '🛠️', '🌊', '🔥', '🎨', '🔭', '💡', '⚙️', '🌿', '🎭']
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -271,7 +271,7 @@ function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) =>
   )
 }
 
-function Sel<T extends string>({ value, onChange, options }: {
+function _Sel<T extends string>({ value, onChange, options }: {
   value: T; onChange: (v: T) => void; options: { value: T; label: string }[]
 }) {
   return (
@@ -285,7 +285,7 @@ function Sel<T extends string>({ value, onChange, options }: {
   )
 }
 
-function Swatch({ color, label, selected, onClick }: { color: string; label?: string; selected: boolean; onClick: () => void }) {
+function _Swatch({ color, label, selected, onClick }: { color: string; label?: string; selected: boolean; onClick: () => void }) {
   return (
     <button onClick={onClick} title={color}
       className={cn('flex flex-col items-center gap-1', label ? 'w-10' : '')}>
@@ -428,7 +428,7 @@ export default function StudioPanel() {
 
   const set = (partial: Partial<typeof cfg>) => dispatch({ type: 'UPDATE_STUDIO', payload: partial })
 
-  const applyBuiltinPreset = (p: BuiltinPreset) => set({
+  const _applyBuiltinPreset = (p: BuiltinPreset) => set({
     backgroundStyle: p.bg, sidebarStyle: p.sidebar,
     accentColor: p.accent, useCustomAccent: true,
     borderRadius: p.borderRadius, glowEffect: p.glowEffect,
@@ -473,7 +473,7 @@ export default function StudioPanel() {
     setSavingProfile(false)
   }
 
-  const applyCustomPreset = (p: StudioCustomPreset) => set({ ...p.config, activePreset: p.id })
+  const _applyCustomPreset = (p: StudioCustomPreset) => set({ ...p.config, activePreset: p.id })
 
   const getOverride = (id: AdminPanel): StudioPanelConfig | undefined =>
     cfg.panelOverrides.find(p => p.id === id)

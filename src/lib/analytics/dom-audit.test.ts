@@ -3,7 +3,7 @@
  * Functions relying on PerformanceObserver or navigator.serviceWorker are covered
  * only for the safe/static parts — browser-specific branches are snapshot-tested.
  */
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { runDOMSEOAudit, runDOMA11yAudit, runPerformanceHintsAudit, runSecurityAudit, runConfigSEOAudit } from './dom-audit'
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────

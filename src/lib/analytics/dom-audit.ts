@@ -237,7 +237,7 @@ export function runPerformanceHintsAudit(): DOMCheck[] {
 
   // Image lazy loading
   const lazyImages    = images.filter((i) => i.loading === 'lazy').length
-  const eagerImages   = images.filter((i) => i.loading !== 'lazy' && !i.closest('[data-above-fold]')).length
+  const _eagerImages   = images.filter((i) => i.loading !== 'lazy' && !i.closest('[data-above-fold]')).length
   const imagesWithDim = images.filter((i) => i.width > 0 && i.height > 0).length
 
   // Viewport meta

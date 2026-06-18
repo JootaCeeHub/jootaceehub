@@ -6,7 +6,6 @@ import {
   ChevronRight, ChevronDown, Sparkles, LayoutGrid, Monitor, Tablet, Smartphone,
   Layers, Cpu, FlaskConical, Server, BookOpen, MessageSquare,
   User, GitBranch, FolderKanban, Microscope, Library, Gamepad2, Globe,
-  Plus, Trash2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAdmin } from '@/lib/admin/store'

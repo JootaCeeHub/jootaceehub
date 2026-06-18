@@ -9,10 +9,9 @@ import { SkipToMain } from '@/components/shared/SkipToMain'
 import { getThemeInitScript } from '@/lib/config/theme-init'
 import './globals.css'
 
+// next/font/google self-hosts: fonts download at build time into _next/static/media/,
+// served from our own domain — zero runtime requests to fonts.gstatic.com.
 // display:'swap' — browser renders fallback font immediately → FCP at ~1.8s.
-// The swap to Inter at ~4.8s (throttled mobile) is a known LCP cost;
-// 'fallback' blocks for 100ms which pushes FCP to 2.7s — worse tradeoff.
-// True LCP fix requires self-hosting fonts; keeping swap until that work lands.
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
@@ -40,8 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta httpEquiv="Content-Security-Policy" content={CSP_STRING} />
 
         {/* 2 — Performance: warm connections before any script requests them */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* Note: fonts are self-hosted via next/font/google — no preconnect to Google Fonts needed */}
         <link rel="dns-prefetch" href="https://github.com" />
         <link rel="dns-prefetch" href="https://api.github.com" />
         {/* Sentry / Plausible — resolve DNS early so first event has low latency */}
