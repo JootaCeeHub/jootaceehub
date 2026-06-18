@@ -36,6 +36,7 @@ import { InsightsTab }     from './analytics/tabs/InsightsTab'
 import { ProjectTab }      from './analytics/tabs/ProjectTab'
 import { Phase2Tab }      from './analytics/tabs/Phase2Tab'
 import { Phase3Tab }      from './analytics/tabs/Phase3Tab'
+import { Phase4Tab }      from './analytics/tabs/Phase4Tab'
 
 // ─── Analytics lib ────────────────────────────────────────────────────────────
 import {
@@ -636,6 +637,7 @@ export default function AnalyticsPanel() {
     { id: 'insights',      label: 'AI Insights', icon: Sparkles     },
     { id: 'phase2',        label: 'Phase 2',     icon: Radio        },
     { id: 'phase3',        label: 'Phase 3',     icon: Construction },
+    { id: 'phase4',        label: 'Phase 4',     icon: Zap          },
   ]
 
   const exportBtnCls = (done: boolean) =>
@@ -885,6 +887,7 @@ export default function AnalyticsPanel() {
       {activeTab === 'insights' && <InsightsTab aiAnalysis={aiAnalysis} prodChecks={prodChecks} healthDomains={healthDomains} />}
       {activeTab === 'phase2'   && <Phase2Tab />}
       {activeTab === 'phase3'   && <Phase3Tab />}
+      {activeTab === 'phase4'   && <Phase4Tab />}
     </div>
   )
 }
