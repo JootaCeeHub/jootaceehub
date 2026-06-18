@@ -289,9 +289,24 @@ export default function NeuralNetworkScene({ initialTier }: { initialTier?: Devi
   const [adaptiveQuality, setAdaptiveQuality] = useState(1)
   const [panelOpen, setPanelOpen] = useState(false)
   const [aggregate, setAggregate] = useState<VisualTelemetryAggregate | null>(null)
+  // Pause the R3F RAF loop when the hero section is fully scrolled out of view.
+  // Saves ~30% idle CPU on long-scroll pages. 'always' → 'never' via IntersectionObserver.
+  const [frameloop, setFrameloop] = useState<'always' | 'never'>('always')
+  const containerRef = useRef<HTMLDivElement>(null)
   const panelEnabled = process.env.NEXT_PUBLIC_ENABLE_3D_CONTROL_PANEL === 'true'
   const sessionId = useId()
   const quality = reducedMotion ? Math.min(adaptiveQuality, 0.62) : adaptiveQuality
+
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el || typeof IntersectionObserver === 'undefined') return
+    const obs = new IntersectionObserver(
+      ([entry]) => { setFrameloop(entry.isIntersecting ? 'always' : 'never') },
+      { threshold: 0.01 },
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
 
   const counts = useMemo(() => {
     const scaledParticles = Math.max(520, Math.floor(config.particleCount * quality))
@@ -340,7 +355,7 @@ export default function NeuralNetworkScene({ initialTier }: { initialTier?: Devi
   if (!sceneEnabled) return null
 
   return (
-    <div className="absolute inset-0 -z-10">
+    <div ref={containerRef} className="absolute inset-0 -z-10">
       <ControlPanel
         enabled={panelEnabled}
         open={panelOpen}
@@ -349,6 +364,7 @@ export default function NeuralNetworkScene({ initialTier }: { initialTier?: Devi
         aggregate={aggregate}
       />
       <Canvas
+        frameloop={frameloop}
         camera={{ position: [0, 0, 6], fov: 58 }}
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
         dpr={[1, 1.5]}

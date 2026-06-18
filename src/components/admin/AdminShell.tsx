@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useEffect, useRef } from 'react'
+import { startTransition, useState, useCallback, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   ChevronLeft,
@@ -143,8 +143,10 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   // ─ Hydration fix ────────────────────────────────────────────────────────────
   const [mounted, setMounted] = useState(false)
   useEffect(() => {
-    setMounted(true) // eslint-disable-line react-hooks/set-state-in-effect
-    if (studio.sidebarCollapsedDefault) setCollapsed(true) // eslint-disable-line react-hooks/set-state-in-effect
+    startTransition(() => {
+      setMounted(true)
+      if (studio.sidebarCollapsedDefault) setCollapsed(true)
+    })
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const prevLastSaved = useRef<string | null>(null)

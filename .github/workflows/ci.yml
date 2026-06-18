@@ -129,10 +129,21 @@ jobs:
           name: dist
           path: dist
 
-      - name: Run Lighthouse CI
+      - name: Run Lighthouse CI (desktop)
         run: npx lhci autorun
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: Bundle size check
+        run: |
+          TOTAL=$(find dist -name "*.js" | xargs du -b 2>/dev/null | awk '{sum+=$1} END {print sum}')
+          TOTAL_KB=$((TOTAL / 1024))
+          echo "Total JS dist size: ${TOTAL_KB} KB raw"
+          if [ "$TOTAL_KB" -gt 12000 ]; then
+            echo "❌ JS bundle too large: ${TOTAL_KB} KB (limit: 12 MB raw)"
+            exit 1
+          fi
+          echo "✅ Bundle size within budget: ${TOTAL_KB} KB"
 
   # ── Stage 4: Deploy to Cloudflare Pages (main branch only) ─────────────
   deploy:
