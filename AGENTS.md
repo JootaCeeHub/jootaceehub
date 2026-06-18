@@ -283,3 +283,64 @@ Captured after stabilization (lint=0 errors, tests=401 pass, build=101 pages).
 | Lint errors | 0 |
 | Tests | 401 passing |
 | Static pages | 103 |
+
+---
+
+## Phase 5 — Production Launch (2026-06-18)
+
+10-goal production launch checklist. All implementable code tasks complete.
+External steps (DNS, Cloudflare env vars, GSC, Plausible account) are documented below.
+
+### Quality gate at Phase 5 close
+
+| Metric | Value |
+|--------|-------|
+| TypeScript errors | 0 |
+| Lint errors | 0 |
+| Tests | 410 passing |
+| Static pages | 107 |
+| Lighthouse Accessibility | 96 |
+| Lighthouse SEO | 100 |
+| Lighthouse Best Practices | 96 |
+| Lighthouse Performance | 44 (baseline; Phase 4 optimizations target ≥ 55) |
+
+### New files (Phase 5)
+
+| File | Purpose |
+|------|---------|
+| `src/lib/analytics/launch-metrics.ts` | 10 LaunchGoal objects — Phase 5 definition-of-done registry |
+| `src/components/admin/panels/analytics/tabs/Phase5Tab.tsx` | Analytics panel tab for Phase 5 metrics |
+| `src/app/[locale]/changelog/page.tsx` | Public release notes page (Phase 1–5 milestones) |
+| `scripts/content-qa.mjs` | Content QA: placeholder scan + internal link resolver |
+| `src/lib/analytics/a11y.test.tsx` | Automated accessibility tests (axe-core, WCAG 2.1 AA) |
+| `src/lib/journal/articles.test.ts` | Journal article smoke tests (already existed — expanded) |
+
+### Pre-deploy runbook (manual steps before going live)
+
+**Before every production deploy:**
+1. `npm run build` — must exit 0
+2. `npm run typecheck` — must exit 0
+3. `npm run test` — all tests pass
+4. `npm run qa:content` — content QA must pass
+5. Export admin state: open `/admin` → Download button → save to `backups/` (git-ignored)
+6. Commit the export JSON to a private backup location or Google Drive
+
+**First-time production setup:**
+1. Cloudflare Pages: Settings → Environment Variables → add:
+   - `NEXT_PUBLIC_SENTRY_DSN` (from sentry.io project settings)
+   - `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` = `jootacee.com` (from plausible.io)
+   - `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT` (for source maps)
+2. DNS: CNAME `jootacee.com` → `<project>.pages.dev`
+3. Google Search Console: add property + submit `https://jootacee.com/sitemap.xml`
+4. Plausible: add Goals — `CTA Click`, `Contact Form Submit`, `Locale Switch`, `Admin Opened`
+
+### External todos (cannot be automated — require accounts/domains)
+
+| Step | Tool | Where |
+|------|------|--------|
+| DNS + HTTPS on jootacee.com | Cloudflare DNS | Cloudflare dashboard |
+| Cloudflare Pages deploy pipeline | GitHub Actions → CF Pages | `.github/workflows/ci.yml` |
+| Google Search Console property + sitemap | GSC | search.google.com/search-console |
+| NEXT_PUBLIC_SENTRY_DSN in CF env | Sentry | Cloudflare Pages Settings |
+| NEXT_PUBLIC_PLAUSIBLE_DOMAIN in CF env | Plausible | Cloudflare Pages Settings |
+| Custom Plausible goals (CTA, form, locale) | Plausible | plausible.io dashboard |

@@ -142,10 +142,23 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const toggleGroup = (key: string) => setCollapsedGroups(v => ({ ...v, [key]: !v[key] }))
   // ─ Hydration fix ────────────────────────────────────────────────────────────
   const [mounted, setMounted] = useState(false)
+  const [lastBackup, setLastBackup] = useState<string | null>(null)
+  const [backupLabel, setBackupLabel] = useState<string>('No backup')
+  const [backupColor, setBackupColor] = useState<string>('text-white/20')
+
+  const updateBackupIndicator = useCallback((iso: string) => {
+    setLastBackup(iso)
+    const days = Math.floor((new Date().getTime() - new Date(iso).getTime()) / 86_400_000)
+    setBackupLabel(days === 0 ? 'Backed up today' : `Backup ${days}d ago`)
+    setBackupColor(days > 30 ? 'text-rose-400' : days > 7 ? 'text-amber-400' : 'text-emerald-400/70')
+  }, [])
+
   useEffect(() => {
     startTransition(() => {
       setMounted(true)
       if (studio.sidebarCollapsedDefault) setCollapsed(true)
+      const stored = localStorage.getItem('jootacee-last-backup')
+      if (stored) updateBackupIndicator(stored)
     })
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -167,6 +180,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const pinnedPanels = mounted ? (studio.pinnedPanels ?? []) : []
   const textOpacity  = mounted && studio.highContrast ? 'text-white/90' : 'text-white/35'
   const speedMult    = !mounted ? 1 : studio.animationSpeed === 'fast' ? 0.4 : studio.animationSpeed === 'slow' ? 2.5 : 1
+
   const scrollbarW   = !mounted ? 'thin' : studio.scrollbarStyle === 'hidden' ? 'none' : studio.scrollbarStyle === 'thin' ? 'thin' : 'auto'
   const motionProps = mounted && studio.reducedMotion
     ? { initial: false as const, animate: {}, exit: {}, transition: { duration: 0 } }
@@ -228,7 +242,10 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     a.download = `jootacee-ecosystem-${new Date().toISOString().slice(0, 10)}.json`
     a.click()
     URL.revokeObjectURL(url)
-  }, [exportJSON])
+    const now = new Date().toISOString()
+    localStorage.setItem('jootacee-last-backup', now)
+    updateBackupIndicator(now)
+  }, [exportJSON, updateBackupIndicator])
 
   const handleImport = useCallback(() => {
     const input = document.createElement('input')
@@ -618,6 +635,16 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                 <span className="hidden sm:inline">Search</span>
                 <kbd className="hidden rounded border border-white/10 bg-white/5 px-1 py-0.5 text-[7.5px] text-white/25 sm:inline">⌘K</kbd>
               </button>
+            )}
+            {/* Last-backup indicator */}
+            {mounted && (
+              <span
+                className={`hidden items-center gap-1 rounded border border-white/6 bg-white/[0.02] px-2 py-0.5 font-mono text-[8.5px] uppercase tracking-[0.12em] sm:inline-flex ${backupColor}`}
+                title={lastBackup ? `Last backup: ${new Date(lastBackup).toLocaleString()}` : 'No backup taken yet'}
+                suppressHydrationWarning
+              >
+                {backupLabel}
+              </span>
             )}
             {/* Export */}
             {(!mounted || studio.headerActions.showExport) && (

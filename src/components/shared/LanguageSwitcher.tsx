@@ -5,6 +5,7 @@ import { Globe } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
+import { trackEvent } from '@/components/shared/Analytics'
 
 const labels: Record<string, string> = {
   en: 'EN',
@@ -17,6 +18,7 @@ export function LanguageSwitcher() {
 
   const handleSwitch = (next: string) => {
     if (next === currentLocale) return
+    trackEvent('Locale Switch', { from: currentLocale, to: next })
     switchLocale(next)
     setOpen(false)
   }

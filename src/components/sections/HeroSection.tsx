@@ -11,6 +11,7 @@ import { brand, heroSignals } from '@/lib/config/brand'
 import { useFoundationIdentity } from '@/hooks/useFoundationIdentity'
 import { useTranslations, useLocale } from '@/lib/i18n/context'
 import { cn } from '@/lib/utils'
+import { trackEvent } from '@/components/shared/Analytics'
 
 // Three.js/R3F is ~620KB gzipped. Deferring until after TTI (via
 // requestIdleCallback) keeps the initial main-thread parse cost near zero,
@@ -223,13 +224,13 @@ export function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={ctaT}
             >
-              <Link prefetch={false} href={lp('/projects')}>
+              <Link prefetch={false} href={lp('/projects')} onClick={() => trackEvent('CTA Click', { section: 'hero', cta: 'primary' })}>
                 <Button size="lg">
                   {ctaPrimary}
                   <ArrowRight className="ml-2 h-4 w-4" suppressHydrationWarning />
                 </Button>
               </Link>
-              <Link prefetch={false} href={lp('/research')}>
+              <Link prefetch={false} href={lp('/research')} onClick={() => trackEvent('CTA Click', { section: 'hero', cta: 'secondary' })}>
                 <Button variant="outline" size="lg">
                   {ctaSecondary}
                 </Button>
