@@ -52,6 +52,17 @@ export const domains: DomainItem[] = [
     ],
   },
   {
+    key: 'ai',
+    label: 'AI',
+    href: '/ai',
+    description: 'Agent registry, labs & intelligence hub',
+    children: [
+      { key: 'labs',           label: 'AI Labs',          href: '/labs',              description: 'Production AI platforms'        },
+      { key: 'intelligence',   label: 'Live Intelligence', href: '/intelligence',      description: 'Real-time signal monitoring'     },
+      { key: 'agents',         label: 'Agent Registry',   href: '/resources/agents',  description: 'Agent architectures & tools'    },
+    ],
+  },
+  {
     key: 'intelligence',
     label: 'Intelligence',
     href: '/intelligence',

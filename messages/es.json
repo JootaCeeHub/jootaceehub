@@ -827,5 +827,28 @@
       "ctaSecondary": "Ver Trabajo",
       "email": "contact@jootacee.com"
     }
+  },
+  "ai": {
+    "badge": "Hub de IA",
+    "title": "Inteligencia Artificial",
+    "description": "Hub central para investigación en IA, arquitecturas de agentes, feeds de inteligencia en vivo y proyectos de laboratorio. Explora la intersección de la ingeniería de sistemas y la inteligencia máquina.",
+    "sections": {
+      "labs": {
+        "label": "Laboratorios IA",
+        "description": "Plataformas IA en producción — orquestación AURA, señales de trading, inteligencia CRM y automatización ERP."
+      },
+      "intelligence": {
+        "label": "Inteligencia en Vivo",
+        "description": "Monitoreo de señales en tiempo real, feeds curados y agregación de investigación automatizada."
+      },
+      "agents": {
+        "label": "Registro de Agentes",
+        "description": "Arquitecturas de agentes curadas, habilidades de Claude Code y registro de servidores MCP."
+      },
+      "systems": {
+        "label": "Arquitectura de Sistemas",
+        "description": "Diseño de sistemas integrados con IA, patrones de infraestructura y showcase de arquitectura distribuida."
+      }
+    }
   }
 }

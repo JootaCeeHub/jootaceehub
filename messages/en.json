@@ -827,5 +827,28 @@
       "ctaSecondary": "View Work",
       "email": "contact@jootacee.com"
     }
+  },
+  "ai": {
+    "badge": "AI Hub",
+    "title": "Artificial Intelligence",
+    "description": "Central hub for AI research, agent architectures, live intelligence feeds, and lab projects. Explore the intersection of systems engineering and machine intelligence.",
+    "sections": {
+      "labs": {
+        "label": "AI Labs",
+        "description": "Production AI platforms — AURA orchestration, trading signals, CRM intelligence, and ERP automation."
+      },
+      "intelligence": {
+        "label": "Live Intelligence",
+        "description": "Real-time signal monitoring, curated feeds, and automated research aggregation."
+      },
+      "agents": {
+        "label": "Agent Registry",
+        "description": "Curated agent architectures, Claude Code skills, and MCP server registry."
+      },
+      "systems": {
+        "label": "Systems Architecture",
+        "description": "AI-integrated systems design, infrastructure patterns, and distributed architecture showcase."
+      }
+    }
   }
 }

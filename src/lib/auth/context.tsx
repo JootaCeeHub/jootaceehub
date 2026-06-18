@@ -40,11 +40,11 @@ function decodeJwt(token: string): Record<string, unknown> {
 function loadStoredUser(): AuthUser | null {
   if (typeof window === 'undefined') return null
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
+    const raw = sessionStorage.getItem(STORAGE_KEY)
     if (!raw) return null
     const user: AuthUser = JSON.parse(raw)
     if (Date.now() / 1000 > user.expiresAt) {
-      localStorage.removeItem(STORAGE_KEY)
+      sessionStorage.removeItem(STORAGE_KEY)
       return null
     }
     return user
@@ -74,7 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     setUser(authUser)
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(authUser))
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(authUser))
     } catch {
       // ignore quota errors
     }
@@ -91,7 +91,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     setUser(anonUser)
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(anonUser))
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(anonUser))
     } catch {
       // ignore
     }
@@ -100,7 +100,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = useCallback(() => {
     setUser(null)
     try {
-      localStorage.removeItem(STORAGE_KEY)
+      sessionStorage.removeItem(STORAGE_KEY)
     } catch {
       // ignore
     }
