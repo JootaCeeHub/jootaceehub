@@ -10,6 +10,7 @@ export type Tab =
   | 'errors'
   | 'history'
   | 'insights'
+  | 'phase2'
 
 export type CWVStatus = 'good' | 'needs-improvement' | 'poor'
 

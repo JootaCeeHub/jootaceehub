@@ -34,6 +34,7 @@ import { ErrorsTab }       from './analytics/tabs/ErrorsTab'
 import { HistoryTab }      from './analytics/tabs/HistoryTab'
 import { InsightsTab }     from './analytics/tabs/InsightsTab'
 import { ProjectTab }      from './analytics/tabs/ProjectTab'
+import { Phase2Tab }      from './analytics/tabs/Phase2Tab'
 
 // ─── Analytics lib ────────────────────────────────────────────────────────────
 import {
@@ -632,6 +633,7 @@ export default function AnalyticsPanel() {
     { id: 'errors',        label: 'Errors',      icon: AlertTriangle, badge: errorCount },
     { id: 'history',       label: 'History',     icon: Clock,         badge: historyEntries.length > 0 ? historyEntries.length : undefined },
     { id: 'insights',      label: 'AI Insights', icon: Sparkles     },
+    { id: 'phase2',        label: 'Phase 2',     icon: Radio        },
   ]
 
   const exportBtnCls = (done: boolean) =>
@@ -879,6 +881,7 @@ export default function AnalyticsPanel() {
         />
       )}
       {activeTab === 'insights' && <InsightsTab aiAnalysis={aiAnalysis} prodChecks={prodChecks} healthDomains={healthDomains} />}
+      {activeTab === 'phase2'   && <Phase2Tab />}
     </div>
   )
 }
