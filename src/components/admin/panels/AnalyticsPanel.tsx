@@ -4,7 +4,7 @@
 import React, { useState, useMemo, useEffect, useCallback, useRef, useDeferredValue } from 'react'
 import {
   BarChart3, Gauge, Zap, Search, Shield, Layers, Code2,
-  AlertTriangle, Copy, CheckCircle2, Package, Play, Loader2, Radio, Sparkles, Clock,
+  AlertTriangle, Copy, CheckCircle2, Package, Play, Loader2, Radio, Sparkles, Clock, Construction,
 } from 'lucide-react'
 import { useAdmin } from '@/lib/admin/store'
 
@@ -35,6 +35,7 @@ import { HistoryTab }      from './analytics/tabs/HistoryTab'
 import { InsightsTab }     from './analytics/tabs/InsightsTab'
 import { ProjectTab }      from './analytics/tabs/ProjectTab'
 import { Phase2Tab }      from './analytics/tabs/Phase2Tab'
+import { Phase3Tab }      from './analytics/tabs/Phase3Tab'
 
 // ─── Analytics lib ────────────────────────────────────────────────────────────
 import {
@@ -634,6 +635,7 @@ export default function AnalyticsPanel() {
     { id: 'history',       label: 'History',     icon: Clock,         badge: historyEntries.length > 0 ? historyEntries.length : undefined },
     { id: 'insights',      label: 'AI Insights', icon: Sparkles     },
     { id: 'phase2',        label: 'Phase 2',     icon: Radio        },
+    { id: 'phase3',        label: 'Phase 3',     icon: Construction },
   ]
 
   const exportBtnCls = (done: boolean) =>
@@ -882,6 +884,7 @@ export default function AnalyticsPanel() {
       )}
       {activeTab === 'insights' && <InsightsTab aiAnalysis={aiAnalysis} prodChecks={prodChecks} healthDomains={healthDomains} />}
       {activeTab === 'phase2'   && <Phase2Tab />}
+      {activeTab === 'phase3'   && <Phase3Tab />}
     </div>
   )
 }
