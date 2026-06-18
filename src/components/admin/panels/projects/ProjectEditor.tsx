@@ -1,10 +1,13 @@
 'use client'
 
+import { useState } from 'react'
 import { useAdmin } from '@/lib/admin/store'
 import type { ProjectEntry, ProjectStatus, ProjectCategory } from '@/lib/admin/types'
 import { cn } from '@/lib/utils'
 import { uid, now, STATUS_OPTIONS, CATEGORY_OPTIONS } from './constants'
 import { TagInput } from './TagInput'
+import { CmsStatusSelector, PreviewLink } from '@/components/admin/panels/cms/CmsStatusBadge'
+import { validateProject, fieldError, type ValidationResult } from '@/lib/cms/validation'
 
 interface Props {
   project: ProjectEntry
@@ -12,17 +15,38 @@ interface Props {
 
 export function ProjectEditor({ project }: Props) {
   const { dispatch } = useAdmin()
+  const [validation, setValidation] = useState<ValidationResult | null>(null)
 
   function update(data: Partial<ProjectEntry>) {
+    const updated = { ...project, ...data }
+    const result = validateProject(updated)
+    setValidation(result)
     dispatch({ type: 'UPDATE_PROJECT', payload: { id: project.id, data } })
   }
 
+  const fe = (field: string) => validation ? fieldError(validation, field) : undefined
+
   return (
     <div className="border-t border-white/8 p-4 space-y-4">
+      {/* CMS Status Row */}
+      <div className="flex items-center justify-between gap-3 rounded-lg border border-white/8 bg-white/[0.02] px-3 py-2">
+        <CmsStatusSelector contentType="project" contentId={project.id} current={project.cmsStatus ?? (project.published ? 'published' : 'draft')} />
+        <div className="flex items-center gap-2">
+          {validation && !validation.valid && (
+            <span className="font-mono text-[8px] text-rose-400/70">{validation.errors.length} validation error{validation.errors.length > 1 ? 's' : ''}</span>
+          )}
+          {validation && validation.valid && (
+            <span className="font-mono text-[8px] text-emerald-400/60">✓ valid</span>
+          )}
+          <PreviewLink contentType="project" contentId={project.id} />
+        </div>
+      </div>
+
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1">
           <div className="font-mono text-[9px] uppercase tracking-[0.12em] text-white/30">Title</div>
-          <input value={project.title} onChange={(e) => update({ title: e.target.value })} className="w-full rounded-lg border border-white/8 bg-black/20 px-2.5 py-1.5 text-[11px] text-white/65 placeholder-white/20 outline-none focus:border-violet-400/25 transition-colors" />
+          <input value={project.title} onChange={(e) => update({ title: e.target.value })} className={cn('w-full rounded-lg border bg-black/20 px-2.5 py-1.5 text-[11px] text-white/65 placeholder-white/20 outline-none focus:border-violet-400/25 transition-colors', fe('title') ? 'border-rose-400/40' : 'border-white/8')} />
+          {fe('title') && <p className="font-mono text-[8px] text-rose-400/70">{fe('title')}</p>}
         </div>
         <div className="space-y-1">
           <div className="font-mono text-[9px] uppercase tracking-[0.12em] text-white/30">Tagline</div>
@@ -51,7 +75,8 @@ export function ProjectEditor({ project }: Props) {
 
       <div className="space-y-1">
         <div className="font-mono text-[9px] uppercase tracking-[0.12em] text-white/30">Description</div>
-        <textarea value={project.description} onChange={(e) => update({ description: e.target.value })} rows={3} placeholder="Short paragraph for project cards…" className="w-full rounded-lg border border-white/8 bg-black/20 px-2.5 py-1.5 text-[11px] text-white/65 placeholder-white/20 outline-none focus:border-violet-400/25 transition-colors resize-none leading-relaxed" />
+        <textarea value={project.description} onChange={(e) => update({ description: e.target.value })} rows={3} placeholder="Short paragraph for project cards…" className={cn('w-full rounded-lg border bg-black/20 px-2.5 py-1.5 text-[11px] text-white/65 placeholder-white/20 outline-none focus:border-violet-400/25 transition-colors resize-none leading-relaxed', fe('description') ? 'border-rose-400/40' : 'border-white/8')} />
+        {fe('description') && <p className="font-mono text-[8px] text-rose-400/70">{fe('description')}</p>}
       </div>
 
       <div className="space-y-1">
@@ -62,7 +87,8 @@ export function ProjectEditor({ project }: Props) {
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1">
           <div className="font-mono text-[9px] uppercase tracking-[0.12em] text-white/30">Repo URL</div>
-          <input value={project.repoUrl ?? ''} onChange={(e) => update({ repoUrl: e.target.value })} placeholder="https://github.com/…" className="w-full rounded-lg border border-white/8 bg-black/20 px-2.5 py-1.5 text-[11px] text-white/65 placeholder-white/20 outline-none focus:border-violet-400/25 transition-colors" />
+          <input value={project.repoUrl ?? ''} onChange={(e) => update({ repoUrl: e.target.value })} placeholder="https://github.com/…" className={cn('w-full rounded-lg border bg-black/20 px-2.5 py-1.5 text-[11px] text-white/65 placeholder-white/20 outline-none focus:border-violet-400/25 transition-colors', fe('repoUrl') ? 'border-rose-400/40' : 'border-white/8')} />
+          {fe('repoUrl') && <p className="font-mono text-[8px] text-rose-400/70">{fe('repoUrl')}</p>}
         </div>
         <div className="space-y-1">
           <div className="font-mono text-[9px] uppercase tracking-[0.12em] text-white/30">Live URL</div>

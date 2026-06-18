@@ -43,6 +43,16 @@ export const ContentRevisionSchema = z.object({
   snapshot:    z.record(z.string(), z.unknown()),
 })
 
+export const SeriesSchema = z.object({
+  id:          z.string().min(1),
+  slug:        z.string().regex(/^[a-z0-9-]+$/),
+  title:       z.string().min(1),
+  description: z.string().optional(),
+  order:       z.array(z.string()),
+  contentType: z.enum(['project', 'research', 'lab', 'system']),
+  createdAt:   z.string(),
+})
+
 // ─── Site Core ────────────────────────────────────────────────────────────────
 
 export const SiteConfigSchema = z.object({
@@ -806,6 +816,7 @@ export const AdminStateSchema = z.object({
   tagRegistry:      z.array(TagSchema).optional(),
   categoryRegistry: z.array(CategorySchema).optional(),
   mediaRegistry:    z.array(MediaItemSchema).optional(),
+  seriesRegistry:   z.array(SeriesSchema).optional(),
   revisionLog:      z.array(ContentRevisionSchema).optional(),
   studioConfig: z.object({
     sidebarWidth:       z.enum(['compact', 'normal', 'wide']).optional(),

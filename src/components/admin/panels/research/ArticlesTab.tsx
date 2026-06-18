@@ -5,6 +5,7 @@ import { useAdmin } from '@/lib/admin/store'
 import type { ResearchCategory, ResearchEntry } from '@/lib/admin/types'
 import { ARTICLE_CATEGORIES, CAT_COLORS } from './utils'
 import { TagChips } from './TagChips'
+import { CmsStatusSelector, PreviewLink } from '@/components/admin/panels/cms/CmsStatusBadge'
 
 export function ArticlesTab() {
   const { state, dispatch } = useAdmin()
@@ -79,6 +80,11 @@ export function ArticlesTab() {
 
               {isOpen && (
                 <div className="border-t border-white/6 px-4 py-3 space-y-3">
+                  {/* CMS Status Row */}
+                  <div className="flex items-center justify-between gap-3 rounded-lg border border-white/8 bg-white/[0.02] px-3 py-2">
+                    <CmsStatusSelector contentType="research" contentId={article.slug} current={article.cmsStatus ?? (article.published ? 'published' : 'draft')} />
+                    <PreviewLink contentType="research" contentId={article.slug} />
+                  </div>
                   <div className="flex flex-wrap items-center gap-2">
                     <button onClick={() => upd(article.slug, { published: !article.published })} className={`rounded-lg border px-2.5 py-1 font-mono text-[9px] transition-colors ${article.published ? 'border-emerald-400/25 text-emerald-400 bg-emerald-400/8 hover:bg-emerald-400/15' : 'border-white/10 text-white/30 hover:border-white/20'}`}>
                       {article.published ? '● Published' : '○ Draft'}

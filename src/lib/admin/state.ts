@@ -265,6 +265,7 @@ export const createInitialState = (): AdminState => ({
   tagRegistry: [],
   categoryRegistry: [],
   mediaRegistry: [],
+  seriesRegistry: [],
   revisionLog: [],
   studioConfig: defaultStudioConfig,
   unsaved: false,

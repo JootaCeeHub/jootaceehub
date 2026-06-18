@@ -265,6 +265,7 @@ export interface ResearchEntry {
   published: boolean
   featured: boolean
   createdAt?: string
+  publishedAt?: string
   /** Full lifecycle status. `published` flag kept for backward compat. */
   cmsStatus?: CmsStatus
 }
@@ -300,6 +301,7 @@ export interface ProjectEntry {
   roadmap?: string
   createdAt: string
   updatedAt: string
+  publishedAt?: string
   relatedResearch?: string[]
   relatedResources?: string[]
   accent: string
@@ -344,6 +346,18 @@ export interface MediaItem {
   mimeType?: string
   source: MediaSource
   addedAt: string
+}
+
+/** Ordered reading sequence grouping content items. */
+export interface Series {
+  id: string
+  slug: string
+  title: string
+  description?: string
+  /** ContentItem IDs in reading order */
+  order: string[]
+  contentType: RevisionContentType
+  createdAt: string
 }
 
 /** Point-in-time snapshot of a portfolio content item for revision history. */
@@ -1241,10 +1255,11 @@ export interface AdminState {
   editingPostId: string | null
   intakeType: EntryType | null
   pagesActiveTab?: string
-  // CMS Phase 3 — taxonomies, media, revisions
+  // CMS Phase 3 — taxonomies, media, revisions, series
   tagRegistry: Tag[]
   categoryRegistry: Category[]
   mediaRegistry: MediaItem[]
+  seriesRegistry: Series[]
   /** Rolling revision log — max 50 entries (oldest pruned). */
   revisionLog: ContentRevision[]
   // Command Center
@@ -1431,8 +1446,14 @@ export type AdminAction =
   // CMS Phase 3 — Revision Log
   | { type: 'LOG_REVISION'; payload: ContentRevision }
   | { type: 'CLEAR_REVISIONS'; payload: { contentId: string; contentType: RevisionContentType } }
+  | { type: 'RESTORE_REVISION'; payload: ContentRevision }
   // CMS Phase 3 — Publishing Workflow
   | { type: 'CONTENT_SET_STATUS'; payload: { contentType: RevisionContentType; contentId: string; status: CmsStatus } }
+  // CMS Phase 3 — Series Registry
+  | { type: 'SET_SERIES_REGISTRY'; payload: Series[] }
+  | { type: 'ADD_SERIES'; payload: Series }
+  | { type: 'UPDATE_SERIES'; payload: { id: string; data: Partial<Series> } }
+  | { type: 'REMOVE_SERIES'; payload: string }
   // CMS Phase 3 — Deploy Hook
   | { type: 'SET_DEPLOY_HOOK_URL'; payload: string }
   | { type: 'DEPLOY_TRIGGERED'; payload: string }
