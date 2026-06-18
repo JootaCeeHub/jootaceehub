@@ -25,7 +25,7 @@
     "validate:content": "node scripts/validate-content.mjs",
     "fetch:github": "node scripts/fetch-github-data.mjs",
     "fetch:lighthouse": "node scripts/fetch-lighthouse.mjs",
-    "postbuild": "node scripts/fetch-github-data.mjs && node scripts/fetch-lighthouse.mjs && node scripts/convert-icons.js && node scripts/beautify-html.mjs && node scripts/generate-sitemap.mjs && node scripts/generate-rss.mjs && node scripts/generate-og.mjs && pagefind --site dist --output-path dist/_pagefind",
+    "postbuild": "node scripts/fetch-github-data.mjs && node scripts/fetch-lighthouse.mjs && node scripts/convert-icons.js && node scripts/beautify-html.mjs && node scripts/generate-sitemap.mjs && node scripts/generate-rss.mjs && node scripts/generate-og.mjs && pagefind --site dist --output-path dist/_pagefind && node scripts/chunk-manifest.mjs",
     "clean": "rm -rf dist",
     "prepare": "husky"
   },

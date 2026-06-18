@@ -15,24 +15,12 @@ export default function manifest(): MetadataRoute.Manifest {
     orientation: 'portrait-primary',
     categories: ['technology', 'business', 'productivity'],
     icons: [
-      {
-        src: '/icon-192x192.png',
-        sizes: '192x192',
-        type: 'image/png',
-        purpose: 'any',
-      },
-      {
-        src: '/icon-512x512.png',
-        sizes: '512x512',
-        type: 'image/png',
-        purpose: 'any',
-      },
-      {
-        src: '/maskable-icon.png',
-        sizes: '192x192',
-        type: 'image/png',
-        purpose: 'maskable',
-      },
+      { src: '/icon-192x192.webp', sizes: '192x192', type: 'image/webp', purpose: 'any' },
+      { src: '/icon-192x192.png',  sizes: '192x192', type: 'image/png',  purpose: 'any' },
+      { src: '/icon-512x512.webp', sizes: '512x512', type: 'image/webp', purpose: 'any' },
+      { src: '/icon-512x512.png',  sizes: '512x512', type: 'image/png',  purpose: 'any' },
+      { src: '/maskable-icon.webp', sizes: '192x192', type: 'image/webp', purpose: 'maskable' },
+      { src: '/maskable-icon.png',  sizes: '192x192', type: 'image/png',  purpose: 'maskable' },
     ],
     shortcuts: [
       {

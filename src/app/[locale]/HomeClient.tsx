@@ -10,6 +10,7 @@ import { LazySection } from '@/components/shared/LazySection'
 import { HeroSection } from '@/components/sections/HeroSection'
 import { useTranslations } from '@/lib/i18n'
 import { installConsoleFilter } from '@/lib/logger'
+import { usePerfTier } from '@/hooks/usePerfTier'
 import type { ArticleMeta } from '@/lib/journal/types'
 
 // Overlays — defer off critical path
@@ -47,6 +48,7 @@ interface HomeClientProps {
 export function HomeClient({ featured, recent }: HomeClientProps) {
   const [showPreloader, setShowPreloader] = useState(false)
   const t = useTranslations('accessibility')
+  const { tier, ready } = usePerfTier()
 
   useEffect(() => {
     installConsoleFilter()
@@ -63,7 +65,8 @@ export function HomeClient({ featured, recent }: HomeClientProps) {
   return (
     <>
       {showPreloader && <Preloader onComplete={handlePreloaderComplete} />}
-      <VisualEffectsLayer />
+      {/* Skip GSAP background effects on low-performance devices to reduce TBT */}
+      {(!ready || tier !== 'low') && <VisualEffectsLayer />}
 
       <div className="relative min-h-screen">
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-foreground focus:outline-none focus:ring-2 focus:ring-primary">

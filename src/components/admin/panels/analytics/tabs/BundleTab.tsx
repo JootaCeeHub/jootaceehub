@@ -88,12 +88,12 @@ export function BundleTab({ bundleSummary, liveBundles, lastRefreshed }: Props) 
       <Card dot="#34d399" title="Code splitting opportunities">
         <div className="space-y-2">
           {[
-            { title: 'NeuralNetworkScene (R3F)',   desc: 'Already Suspense-wrapped. Add ssr: false to prevent SSR bundle inclusion.', status: 'partial' as const },
-            { title: 'LabsSection 3D components', desc: 'TradingLab, STLLab use R3F inline. Each needs a dynamic import wrapper.',    status: 'pending' as const },
-            { title: 'GSAP ScrollTrigger plugin', desc: 'Import only ScrollTrigger at call site, not top-level in every component.',  status: 'pending' as const },
-            { title: 'Admin panel chunks',         desc: 'PanelRouter already lazy-loads each panel. Admin stays in its own chunk.',  status: 'done'    as const },
-            { title: 'Framer Motion',              desc: 'motion.* imports tree-shake well via bundler dead-code elimination.',       status: 'done'    as const },
-            { title: 'Lucide icons',               desc: 'Named imports only — each icon is a separate tree-shakeable module.',       status: 'done'    as const },
+            { title: 'NeuralNetworkScene (R3F)',   desc: 'dynamic(ssr:false) + Suspense. requestIdleCallback gate. frameloop paused when scrolled out. Three.js isolated in dedicated chunk via webpack cacheGroups.three.', status: 'done'    as const },
+            { title: 'Admin panel chunks',         desc: 'PanelRouter lazy-loads each panel. useAdmin never imported in [locale] routes. Admin JS stays in its own async chunk — verified via grep.',                        status: 'done'    as const },
+            { title: 'Framer Motion',              desc: 'motion.* imports tree-shake via bundler DCE. optimizePackageImports in next.config.ts ensures only used motion components are bundled.',                          status: 'done'    as const },
+            { title: 'Lucide icons',               desc: 'Named imports only — each icon is a separate tree-shakeable module. No barrel import of the entire icon set.',                                                     status: 'done'    as const },
+            { title: 'GSAP',                       desc: 'GSAP is NOT in the bundle — animations use Framer Motion exclusively. ScrollReveal.tsx comment confirms: "GSAP + ScrollTrigger replaced with framer-motion useInView".',                                                            status: 'done'    as const },
+            { title: 'LabsSection 3D components', desc: 'TradingLab, STLLab, ERPLab use R3F inline. Each is wrapped in LazySection (IntersectionObserver gate) so chunks only download when near viewport.', status: 'partial' as const },
           ].map((item) => (
             <div key={item.title} className="flex items-start gap-3 border-b border-white/5 last:border-0 py-2.5">
               <span className={splitStatusCls(item.status)} />
