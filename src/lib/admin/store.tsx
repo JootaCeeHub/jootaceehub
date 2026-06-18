@@ -16,6 +16,7 @@ import { integrationsHandler } from './slices/integrations'
 import { aiHandler } from './slices/ai'
 import { capabilitiesHandler } from './slices/capabilities'
 import { studioHandler } from './slices/studio'
+import { cmsHandler } from './slices/cms'
 
 const SLICE_HANDLERS = [
   uiHandler,
@@ -28,6 +29,7 @@ const SLICE_HANDLERS = [
   aiHandler,
   capabilitiesHandler,
   studioHandler,
+  cmsHandler,
 ] as const
 
 const STORAGE_KEY = 'jootacee-command-v2'
@@ -151,13 +153,41 @@ export function adminReducer(state: AdminState, action: AdminAction): AdminState
     return next
   }
 
+  // Auto-revision: snapshot the item before content mutations are applied
+  const preRevisionState = autoSnapshotBeforeMutation(state, action)
+  const baseState = preRevisionState ?? state
+
   // Delegate to domain slice handlers — first match wins
   for (const handler of SLICE_HANDLERS) {
-    const result = handler(state, action)
+    const result = handler(baseState, action)
     if (result !== null) return result
   }
 
-  return state
+  return baseState
+}
+
+/** Returns a new state with a revision appended before a destructive content mutation, or null if not applicable. */
+function autoSnapshotBeforeMutation(state: AdminState, action: AdminAction): AdminState | null {
+  const MAX_REVISIONS = 50
+  let revision: import('./types').ContentRevision | null = null
+  const ts = new Date().toISOString()
+
+  if (action.type === 'UPDATE_PROJECT') {
+    const item = state.projectsRegistry.find(p => p.id === action.payload.id)
+    if (item) revision = { id: `${ts}-${item.id}`, contentId: item.id, contentType: 'project', savedAt: ts, snapshot: item as unknown as Record<string, unknown> }
+  } else if (action.type === 'UPDATE_RESEARCH_ENTRY') {
+    const item = state.researchRegistry.find(r => r.slug === action.payload.slug)
+    if (item) revision = { id: `${ts}-${item.slug}`, contentId: item.slug, contentType: 'research', savedAt: ts, snapshot: item as unknown as Record<string, unknown> }
+  } else if (action.type === 'UPDATE_LAB') {
+    const item = state.labsRegistry.find(l => l.key === action.payload.key)
+    if (item) revision = { id: `${ts}-${item.key}`, contentId: item.key, contentType: 'lab', savedAt: ts, snapshot: item as unknown as Record<string, unknown> }
+  } else if (action.type === 'UPDATE_SYSTEM') {
+    const item = state.systemsRegistry.find(s => s.key === action.payload.key)
+    if (item) revision = { id: `${ts}-${item.key}`, contentId: item.key, contentType: 'system', savedAt: ts, snapshot: item as unknown as Record<string, unknown> }
+  }
+
+  if (!revision) return null
+  return { ...state, revisionLog: [...state.revisionLog, revision].slice(-MAX_REVISIONS) }
 }
 
 function _unused_adminReducer_legacy(state: AdminState, action: AdminAction): AdminState {

@@ -15,6 +15,7 @@ import { GitHubTab }    from './integrations/GitHubTab'
 import { FilesTab }     from './integrations/FilesTab'
 import { LinksTab }     from './integrations/LinksTab'
 import { HermesTab }    from './capabilities/HermesTab'
+import { DeployTab }    from './integrations/DeployTab'
 
 // ─── Tab union ────────────────────────────────────────────────────────────────
 
@@ -27,6 +28,7 @@ const ALL_TABS: { id: Tab; label: string; group: 'sources' | 'agents' }[] = [
   { id: 'github',    label: 'GitHub',     group: 'sources' },
   { id: 'files',     label: 'Files',      group: 'sources' },
   { id: 'links',     label: 'Links & DBs', group: 'sources' },
+  { id: 'deploy',    label: 'Deploy',     group: 'sources' },
   // ── AI capabilities (absorbed from Capabilities) ──────────────────────────
   { id: 'agentes',   label: 'Agentes',    group: 'agents' },
   { id: 'hermes',    label: 'Hermes ☤',  group: 'agents' },
@@ -243,6 +245,7 @@ export default function IntegrationsPanel({ initialTab }: { initialTab?: Tab } =
       {tab === 'github'    && <GitHubTab onNavigateToSources={() => setTab('sources')} />}
       {tab === 'files'     && <FilesTab  onNavigateToSources={() => setTab('sources')} />}
       {tab === 'links'     && <LinksTab  onNavigateToSources={() => setTab('sources')} />}
+      {tab === 'deploy'    && <DeployTab />}
 
       {/* ─── AGENTES TAB ─────────────────────────────────────────────────────── */}
       {tab === 'agentes' && (

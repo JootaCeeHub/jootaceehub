@@ -105,15 +105,16 @@ function GoalCard({ goal }: { goal: CMSGoal }) {
     return parent && parent.status !== 'done'
   })
 
-  const borderColor = isBlocked ? 'border-rose-400/10' : 'border-white/8'
-  const iconBg      = isBlocked ? '#f8717108' : '#f59e0b08'
+  const borderColor = isBlocked ? 'border-rose-400/10' : goal.status === 'done' ? 'border-emerald-400/12' : 'border-white/8'
+  const iconBg      = isBlocked ? '#f8717108' : goal.status === 'done' ? '#34d39908' : '#f59e0b08'
+  const iconColor   = isBlocked ? 'text-rose-400/50' : goal.status === 'done' ? 'text-emerald-400/55' : goal.status === 'in-progress' ? 'text-amber-400/55' : 'text-white/25'
 
   return (
     <div className={cn('flex flex-col overflow-hidden rounded-xl border bg-white/[0.02]', borderColor)}>
       {/* Header */}
       <div className="flex items-start gap-3 px-4 pb-3 pt-4">
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-white/8" style={{ background: iconBg }}>
-          <Icon className="h-4 w-4 text-amber-400/55" />
+          <Icon className={cn('h-4 w-4', iconColor)} />
         </div>
 
         <div className="min-w-0 flex-1 space-y-1">
@@ -123,8 +124,13 @@ function GoalCard({ goal }: { goal: CMSGoal }) {
             </span>
             <StatusBadge status={goal.status} />
             {goal.adr && (
-              <span className="rounded border border-sky-400/15 bg-sky-400/5 px-1.5 py-0.5 font-mono text-[7px] text-sky-400/55">
-                {goal.adr} needed
+              <span className={cn(
+                'rounded border px-1.5 py-0.5 font-mono text-[7px]',
+                goal.status === 'done' || goal.status === 'in-progress'
+                  ? 'border-emerald-400/15 bg-emerald-400/5 text-emerald-400/55'
+                  : 'border-sky-400/15 bg-sky-400/5 text-sky-400/55'
+              )}>
+                {goal.adr}
               </span>
             )}
             {isBlocked && (
@@ -137,7 +143,13 @@ function GoalCard({ goal }: { goal: CMSGoal }) {
 
           {/* Progress bar */}
           <div className="h-0.5 w-full overflow-hidden rounded-full bg-white/5">
-            <div className="h-full rounded-full bg-amber-400/40 transition-all duration-700" style={{ width: `${progress}%` }} />
+            <div
+              className="h-full rounded-full transition-all duration-700"
+              style={{
+                width: `${progress}%`,
+                background: goal.status === 'done' ? '#34d39966' : goal.status === 'in-progress' ? '#f59e0b66' : '#ffffff22',
+              }}
+            />
           </div>
         </div>
 

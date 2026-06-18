@@ -42,6 +42,7 @@ export type AdminPanel =
   | 'capabilities'
   | 'studio'
   | 'search'
+  | 'taxonomy'
 
 // ─── Studio Config (Command Center settings) ──────────────────────────────────
 
@@ -264,6 +265,8 @@ export interface ResearchEntry {
   published: boolean
   featured: boolean
   createdAt?: string
+  /** Full lifecycle status. `published` flag kept for backward compat. */
+  cmsStatus?: CmsStatus
 }
 
 // ─── Projects Manager ────────────────────────────────────────────────────────
@@ -300,6 +303,60 @@ export interface ProjectEntry {
   relatedResearch?: string[]
   relatedResources?: string[]
   accent: string
+  /** Full lifecycle status. `published` flag kept for backward compat. */
+  cmsStatus?: CmsStatus
+}
+
+// ─── CMS Phase 3 — Content Lifecycle ─────────────────────────────────────────
+
+/** Four-stage lifecycle for portfolio content managed in AdminState. */
+export type CmsStatus = 'draft' | 'review' | 'published' | 'archived'
+
+/** Global taxonomy atom. Tags are defined once, referenced by slug everywhere. */
+export interface Tag {
+  id: string
+  slug: string
+  label: string
+  color?: string
+  description?: string
+  createdAt: string
+}
+
+/** Hierarchical taxonomy node (optional parent for nesting). */
+export interface Category {
+  id: string
+  slug: string
+  label: string
+  description?: string
+  parentId?: string
+  createdAt: string
+}
+
+/** External media asset for portfolio content (URLs only — no file upload in static export). */
+export type MediaSource = 'external' | 'github'
+export interface MediaItem {
+  id: string
+  url: string
+  alt: string
+  caption?: string
+  width?: number
+  height?: number
+  mimeType?: string
+  source: MediaSource
+  addedAt: string
+}
+
+/** Point-in-time snapshot of a portfolio content item for revision history. */
+export type RevisionContentType = 'project' | 'research' | 'lab' | 'system'
+export interface ContentRevision {
+  id: string
+  contentId: string
+  contentType: RevisionContentType
+  savedAt: string
+  note?: string
+  // reason: generic snapshot — caller controls shape, restored via typed dispatch
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  snapshot: Record<string, any>
 }
 
 // ─── Curated Links ────────────────────────────────────────────────────────────
@@ -807,6 +864,10 @@ export interface IntegrationsConfig {
   github: GitHubIntegration
   dataSources: DataSource[]
   socialPlatforms: SocialPlatform[]
+  /** Vercel / Netlify / CF Pages deploy hook URL. Stored here for single-admin convenience. */
+  deployHookUrl?: string
+  /** ISO timestamp of last manual deploy trigger. */
+  lastDeployTriggeredAt?: string
 }
 
 // ─── Hermes Agent ─────────────────────────────────────────────────────────────
@@ -1180,6 +1241,12 @@ export interface AdminState {
   editingPostId: string | null
   intakeType: EntryType | null
   pagesActiveTab?: string
+  // CMS Phase 3 — taxonomies, media, revisions
+  tagRegistry: Tag[]
+  categoryRegistry: Category[]
+  mediaRegistry: MediaItem[]
+  /** Rolling revision log — max 50 entries (oldest pruned). */
+  revisionLog: ContentRevision[]
   // Command Center
   studioConfig: StudioConfig
   // Meta
@@ -1346,4 +1413,27 @@ export type AdminAction =
   | { type: 'STUDIO_DELETE_PRESET'; payload: string }
   | { type: 'STUDIO_SAVE_WORKSPACE_PROFILE'; payload: StudioWorkspaceProfile }
   | { type: 'STUDIO_DELETE_WORKSPACE_PROFILE'; payload: string }
+  // CMS Phase 3 — Tag Registry
+  | { type: 'SET_TAG_REGISTRY'; payload: Tag[] }
+  | { type: 'ADD_TAG'; payload: Tag }
+  | { type: 'UPDATE_TAG'; payload: { id: string; data: Partial<Tag> } }
+  | { type: 'REMOVE_TAG'; payload: string }
+  // CMS Phase 3 — Category Registry
+  | { type: 'SET_CATEGORY_REGISTRY'; payload: Category[] }
+  | { type: 'ADD_CATEGORY'; payload: Category }
+  | { type: 'UPDATE_CATEGORY'; payload: { id: string; data: Partial<Category> } }
+  | { type: 'REMOVE_CATEGORY'; payload: string }
+  // CMS Phase 3 — Media Registry
+  | { type: 'SET_MEDIA_REGISTRY'; payload: MediaItem[] }
+  | { type: 'ADD_MEDIA_ITEM'; payload: MediaItem }
+  | { type: 'UPDATE_MEDIA_ITEM'; payload: { id: string; data: Partial<MediaItem> } }
+  | { type: 'REMOVE_MEDIA_ITEM'; payload: string }
+  // CMS Phase 3 — Revision Log
+  | { type: 'LOG_REVISION'; payload: ContentRevision }
+  | { type: 'CLEAR_REVISIONS'; payload: { contentId: string; contentType: RevisionContentType } }
+  // CMS Phase 3 — Publishing Workflow
+  | { type: 'CONTENT_SET_STATUS'; payload: { contentType: RevisionContentType; contentId: string; status: CmsStatus } }
+  // CMS Phase 3 — Deploy Hook
+  | { type: 'SET_DEPLOY_HOOK_URL'; payload: string }
+  | { type: 'DEPLOY_TRIGGERED'; payload: string }
   | { type: 'STUDIO_RESET' }

@@ -1,5 +1,48 @@
 import { z } from 'zod'
 
+// ─── CMS Phase 3 Schemas ──────────────────────────────────────────────────────
+
+export const CmsStatusSchema = z.enum(['draft', 'review', 'published', 'archived'])
+
+export const TagSchema = z.object({
+  id:          z.string().min(1),
+  slug:        z.string().regex(/^[a-z0-9-]+$/),
+  label:       z.string().min(1),
+  color:       z.string().optional(),
+  description: z.string().optional(),
+  createdAt:   z.string(),
+})
+
+export const CategorySchema = z.object({
+  id:          z.string().min(1),
+  slug:        z.string().regex(/^[a-z0-9-]+$/),
+  label:       z.string().min(1),
+  description: z.string().optional(),
+  parentId:    z.string().optional(),
+  createdAt:   z.string(),
+})
+
+export const MediaItemSchema = z.object({
+  id:       z.string().min(1),
+  url:      z.string().url(),
+  alt:      z.string().min(1),
+  caption:  z.string().optional(),
+  width:    z.number().int().positive().optional(),
+  height:   z.number().int().positive().optional(),
+  mimeType: z.string().optional(),
+  source:   z.enum(['external', 'github']),
+  addedAt:  z.string(),
+})
+
+export const ContentRevisionSchema = z.object({
+  id:          z.string().min(1),
+  contentId:   z.string().min(1),
+  contentType: z.enum(['project', 'research', 'lab', 'system']),
+  savedAt:     z.string(),
+  note:        z.string().optional(),
+  snapshot:    z.record(z.string(), z.unknown()),
+})
+
 // ─── Site Core ────────────────────────────────────────────────────────────────
 
 export const SiteConfigSchema = z.object({
@@ -398,6 +441,8 @@ export const IntegrationsConfigSchema = z.object({
   }),
   dataSources: z.array(DataSourceSchema).optional(),
   socialPlatforms: z.array(SocialPlatformSchema).optional(),
+  deployHookUrl: z.string().optional(),
+  lastDeployTriggeredAt: z.string().optional(),
 })
 
 const HermesCronTaskSchema = z.object({
@@ -720,7 +765,7 @@ const ResourceSkillItemSchema  = z.object({ id: z.string(), command: z.string(),
 // ─── Root State ───────────────────────────────────────────────────────────────
 
 export const AdminStateSchema = z.object({
-  panel: z.enum(['command', 'projects', 'research', 'about', 'github', 'site-core', 'seo', 'design', 'personality', 'navbar-config', 'content', 'blocks', 'footer-config', 'systems', 'labs', 'infrastructure', 'ai', 'integrations', 'showcase', 'analytics', 'design-lab', 'intelligence', 'intake', 'posts', 'media', 'content-editor', 'pages', 'design-studio']).catch('command'),
+  panel: z.enum(['command', 'projects', 'research', 'about', 'github', 'site-core', 'seo', 'design', 'personality', 'navbar-config', 'content', 'blocks', 'footer-config', 'systems', 'labs', 'infrastructure', 'ai', 'integrations', 'showcase', 'analytics', 'design-lab', 'intelligence', 'intake', 'posts', 'media', 'content-editor', 'pages', 'design-studio', 'capabilities', 'studio', 'search', 'taxonomy']).catch('command'),
   site: SiteConfigSchema,
   seo: SeoConfigSchema,
   runtime: RuntimeMetaSchema,
@@ -758,6 +803,10 @@ export const AdminStateSchema = z.object({
   intelligence: IntelligenceConfigSchema.optional(),
   intakeType: z.enum(['project', 'research', 'resource', 'drive', 'source', 'lab', 'github-showcase', 'intel-source']).nullable().optional(),
   pagesActiveTab: z.string().optional(),
+  tagRegistry:      z.array(TagSchema).optional(),
+  categoryRegistry: z.array(CategorySchema).optional(),
+  mediaRegistry:    z.array(MediaItemSchema).optional(),
+  revisionLog:      z.array(ContentRevisionSchema).optional(),
   studioConfig: z.object({
     sidebarWidth:       z.enum(['compact', 'normal', 'wide']).optional(),
     density:            z.enum(['compact', 'normal', 'comfortable']).optional(),

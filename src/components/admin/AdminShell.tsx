@@ -35,6 +35,7 @@ import {
   FlaskConical,
   SlidersHorizontal,
   X,
+  Tag,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAdmin } from '@/lib/admin/store'
@@ -79,6 +80,7 @@ const PANEL_GROUPS: PanelGroup[] = [
       { id: 'command',        label: 'Overview',       icon: LayoutDashboard, accent: '#22d3ee', desc: 'Publishing dashboard'      },
       { id: 'analytics',      label: 'Analytics',      icon: BarChart3,    accent: '#f43f5e', desc: 'Metrics & performance'       },
       { id: 'labs',           label: 'Labs',           icon: FlaskConical,  accent: '#f59e0b', desc: 'Experiments & demos'         },
+      { id: 'taxonomy',       label: 'Taxonomy',       icon: Tag,           accent: '#34d399', desc: 'Tags, categories & media'    },
     ],
   },
   {

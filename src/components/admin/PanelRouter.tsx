@@ -36,6 +36,7 @@ const PagesPanel          = lazy(() => import('./panels/PagesPanel'))
 const DesignStudioPanel   = lazy(() => import('./panels/DesignStudioPanel'))
 const SearchPanel         = lazy(() => import('./panels/SearchPanel'))
 const StudioPanel         = lazy(() => import('./panels/StudioPanel'))
+const TaxonomyPanel       = lazy(() => import('./panels/cms/TaxonomyPanel').then(m => ({ default: m.TaxonomyPanel })))
 
 // ─── Loading skeleton ─────────────────────────────────────────────────────────
 
@@ -105,6 +106,7 @@ export default function PanelRouter() {
       case 'capabilities':   return <IntegrationsPanel initialTab="agentes" />
       case 'search':         return <SearchPanel />
       case 'studio':         return <StudioPanel />
+      case 'taxonomy':       return <TaxonomyPanel />
       default:               return <CommandPanel />
     }
   })()
