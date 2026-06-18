@@ -1,0 +1,106 @@
+[
+  {
+    "id": "agent-0",
+    "title": "ReAct (Reason + Act)",
+    "stack": [
+      "Claude API",
+      "OpenAI",
+      "LangChain AgentExecutor"
+    ]
+  },
+  {
+    "id": "agent-1",
+    "title": "Multi-Agent Orchestration",
+    "stack": [
+      "LangGraph",
+      "AutoGen",
+      "CrewAI"
+    ]
+  },
+  {
+    "id": "agent-2",
+    "title": "RAG Agent",
+    "stack": [
+      "LangChain + pgvector",
+      "Weaviate",
+      "Pinecone"
+    ]
+  },
+  {
+    "id": "agent-3",
+    "title": "Memory Agent (Short + Long Term)",
+    "stack": [
+      "Claude + MCP memory server",
+      "LangChain Memory",
+      "Mem0"
+    ]
+  },
+  {
+    "id": "agent-4",
+    "title": "Critic-Refinement Loop",
+    "stack": [
+      "Claude API with two system prompts"
+    ]
+  },
+  {
+    "id": "agent-5",
+    "title": "Tool-Use Pattern (Parallel Calls)",
+    "stack": [
+      "Claude API",
+      "OpenAI with parallel_tool_calls"
+    ]
+  },
+  {
+    "id": "agent-6",
+    "title": "Supervisor / Router Pattern",
+    "stack": [
+      "LangGraph StateGraph",
+      "Claude with structured routing"
+    ]
+  },
+  {
+    "id": "agent-7",
+    "title": "Event-Driven Agent",
+    "stack": [
+      "n8n + Claude API",
+      "GitHub Actions + Claude",
+      "Temporal"
+    ]
+  },
+  {
+    "id": "agent-8",
+    "title": "Self-Healing Agent",
+    "stack": [
+      "Claude API",
+      "LangGraph error handlers",
+      "Temporal"
+    ]
+  },
+  {
+    "id": "agent-9",
+    "title": "Plan-and-Execute",
+    "stack": [
+      "Claude 3 Opus (planner)",
+      "Claude Haiku (executor)",
+      "LangGraph"
+    ]
+  },
+  {
+    "id": "agent-10",
+    "title": "Human-in-the-Loop (HITL)",
+    "stack": [
+      "Claude API",
+      "Slack Approval Bot",
+      "LangGraph interrupt()"
+    ]
+  },
+  {
+    "id": "agent-11",
+    "title": "Structured Extraction Agent",
+    "stack": [
+      "Claude API",
+      "Zod",
+      "TypeScript"
+    ]
+  }
+]

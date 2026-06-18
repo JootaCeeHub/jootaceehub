@@ -1,0 +1,125 @@
+[
+  {
+    "id": "proj-aura",
+    "slug": "aura",
+    "title": "AURA",
+    "tagline": "AI orchestration core platform",
+    "type": "project",
+    "category": "ai",
+    "status": "live",
+    "featured": true,
+    "published": true,
+    "description": "Central orchestration intelligence that coordinates agents, manages context windows, routes tool calls, and enforces operational policies across the entire AI stack.",
+    "techStack": [
+      "Python",
+      "FastAPI",
+      "Redis",
+      "GraphQL",
+      "React",
+      "TypeScript"
+    ],
+    "tags": [
+      "orchestration",
+      "agents",
+      "mcp",
+      "llm"
+    ],
+    "repoUrl": "",
+    "liveUrl": "",
+    "accent": "#a78bfa",
+    "publishedAt": "2025-01-01T00:00:00.000Z",
+    "updatedAt": "2026-05-01T00:00:00.000Z",
+    "locale": "en"
+  },
+  {
+    "id": "proj-trading-ai",
+    "slug": "trading-ai",
+    "title": "Trading AI",
+    "tagline": "Quantitative intelligence engine",
+    "type": "project",
+    "category": "ai",
+    "status": "beta",
+    "featured": true,
+    "published": true,
+    "description": "Real-time algorithmic trading engine with signal processing, risk modeling, and autonomous execution across multiple asset classes.",
+    "techStack": [
+      "Python",
+      "FastAPI",
+      "PostgreSQL",
+      "Redis",
+      "React"
+    ],
+    "tags": [
+      "trading",
+      "ai",
+      "quantitative",
+      "finance"
+    ],
+    "repoUrl": "",
+    "liveUrl": "",
+    "accent": "#34d399",
+    "publishedAt": "2025-03-01T00:00:00.000Z",
+    "updatedAt": "2026-04-15T00:00:00.000Z",
+    "locale": "en"
+  },
+  {
+    "id": "proj-stl",
+    "slug": "stl-generator",
+    "title": "STL Generator",
+    "tagline": "Spatial AI fabrication tool",
+    "type": "project",
+    "category": "ai",
+    "status": "beta",
+    "featured": false,
+    "published": true,
+    "description": "AI-powered 3D model generation from natural language prompts with parametric design controls and direct STL export for fabrication.",
+    "techStack": [
+      "Python",
+      "Three.js",
+      "OpenSCAD",
+      "FastAPI"
+    ],
+    "tags": [
+      "3d",
+      "generative-ai",
+      "fabrication",
+      "stl"
+    ],
+    "repoUrl": "",
+    "liveUrl": "",
+    "accent": "#818cf8",
+    "publishedAt": "2025-06-01T00:00:00.000Z",
+    "updatedAt": "2026-03-20T00:00:00.000Z",
+    "locale": "en"
+  },
+  {
+    "id": "proj-crm",
+    "slug": "crm",
+    "title": "CRM Platform",
+    "tagline": "Intelligent customer intelligence",
+    "type": "project",
+    "category": "web",
+    "status": "wip",
+    "featured": false,
+    "published": false,
+    "description": "AI-augmented customer relationship system with predictive scoring, automated touchpoint orchestration, and pipeline intelligence.",
+    "techStack": [
+      "Next.js",
+      "PostgreSQL",
+      "Python",
+      "LangChain"
+    ],
+    "tags": [
+      "crm",
+      "ai",
+      "sales",
+      "automation"
+    ],
+    "repoUrl": "",
+    "liveUrl": "",
+    "accent": "#f472b6",
+    "publishedAt": "2025-09-01T00:00:00.000Z",
+    "updatedAt": "2026-02-10T00:00:00.000Z",
+    "locale": "en"
+  }
+]

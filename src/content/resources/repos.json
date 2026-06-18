@@ -1,0 +1,254 @@
+[
+  {
+    "id": "repo-typescript",
+    "org": "microsoft",
+    "name": "TypeScript",
+    "lang": "TypeScript",
+    "stars": "101k",
+    "url": "https://github.com/microsoft/TypeScript",
+    "cat": "TypeScript"
+  },
+  {
+    "id": "repo-nextjs",
+    "org": "vercel",
+    "name": "next.js",
+    "lang": "TypeScript",
+    "stars": "128k",
+    "url": "https://github.com/vercel/next.js",
+    "cat": "TypeScript"
+  },
+  {
+    "id": "repo-shadcn",
+    "org": "shadcn-ui",
+    "name": "ui",
+    "lang": "TypeScript",
+    "stars": "82k",
+    "url": "https://github.com/shadcn-ui/ui",
+    "cat": "TypeScript"
+  },
+  {
+    "id": "repo-zustand",
+    "org": "pmndrs",
+    "name": "zustand",
+    "lang": "TypeScript",
+    "stars": "50k",
+    "url": "https://github.com/pmndrs/zustand",
+    "cat": "TypeScript"
+  },
+  {
+    "id": "repo-zod",
+    "org": "colinhacks",
+    "name": "zod",
+    "lang": "TypeScript",
+    "stars": "35k",
+    "url": "https://github.com/colinhacks/zod",
+    "cat": "TypeScript"
+  },
+  {
+    "id": "repo-trpc",
+    "org": "trpc",
+    "name": "trpc",
+    "lang": "TypeScript",
+    "stars": "35k",
+    "url": "https://github.com/trpc/trpc",
+    "cat": "TypeScript"
+  },
+  {
+    "id": "repo-prisma",
+    "org": "prisma",
+    "name": "prisma",
+    "lang": "TypeScript",
+    "stars": "41k",
+    "url": "https://github.com/prisma/prisma",
+    "cat": "TypeScript"
+  },
+  {
+    "id": "repo-n8n",
+    "org": "n8n-io",
+    "name": "n8n",
+    "lang": "TypeScript",
+    "stars": "51k",
+    "url": "https://github.com/n8n-io/n8n",
+    "cat": "TypeScript"
+  },
+  {
+    "id": "repo-langchain-py",
+    "org": "langchain-ai",
+    "name": "langchain",
+    "lang": "Python",
+    "stars": "96k",
+    "url": "https://github.com/langchain-ai/langchain",
+    "cat": "Python"
+  },
+  {
+    "id": "repo-anthropic-py",
+    "org": "anthropics",
+    "name": "anthropic-sdk-python",
+    "lang": "Python",
+    "stars": "3.8k",
+    "url": "https://github.com/anthropics/anthropic-sdk-python",
+    "cat": "Python"
+  },
+  {
+    "id": "repo-pydantic-ai",
+    "org": "pydantic",
+    "name": "pydantic-ai",
+    "lang": "Python",
+    "stars": "8.4k",
+    "url": "https://github.com/pydantic/pydantic-ai",
+    "cat": "Python"
+  },
+  {
+    "id": "repo-langgraph",
+    "org": "langchain-ai",
+    "name": "langgraph",
+    "lang": "Python",
+    "stars": "12k",
+    "url": "https://github.com/langchain-ai/langgraph",
+    "cat": "Python"
+  },
+  {
+    "id": "repo-autogen",
+    "org": "microsoft",
+    "name": "autogen",
+    "lang": "Python",
+    "stars": "38k",
+    "url": "https://github.com/microsoft/autogen",
+    "cat": "Python"
+  },
+  {
+    "id": "repo-fastapi",
+    "org": "tiangolo",
+    "name": "fastapi",
+    "lang": "Python",
+    "stars": "80k",
+    "url": "https://github.com/tiangolo/fastapi",
+    "cat": "Python"
+  },
+  {
+    "id": "repo-ollama",
+    "org": "ollama",
+    "name": "ollama",
+    "lang": "Go",
+    "stars": "103k",
+    "url": "https://github.com/ollama/ollama",
+    "cat": "Go/Rust"
+  },
+  {
+    "id": "repo-biome",
+    "org": "biomejs",
+    "name": "biome",
+    "lang": "Rust",
+    "stars": "17k",
+    "url": "https://github.com/biomejs/biome",
+    "cat": "Go/Rust"
+  },
+  {
+    "id": "repo-claude-code",
+    "org": "anthropics",
+    "name": "claude-code",
+    "lang": "TypeScript",
+    "stars": "12k",
+    "url": "https://github.com/anthropics/claude-code",
+    "cat": "AI/LLM"
+  },
+  {
+    "id": "repo-instructor",
+    "org": "jxnl",
+    "name": "instructor",
+    "lang": "Python",
+    "stars": "10k",
+    "url": "https://github.com/jxnl/instructor",
+    "cat": "AI/LLM"
+  },
+  {
+    "id": "repo-mem0",
+    "org": "mem0ai",
+    "name": "mem0",
+    "lang": "Python",
+    "stars": "26k",
+    "url": "https://github.com/mem0ai/mem0",
+    "cat": "AI/LLM"
+  },
+  {
+    "id": "repo-mcp-servers",
+    "org": "modelcontextprotocol",
+    "name": "servers",
+    "lang": "TypeScript",
+    "stars": "9.2k",
+    "url": "https://github.com/modelcontextprotocol/servers",
+    "cat": "MCP"
+  },
+  {
+    "id": "repo-mcp-ts-sdk",
+    "org": "modelcontextprotocol",
+    "name": "typescript-sdk",
+    "lang": "TypeScript",
+    "stars": "6.1k",
+    "url": "https://github.com/modelcontextprotocol/typescript-sdk",
+    "cat": "MCP"
+  },
+  {
+    "id": "repo-fastmcp",
+    "org": "jlowin",
+    "name": "fastmcp",
+    "lang": "Python",
+    "stars": "4.2k",
+    "url": "https://github.com/jlowin/fastmcp",
+    "cat": "MCP"
+  },
+  {
+    "id": "repo-t3",
+    "org": "t3-oss",
+    "name": "create-t3-app",
+    "lang": "TypeScript",
+    "stars": "26k",
+    "url": "https://github.com/t3-oss/create-t3-app",
+    "cat": "Starters"
+  },
+  {
+    "id": "repo-bulletproof",
+    "org": "alan2207",
+    "name": "bulletproof-react",
+    "lang": "TypeScript",
+    "stars": "29k",
+    "url": "https://github.com/alan2207/bulletproof-react",
+    "cat": "Starters"
+  },
+  {
+    "id": "repo-algorithms",
+    "org": "trekhleb",
+    "name": "javascript-algorithms",
+    "lang": "JavaScript",
+    "stars": "188k",
+    "url": "https://github.com/trekhleb/javascript-algorithms",
+    "cat": "Learning"
+  },
+  {
+    "id": "repo-system-design",
+    "org": "donnemartin",
+    "name": "system-design-primer",
+    "lang": "Python",
+    "stars": "280k",
+    "url": "https://github.com/donnemartin/system-design-primer",
+    "cat": "Learning"
+  },
+  {
+    "id": "repo-roadmap",
+    "org": "kamranahmedse",
+    "name": "developer-roadmap",
+    "lang": "TypeScript",
+    "stars": "305k",
+    "url": "https://github.com/kamranahmedse/developer-roadmap",
+    "cat": "Learning"
+  },
+  {
+    "id": "repo-build-your-own-x",
+    "org": "codecrafters-io",
+    "name": "build-your-own-x",
+    "lang": "Markdown",
+    "stars": "310k",
+    "url": "https://github.com/codecrafters-io/build-your-own-x",
+    "cat": "Learning"
+  }
+]

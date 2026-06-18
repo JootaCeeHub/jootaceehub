@@ -1,0 +1,139 @@
+[
+  {
+    "slug": "orchestration-is-the-new-compute",
+    "title": "Orchestration is the New Compute",
+    "type": "research",
+    "category": "opinion",
+    "excerpt": "The shift from raw compute to intelligent orchestration layers is the defining architectural transition of the AI era.",
+    "tags": [
+      "orchestration",
+      "ai-architecture",
+      "mcp"
+    ],
+    "readTime": 8,
+    "published": true,
+    "featured": true,
+    "status": "published",
+    "locale": "en",
+    "publishedAt": "2026-05-15T00:00:00.000Z",
+    "updatedAt": "2026-05-15T00:00:00.000Z"
+  },
+  {
+    "slug": "graphrag-vs-vector-retrieval",
+    "title": "GraphRAG vs Vector Retrieval",
+    "type": "research",
+    "category": "research",
+    "excerpt": "A technical deep-dive comparing graph-native memory systems against traditional vector store approaches for multi-hop reasoning.",
+    "tags": [
+      "graphrag",
+      "vector-db",
+      "memory",
+      "retrieval"
+    ],
+    "readTime": 12,
+    "published": true,
+    "featured": false,
+    "status": "published",
+    "locale": "en",
+    "publishedAt": "2026-04-20T00:00:00.000Z",
+    "updatedAt": "2026-04-20T00:00:00.000Z"
+  },
+  {
+    "slug": "on-building-systems-that-last",
+    "title": "On Building Systems That Last",
+    "type": "research",
+    "category": "essays",
+    "excerpt": "Principles for designing autonomous infrastructure that survives team changes, scaling pressures, and the entropy of time.",
+    "tags": [
+      "architecture",
+      "systems-thinking",
+      "engineering"
+    ],
+    "readTime": 10,
+    "published": true,
+    "featured": false,
+    "status": "published",
+    "locale": "en",
+    "publishedAt": "2026-03-10T00:00:00.000Z",
+    "updatedAt": "2026-03-10T00:00:00.000Z"
+  },
+  {
+    "slug": "mcp-ecosystem-expansion-2026",
+    "title": "MCP Ecosystem Expansion Q2 2026",
+    "type": "research",
+    "category": "news",
+    "excerpt": "The Model Context Protocol ecosystem grows to 400+ registered tools with new security primitives and schema validation layers.",
+    "tags": [
+      "mcp",
+      "ecosystem",
+      "news"
+    ],
+    "readTime": 5,
+    "published": true,
+    "featured": false,
+    "status": "published",
+    "locale": "en",
+    "publishedAt": "2026-04-01T00:00:00.000Z",
+    "updatedAt": "2026-04-01T00:00:00.000Z"
+  },
+  {
+    "slug": "autonomous-infrastructure-observability",
+    "title": "Observability as a First-Class Citizen in Autonomous Infrastructure",
+    "type": "research",
+    "category": "research",
+    "excerpt": "When the system operates itself, you cannot afford to watch it with human eyes. Observability must be designed into the fabric of autonomous infrastructure from the start.",
+    "tags": [
+      "observability",
+      "autonomous-systems",
+      "infrastructure",
+      "telemetry"
+    ],
+    "readTime": 11,
+    "published": true,
+    "featured": false,
+    "status": "published",
+    "locale": "en",
+    "publishedAt": "2026-02-15T00:00:00.000Z",
+    "updatedAt": "2026-02-15T00:00:00.000Z"
+  },
+  {
+    "slug": "context-window-as-operating-environment",
+    "title": "The Context Window as Operating Environment",
+    "type": "research",
+    "category": "essays",
+    "excerpt": "We have been thinking about context windows as memory limitations. They are better understood as computational environments — and designing for them changes everything.",
+    "tags": [
+      "context-windows",
+      "llm-architecture",
+      "agent-design",
+      "memory"
+    ],
+    "readTime": 9,
+    "published": true,
+    "featured": false,
+    "status": "published",
+    "locale": "en",
+    "publishedAt": "2026-01-20T00:00:00.000Z",
+    "updatedAt": "2026-01-20T00:00:00.000Z"
+  },
+  {
+    "slug": "protocol-convergence-mcp-a2a",
+    "title": "Protocol Convergence: MCP and A2A Are the Same Bet",
+    "type": "research",
+    "category": "news",
+    "excerpt": "Anthropic's MCP and Google's A2A are often presented as competing standards. They are actually converging on the same architectural insight.",
+    "tags": [
+      "mcp",
+      "a2a",
+      "protocols",
+      "interoperability"
+    ],
+    "readTime": 5,
+    "published": true,
+    "featured": false,
+    "status": "published",
+    "locale": "en",
+    "publishedAt": "2026-03-25T00:00:00.000Z",
+    "updatedAt": "2026-03-25T00:00:00.000Z"
+  }
+]

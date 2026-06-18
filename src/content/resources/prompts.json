@@ -1,0 +1,152 @@
+[
+  {
+    "id": "pr-0",
+    "title": "Senior TypeScript Code Reviewer",
+    "cat": "System",
+    "models": [
+      "Claude 3.5 Sonnet",
+      "GPT-4o",
+      "Gemini 1.5 Pro"
+    ]
+  },
+  {
+    "id": "pr-1",
+    "title": "Architecture Decision Advisor",
+    "cat": "System",
+    "models": [
+      "Claude 3 Opus",
+      "GPT-4o"
+    ]
+  },
+  {
+    "id": "pr-2",
+    "title": "Technical Documentation Writer",
+    "cat": "System",
+    "models": [
+      "Claude 3.5 Sonnet",
+      "GPT-4o"
+    ]
+  },
+  {
+    "id": "pr-3",
+    "title": "Fullstack Code Generator",
+    "cat": "System",
+    "models": [
+      "Claude 3.5 Sonnet",
+      "GPT-4o",
+      "Claude 3 Opus"
+    ]
+  },
+  {
+    "id": "pr-4",
+    "title": "Security-First Code Reviewer",
+    "cat": "System",
+    "models": [
+      "Claude 3.5 Sonnet",
+      "GPT-4o",
+      "Claude 3 Opus"
+    ]
+  },
+  {
+    "id": "pr-5",
+    "title": "Product Manager — PRD Writer",
+    "cat": "System",
+    "models": [
+      "Claude 3.5 Sonnet",
+      "GPT-4o"
+    ]
+  },
+  {
+    "id": "pr-6",
+    "title": "E2E Test Writer (Playwright)",
+    "cat": "Task",
+    "models": [
+      "Claude 3.5 Sonnet",
+      "GPT-4o"
+    ]
+  },
+  {
+    "id": "pr-7",
+    "title": "Performance Bottleneck Finder",
+    "cat": "Task",
+    "models": [
+      "Claude 3.5 Sonnet",
+      "GPT-4o",
+      "Gemini 1.5 Pro"
+    ]
+  },
+  {
+    "id": "pr-8",
+    "title": "Chain of Thought Activator",
+    "cat": "Meta",
+    "models": [
+      "Claude 3.5 Sonnet",
+      "GPT-4o",
+      "Gemini 1.5 Pro",
+      "Claude 3 Opus"
+    ]
+  },
+  {
+    "id": "pr-9",
+    "title": "Persona Calibrator",
+    "cat": "Meta",
+    "models": [
+      "Claude 3.5 Sonnet",
+      "GPT-4o"
+    ]
+  },
+  {
+    "id": "pr-10",
+    "title": "CI/CD Pipeline Debugger",
+    "cat": "DevOps",
+    "models": [
+      "Claude 3.5 Sonnet",
+      "GPT-4o"
+    ]
+  },
+  {
+    "id": "pr-11",
+    "title": "Docker Compose Generator",
+    "cat": "DevOps",
+    "models": [
+      "Claude 3.5 Sonnet",
+      "GPT-4o"
+    ]
+  },
+  {
+    "id": "pr-12",
+    "title": "SQL Query Optimizer",
+    "cat": "Data",
+    "models": [
+      "Claude 3.5 Sonnet",
+      "GPT-4o"
+    ]
+  },
+  {
+    "id": "pr-13",
+    "title": "Data Pipeline Designer",
+    "cat": "Data",
+    "models": [
+      "Claude 3.5 Sonnet",
+      "Claude 3 Opus"
+    ]
+  },
+  {
+    "id": "pr-14",
+    "title": "Competitive Analysis Report",
+    "cat": "Business",
+    "models": [
+      "Claude 3.5 Sonnet",
+      "GPT-4o"
+    ]
+  },
+  {
+    "id": "pr-15",
+    "title": "Investor Update Writer",
+    "cat": "Business",
+    "models": [
+      "Claude 3.5 Sonnet",
+      "GPT-4o"
+    ]
+  }
+]

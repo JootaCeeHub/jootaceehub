@@ -1,0 +1,169 @@
+[
+  {
+    "key": "trading-ai",
+    "name": "Trading AI",
+    "tagline": "Quantitative intelligence engine",
+    "status": "beta",
+    "description": "Real-time algorithmic trading engine with signal processing, risk modeling, and autonomous execution across multiple asset classes.",
+    "stack": [
+      "Python",
+      "FastAPI",
+      "PostgreSQL",
+      "Redis",
+      "React"
+    ],
+    "metrics": [
+      {
+        "label": "Signals/day",
+        "value": "847"
+      },
+      {
+        "label": "Accuracy",
+        "value": "73.4%"
+      },
+      {
+        "label": "Latency",
+        "value": "12ms"
+      },
+      {
+        "label": "Trades",
+        "value": "2.1k"
+      }
+    ],
+    "accent": "#34d399",
+    "visible": true
+  },
+  {
+    "key": "stl-generator",
+    "name": "STL Generator",
+    "tagline": "Spatial AI fabrication tool",
+    "status": "beta",
+    "description": "AI-powered 3D model generation from natural language prompts with parametric design controls and direct STL export for fabrication.",
+    "stack": [
+      "Python",
+      "Three.js",
+      "OpenSCAD",
+      "FastAPI"
+    ],
+    "metrics": [
+      {
+        "label": "Models/day",
+        "value": "312"
+      },
+      {
+        "label": "Accuracy",
+        "value": "89%"
+      },
+      {
+        "label": "Export",
+        "value": "STL/OBJ"
+      },
+      {
+        "label": "Avg time",
+        "value": "4.2s"
+      }
+    ],
+    "accent": "#818cf8",
+    "visible": true
+  },
+  {
+    "key": "crm",
+    "name": "CRM Platform",
+    "tagline": "Intelligent customer intelligence",
+    "status": "rd",
+    "description": "AI-augmented customer relationship system with predictive scoring, automated touchpoint orchestration, and pipeline intelligence.",
+    "stack": [
+      "Next.js",
+      "PostgreSQL",
+      "Python",
+      "LangChain"
+    ],
+    "metrics": [
+      {
+        "label": "Contacts",
+        "value": "4.2k"
+      },
+      {
+        "label": "Pipelines",
+        "value": "3"
+      },
+      {
+        "label": "AI score",
+        "value": "94%"
+      },
+      {
+        "label": "Automation",
+        "value": "18 flows"
+      }
+    ],
+    "accent": "#f472b6",
+    "visible": true
+  },
+  {
+    "key": "erp",
+    "name": "ERP Platform",
+    "tagline": "Enterprise automation suite",
+    "status": "rd",
+    "description": "Modular enterprise resource planning system with AI-assisted workflow routing, financial intelligence, and operational dashboards.",
+    "stack": [
+      "Next.js",
+      "PostgreSQL",
+      "Python",
+      "Temporal"
+    ],
+    "metrics": [
+      {
+        "label": "Modules",
+        "value": "7"
+      },
+      {
+        "label": "Workflows",
+        "value": "42"
+      },
+      {
+        "label": "Automation",
+        "value": "68%"
+      },
+      {
+        "label": "Uptime",
+        "value": "99.9%"
+      }
+    ],
+    "accent": "#fb923c",
+    "visible": true
+  },
+  {
+    "key": "aura",
+    "name": "AURA",
+    "tagline": "AI orchestration core platform",
+    "status": "live",
+    "description": "Central orchestration intelligence that coordinates agents, manages context windows, routes tool calls, and enforces operational policies.",
+    "stack": [
+      "Python",
+      "FastAPI",
+      "Redis",
+      "GraphQL",
+      "React"
+    ],
+    "metrics": [
+      {
+        "label": "Agents",
+        "value": "12"
+      },
+      {
+        "label": "Tool calls/h",
+        "value": "3.4k"
+      },
+      {
+        "label": "Latency",
+        "value": "240ms"
+      },
+      {
+        "label": "Uptime",
+        "value": "99.9%"
+      }
+    ],
+    "accent": "#a78bfa",
+    "visible": true
+  }
+]

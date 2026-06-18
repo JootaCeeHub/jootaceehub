@@ -1,0 +1,54 @@
+[
+  {
+    "key": "mcp",
+    "badge": "Protocol Layer",
+    "title": "MCP Ecosystem",
+    "subtitle": "Protocol-first orchestration layer",
+    "description": "The Model Context Protocol gateway that connects AI models, tools, and operational data streams into a unified orchestration fabric.",
+    "status": "Operational",
+    "href": "/systems/mcp",
+    "version": "v1.8.3",
+    "uptime": "99.9%",
+    "tools": 18,
+    "visible": true
+  },
+  {
+    "key": "graphrag",
+    "badge": "Memory System",
+    "title": "GraphRAG",
+    "subtitle": "Graph memory & retrieval system",
+    "description": "A graph-native retrieval-augmented generation system that stores and queries knowledge as interconnected entities rather than flat vectors.",
+    "status": "Operational",
+    "href": "/systems/graphrag",
+    "version": "v3.0.1",
+    "uptime": "99.7%",
+    "tools": 6,
+    "visible": true
+  },
+  {
+    "key": "agents",
+    "badge": "Agent Network",
+    "title": "AI Agents",
+    "subtitle": "Multi-agent orchestration fabric",
+    "description": "Coordinated autonomous agents with defined roles, tool access, and inter-agent communication protocols for complex task execution.",
+    "status": "Active",
+    "href": "/systems/agents",
+    "version": "v1.5.2",
+    "uptime": "99.9%",
+    "tools": 12,
+    "visible": true
+  },
+  {
+    "key": "automation",
+    "badge": "Automation Layer",
+    "title": "Automation",
+    "subtitle": "Intelligent workflow infrastructure",
+    "description": "Event-driven automation pipelines that reduce operational friction and increase throughput across the entire system surface.",
+    "status": "Operational",
+    "href": "/systems/automation",
+    "version": "v2.1.0",
+    "uptime": "99.8%",
+    "tools": 8,
+    "visible": true
+  }
+]

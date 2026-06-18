@@ -1,0 +1,177 @@
+[
+  {
+    "id": "mcp-filesystem",
+    "name": "filesystem",
+    "cat": "official",
+    "install": "npx @modelcontextprotocol/server-filesystem",
+    "toolCount": 6
+  },
+  {
+    "id": "mcp-brave-search",
+    "name": "brave-search",
+    "cat": "official",
+    "install": "npx @modelcontextprotocol/server-brave-search",
+    "toolCount": 2
+  },
+  {
+    "id": "mcp-github",
+    "name": "github",
+    "cat": "official",
+    "install": "npx @modelcontextprotocol/server-github",
+    "toolCount": 5
+  },
+  {
+    "id": "mcp-postgres",
+    "name": "postgres",
+    "cat": "official",
+    "install": "npx @modelcontextprotocol/server-postgres",
+    "toolCount": 3
+  },
+  {
+    "id": "mcp-sqlite",
+    "name": "sqlite",
+    "cat": "official",
+    "install": "npx @modelcontextprotocol/server-sqlite",
+    "toolCount": 4
+  },
+  {
+    "id": "mcp-puppeteer",
+    "name": "puppeteer",
+    "cat": "official",
+    "install": "npx @modelcontextprotocol/server-puppeteer",
+    "toolCount": 5
+  },
+  {
+    "id": "mcp-fetch",
+    "name": "fetch",
+    "cat": "official",
+    "install": "npx @modelcontextprotocol/server-fetch",
+    "toolCount": 2
+  },
+  {
+    "id": "mcp-memory",
+    "name": "memory",
+    "cat": "official",
+    "install": "npx @modelcontextprotocol/server-memory",
+    "toolCount": 5
+  },
+  {
+    "id": "mcp-sequential-thinking",
+    "name": "sequential-thinking",
+    "cat": "official",
+    "install": "npx @modelcontextprotocol/server-sequential-thinking",
+    "toolCount": 1
+  },
+  {
+    "id": "mcp-mysql",
+    "name": "mysql",
+    "cat": "database",
+    "install": "npx @modelcontextprotocol/server-mysql",
+    "toolCount": 4
+  },
+  {
+    "id": "mcp-mongodb",
+    "name": "mongodb",
+    "cat": "database",
+    "install": "npx mcp-server-mongodb",
+    "toolCount": 6
+  },
+  {
+    "id": "mcp-redis",
+    "name": "redis",
+    "cat": "database",
+    "install": "npx mcp-server-redis",
+    "toolCount": 6
+  },
+  {
+    "id": "mcp-supabase",
+    "name": "supabase",
+    "cat": "database",
+    "install": "npx mcp-server-supabase",
+    "toolCount": 3
+  },
+  {
+    "id": "mcp-google-drive",
+    "name": "google-drive",
+    "cat": "productivity",
+    "install": "npx @modelcontextprotocol/server-gdrive",
+    "toolCount": 5
+  },
+  {
+    "id": "mcp-notion",
+    "name": "notion",
+    "cat": "productivity",
+    "install": "npx mcp-notion-server",
+    "toolCount": 4
+  },
+  {
+    "id": "mcp-linear",
+    "name": "linear",
+    "cat": "productivity",
+    "install": "npx @linear/mcp-server",
+    "toolCount": 4
+  },
+  {
+    "id": "mcp-git",
+    "name": "git",
+    "cat": "devops",
+    "install": "npx @modelcontextprotocol/server-git",
+    "toolCount": 6
+  },
+  {
+    "id": "mcp-docker",
+    "name": "docker",
+    "cat": "devops",
+    "install": "npx mcp-server-docker",
+    "toolCount": 6
+  },
+  {
+    "id": "mcp-kubernetes",
+    "name": "kubernetes",
+    "cat": "devops",
+    "install": "npx mcp-server-kubernetes",
+    "toolCount": 6
+  },
+  {
+    "id": "mcp-cloudflare",
+    "name": "cloudflare",
+    "cat": "devops",
+    "install": "npx @cloudflare/mcp-server-cloudflare",
+    "toolCount": 6
+  },
+  {
+    "id": "mcp-sentry",
+    "name": "sentry",
+    "cat": "devops",
+    "install": "npx mcp-server-sentry",
+    "toolCount": 5
+  },
+  {
+    "id": "mcp-tavily",
+    "name": "tavily",
+    "cat": "ai",
+    "install": "npx tavily-mcp",
+    "toolCount": 2
+  },
+  {
+    "id": "mcp-stripe",
+    "name": "stripe",
+    "cat": "ai",
+    "install": "npx @stripe/agent-toolkit",
+    "toolCount": 4
+  },
+  {
+    "id": "mcp-slack",
+    "name": "slack",
+    "cat": "communication",
+    "install": "npx mcp-server-slack",
+    "toolCount": 4
+  },
+  {
+    "id": "mcp-gmail",
+    "name": "gmail",
+    "cat": "communication",
+    "install": "npx mcp-server-gmail",
+    "toolCount": 5
+  }
+]

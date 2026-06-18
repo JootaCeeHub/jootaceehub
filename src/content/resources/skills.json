@@ -1,0 +1,62 @@
+[
+  {
+    "id": "skill-ultrareview",
+    "command": "/ultrareview",
+    "title": "Ultra Review",
+    "builtin": true
+  },
+  {
+    "id": "skill-plan",
+    "command": "/plan",
+    "title": "Architecture Planner",
+    "builtin": true
+  },
+  {
+    "id": "skill-fast",
+    "command": "/fast",
+    "title": "Fast Mode",
+    "builtin": true
+  },
+  {
+    "id": "skill-deploy",
+    "command": "/deploy",
+    "title": "Deploy to Railway",
+    "builtin": false
+  },
+  {
+    "id": "skill-bundle",
+    "command": "/bundle",
+    "title": "Analyze Bundle",
+    "builtin": false
+  },
+  {
+    "id": "skill-migrate",
+    "command": "/migrate <name>",
+    "title": "DB Migration",
+    "builtin": false
+  },
+  {
+    "id": "skill-review",
+    "command": "/review",
+    "title": "Code Review",
+    "builtin": false
+  },
+  {
+    "id": "skill-optimize",
+    "command": "/optimize <file>",
+    "title": "Performance Optimizer",
+    "builtin": false
+  },
+  {
+    "id": "skill-i18n",
+    "command": "/i18n",
+    "title": "i18n Coverage Check",
+    "builtin": false
+  },
+  {
+    "id": "skill-types",
+    "command": "/types",
+    "title": "Type Generation",
+    "builtin": false
+  }
+]

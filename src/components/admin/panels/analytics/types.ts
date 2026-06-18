@@ -15,6 +15,7 @@ export type Tab =
   | 'phase4'
   | 'phase5'
   | 'stabilization'
+  | 'phase2cms'
 
 export type CWVStatus = 'good' | 'needs-improvement' | 'poor'
 

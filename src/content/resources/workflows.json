@@ -1,0 +1,86 @@
+[
+  {
+    "id": "wf-0",
+    "title": "Typecheck + Lint + Test → Build → Lighthouse CI",
+    "type": "cicd",
+    "complexity": "Medium"
+  },
+  {
+    "id": "wf-1",
+    "title": "Docker Multi-stage Build with Layer Cache",
+    "type": "cicd",
+    "complexity": "Medium"
+  },
+  {
+    "id": "wf-2",
+    "title": "Semantic Release with Changelog Generation",
+    "type": "cicd",
+    "complexity": "Low"
+  },
+  {
+    "id": "wf-3",
+    "title": "GitHub Issue → Auto-label → Notify Slack",
+    "type": "n8n",
+    "complexity": "Low"
+  },
+  {
+    "id": "wf-4",
+    "title": "RSS Feed → AI Summary → Telegram Channel",
+    "type": "n8n",
+    "complexity": "Medium"
+  },
+  {
+    "id": "wf-5",
+    "title": "CRM Lead → Enrich → Assign → Welcome Email",
+    "type": "n8n",
+    "complexity": "High"
+  },
+  {
+    "id": "wf-6",
+    "title": "Daily Metrics Digest → Email Report",
+    "type": "n8n",
+    "complexity": "Medium"
+  },
+  {
+    "id": "wf-7",
+    "title": "New GitHub Star → Thank You Tweet (X)",
+    "type": "n8n",
+    "complexity": "Medium"
+  },
+  {
+    "id": "wf-8",
+    "title": "Nightly SEO Audit → Linear Issue Creator",
+    "type": "n8n",
+    "complexity": "High"
+  },
+  {
+    "id": "wf-9",
+    "title": "RAG Pipeline: Ingest → Chunk → Embed → Retrieve",
+    "type": "ai",
+    "complexity": "High"
+  },
+  {
+    "id": "wf-10",
+    "title": "Multi-Agent Loop: Planner → Executor → Critic",
+    "type": "ai",
+    "complexity": "High"
+  },
+  {
+    "id": "wf-11",
+    "title": "Document Classification with Confidence Scoring",
+    "type": "ai",
+    "complexity": "Medium"
+  },
+  {
+    "id": "wf-12",
+    "title": "Structured Output Pipeline with Zod Validation",
+    "type": "ai",
+    "complexity": "Low"
+  },
+  {
+    "id": "wf-13",
+    "title": "Streaming Agent with Real-Time UI Updates",
+    "type": "ai",
+    "complexity": "High"
+  }
+]

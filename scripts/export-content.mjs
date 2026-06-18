@@ -1,0 +1,586 @@
+/**
+ * Phase 2 — Content Export Script
+ * Reads TypeScript data modules and writes canonical JSON files to src/content/
+ *
+ * Run: npx tsx scripts/export-content.mjs
+ * (Uses npx tsx for TypeScript execution without a separate tsconfig)
+ */
+
+import { writeFileSync, mkdirSync } from 'node:fs'
+import { join, dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const ROOT = join(__dirname, '..')
+const CONTENT = join(ROOT, 'src/content')
+
+function write(relPath, data) {
+  const full = join(CONTENT, relPath)
+  mkdirSync(dirname(full), { recursive: true })
+  writeFileSync(full, JSON.stringify(data, null, 2) + '\n')
+  console.log(`  ✓ ${relPath} (${Array.isArray(data) ? data.length : Object.keys(data).length} entries)`)
+}
+
+// ── Systems ───────────────────────────────────────────────────────────────────
+
+const systems = [
+  {
+    "key": "mcp",
+    "badge": "Protocol Layer",
+    "title": "MCP Ecosystem",
+    "subtitle": "Protocol-first orchestration layer",
+    "description": "The Model Context Protocol gateway that connects AI models, tools, and operational data streams into a unified orchestration fabric.",
+    "status": "Operational",
+    "href": "/systems/mcp",
+    "version": "v1.8.3",
+    "uptime": "99.9%",
+    "tools": 18,
+    "visible": true
+  },
+  {
+    "key": "graphrag",
+    "badge": "Memory System",
+    "title": "GraphRAG",
+    "subtitle": "Graph memory & retrieval system",
+    "description": "A graph-native retrieval-augmented generation system that stores and queries knowledge as interconnected entities rather than flat vectors.",
+    "status": "Operational",
+    "href": "/systems/graphrag",
+    "version": "v3.0.1",
+    "uptime": "99.7%",
+    "tools": 6,
+    "visible": true
+  },
+  {
+    "key": "agents",
+    "badge": "Agent Network",
+    "title": "AI Agents",
+    "subtitle": "Multi-agent orchestration fabric",
+    "description": "Coordinated autonomous agents with defined roles, tool access, and inter-agent communication protocols for complex task execution.",
+    "status": "Active",
+    "href": "/systems/agents",
+    "version": "v1.5.2",
+    "uptime": "99.9%",
+    "tools": 12,
+    "visible": true
+  },
+  {
+    "key": "automation",
+    "badge": "Automation Layer",
+    "title": "Automation",
+    "subtitle": "Intelligent workflow infrastructure",
+    "description": "Event-driven automation pipelines that reduce operational friction and increase throughput across the entire system surface.",
+    "status": "Operational",
+    "href": "/systems/automation",
+    "version": "v2.1.0",
+    "uptime": "99.8%",
+    "tools": 8,
+    "visible": true
+  }
+]
+
+const systemMeta = {
+  "architectureNotes": [
+    "Protocol-first orchestration through MCP gateway and AURA arbitration.",
+    "Graph memory as persistent operational context for multi-agent continuity.",
+    "Runtime feedback loops feeding orchestration and reliability policies.",
+    "Infrastructure modeled as composable intelligence modules, not isolated apps."
+  ],
+  "stats": [
+    { "value": "18", "label": "MCP Tools" },
+    { "value": "4",  "label": "AI Models" },
+    { "value": "240ms", "label": "Avg Latency" },
+    { "value": "99.9%", "label": "Uptime" }
+  ]
+}
+
+// ── Labs ──────────────────────────────────────────────────────────────────────
+
+const labs = [
+  {
+    "key": "trading-ai",
+    "name": "Trading AI",
+    "tagline": "Quantitative intelligence engine",
+    "status": "beta",
+    "description": "Real-time algorithmic trading engine with signal processing, risk modeling, and autonomous execution across multiple asset classes.",
+    "stack": ["Python", "FastAPI", "PostgreSQL", "Redis", "React"],
+    "metrics": [
+      { "label": "Signals/day", "value": "847" },
+      { "label": "Accuracy", "value": "73.4%" },
+      { "label": "Latency", "value": "12ms" },
+      { "label": "Trades", "value": "2.1k" }
+    ],
+    "accent": "#34d399",
+    "visible": true
+  },
+  {
+    "key": "stl-generator",
+    "name": "STL Generator",
+    "tagline": "Spatial AI fabrication tool",
+    "status": "beta",
+    "description": "AI-powered 3D model generation from natural language prompts with parametric design controls and direct STL export for fabrication.",
+    "stack": ["Python", "Three.js", "OpenSCAD", "FastAPI"],
+    "metrics": [
+      { "label": "Models/day", "value": "312" },
+      { "label": "Accuracy", "value": "89%" },
+      { "label": "Export", "value": "STL/OBJ" },
+      { "label": "Avg time", "value": "4.2s" }
+    ],
+    "accent": "#818cf8",
+    "visible": true
+  },
+  {
+    "key": "crm",
+    "name": "CRM Platform",
+    "tagline": "Intelligent customer intelligence",
+    "status": "rd",
+    "description": "AI-augmented customer relationship system with predictive scoring, automated touchpoint orchestration, and pipeline intelligence.",
+    "stack": ["Next.js", "PostgreSQL", "Python", "LangChain"],
+    "metrics": [
+      { "label": "Contacts", "value": "4.2k" },
+      { "label": "Pipelines", "value": "3" },
+      { "label": "AI score", "value": "94%" },
+      { "label": "Automation", "value": "18 flows" }
+    ],
+    "accent": "#f472b6",
+    "visible": true
+  },
+  {
+    "key": "erp",
+    "name": "ERP Platform",
+    "tagline": "Enterprise automation suite",
+    "status": "rd",
+    "description": "Modular enterprise resource planning system with AI-assisted workflow routing, financial intelligence, and operational dashboards.",
+    "stack": ["Next.js", "PostgreSQL", "Python", "Temporal"],
+    "metrics": [
+      { "label": "Modules", "value": "7" },
+      { "label": "Workflows", "value": "42" },
+      { "label": "Automation", "value": "68%" },
+      { "label": "Uptime", "value": "99.9%" }
+    ],
+    "accent": "#fb923c",
+    "visible": true
+  },
+  {
+    "key": "aura",
+    "name": "AURA",
+    "tagline": "AI orchestration core platform",
+    "status": "live",
+    "description": "Central orchestration intelligence that coordinates agents, manages context windows, routes tool calls, and enforces operational policies.",
+    "stack": ["Python", "FastAPI", "Redis", "GraphQL", "React"],
+    "metrics": [
+      { "label": "Agents", "value": "12" },
+      { "label": "Tool calls/h", "value": "3.4k" },
+      { "label": "Latency", "value": "240ms" },
+      { "label": "Uptime", "value": "99.9%" }
+    ],
+    "accent": "#a78bfa",
+    "visible": true
+  }
+]
+
+// ── Projects ──────────────────────────────────────────────────────────────────
+
+const projects = [
+  {
+    "id": "proj-aura",
+    "slug": "aura",
+    "title": "AURA",
+    "tagline": "AI orchestration core platform",
+    "type": "project",
+    "category": "ai",
+    "status": "live",
+    "featured": true,
+    "published": true,
+    "description": "Central orchestration intelligence that coordinates agents, manages context windows, routes tool calls, and enforces operational policies across the entire AI stack.",
+    "techStack": ["Python", "FastAPI", "Redis", "GraphQL", "React", "TypeScript"],
+    "tags": ["orchestration", "agents", "mcp", "llm"],
+    "repoUrl": "",
+    "liveUrl": "",
+    "accent": "#a78bfa",
+    "publishedAt": "2025-01-01T00:00:00.000Z",
+    "updatedAt": "2026-05-01T00:00:00.000Z",
+    "locale": "en"
+  },
+  {
+    "id": "proj-trading-ai",
+    "slug": "trading-ai",
+    "title": "Trading AI",
+    "tagline": "Quantitative intelligence engine",
+    "type": "project",
+    "category": "ai",
+    "status": "beta",
+    "featured": true,
+    "published": true,
+    "description": "Real-time algorithmic trading engine with signal processing, risk modeling, and autonomous execution across multiple asset classes.",
+    "techStack": ["Python", "FastAPI", "PostgreSQL", "Redis", "React"],
+    "tags": ["trading", "ai", "quantitative", "finance"],
+    "repoUrl": "",
+    "liveUrl": "",
+    "accent": "#34d399",
+    "publishedAt": "2025-03-01T00:00:00.000Z",
+    "updatedAt": "2026-04-15T00:00:00.000Z",
+    "locale": "en"
+  },
+  {
+    "id": "proj-stl",
+    "slug": "stl-generator",
+    "title": "STL Generator",
+    "tagline": "Spatial AI fabrication tool",
+    "type": "project",
+    "category": "ai",
+    "status": "beta",
+    "featured": false,
+    "published": true,
+    "description": "AI-powered 3D model generation from natural language prompts with parametric design controls and direct STL export for fabrication.",
+    "techStack": ["Python", "Three.js", "OpenSCAD", "FastAPI"],
+    "tags": ["3d", "generative-ai", "fabrication", "stl"],
+    "repoUrl": "",
+    "liveUrl": "",
+    "accent": "#818cf8",
+    "publishedAt": "2025-06-01T00:00:00.000Z",
+    "updatedAt": "2026-03-20T00:00:00.000Z",
+    "locale": "en"
+  },
+  {
+    "id": "proj-crm",
+    "slug": "crm",
+    "title": "CRM Platform",
+    "tagline": "Intelligent customer intelligence",
+    "type": "project",
+    "category": "web",
+    "status": "wip",
+    "featured": false,
+    "published": false,
+    "description": "AI-augmented customer relationship system with predictive scoring, automated touchpoint orchestration, and pipeline intelligence.",
+    "techStack": ["Next.js", "PostgreSQL", "Python", "LangChain"],
+    "tags": ["crm", "ai", "sales", "automation"],
+    "repoUrl": "",
+    "liveUrl": "",
+    "accent": "#f472b6",
+    "publishedAt": "2025-09-01T00:00:00.000Z",
+    "updatedAt": "2026-02-10T00:00:00.000Z",
+    "locale": "en"
+  }
+]
+
+// ── Research ──────────────────────────────────────────────────────────────────
+
+const research = [
+  {
+    "slug": "orchestration-is-the-new-compute",
+    "title": "Orchestration is the New Compute",
+    "type": "research",
+    "category": "opinion",
+    "excerpt": "The shift from raw compute to intelligent orchestration layers is the defining architectural transition of the AI era.",
+    "tags": ["orchestration", "ai-architecture", "mcp"],
+    "readTime": 8,
+    "published": true,
+    "featured": true,
+    "status": "published",
+    "locale": "en",
+    "publishedAt": "2026-05-15T00:00:00.000Z",
+    "updatedAt": "2026-05-15T00:00:00.000Z"
+  },
+  {
+    "slug": "graphrag-vs-vector-retrieval",
+    "title": "GraphRAG vs Vector Retrieval",
+    "type": "research",
+    "category": "research",
+    "excerpt": "A technical deep-dive comparing graph-native memory systems against traditional vector store approaches for multi-hop reasoning.",
+    "tags": ["graphrag", "vector-db", "memory", "retrieval"],
+    "readTime": 12,
+    "published": true,
+    "featured": false,
+    "status": "published",
+    "locale": "en",
+    "publishedAt": "2026-04-20T00:00:00.000Z",
+    "updatedAt": "2026-04-20T00:00:00.000Z"
+  },
+  {
+    "slug": "on-building-systems-that-last",
+    "title": "On Building Systems That Last",
+    "type": "research",
+    "category": "essays",
+    "excerpt": "Principles for designing autonomous infrastructure that survives team changes, scaling pressures, and the entropy of time.",
+    "tags": ["architecture", "systems-thinking", "engineering"],
+    "readTime": 10,
+    "published": true,
+    "featured": false,
+    "status": "published",
+    "locale": "en",
+    "publishedAt": "2026-03-10T00:00:00.000Z",
+    "updatedAt": "2026-03-10T00:00:00.000Z"
+  },
+  {
+    "slug": "mcp-ecosystem-expansion-2026",
+    "title": "MCP Ecosystem Expansion Q2 2026",
+    "type": "research",
+    "category": "news",
+    "excerpt": "The Model Context Protocol ecosystem grows to 400+ registered tools with new security primitives and schema validation layers.",
+    "tags": ["mcp", "ecosystem", "news"],
+    "readTime": 5,
+    "published": true,
+    "featured": false,
+    "status": "published",
+    "locale": "en",
+    "publishedAt": "2026-04-01T00:00:00.000Z",
+    "updatedAt": "2026-04-01T00:00:00.000Z"
+  },
+  {
+    "slug": "autonomous-infrastructure-observability",
+    "title": "Observability as a First-Class Citizen in Autonomous Infrastructure",
+    "type": "research",
+    "category": "research",
+    "excerpt": "When the system operates itself, you cannot afford to watch it with human eyes. Observability must be designed into the fabric of autonomous infrastructure from the start.",
+    "tags": ["observability", "autonomous-systems", "infrastructure", "telemetry"],
+    "readTime": 11,
+    "published": true,
+    "featured": false,
+    "status": "published",
+    "locale": "en",
+    "publishedAt": "2026-02-15T00:00:00.000Z",
+    "updatedAt": "2026-02-15T00:00:00.000Z"
+  },
+  {
+    "slug": "context-window-as-operating-environment",
+    "title": "The Context Window as Operating Environment",
+    "type": "research",
+    "category": "essays",
+    "excerpt": "We have been thinking about context windows as memory limitations. They are better understood as computational environments — and designing for them changes everything.",
+    "tags": ["context-windows", "llm-architecture", "agent-design", "memory"],
+    "readTime": 9,
+    "published": true,
+    "featured": false,
+    "status": "published",
+    "locale": "en",
+    "publishedAt": "2026-01-20T00:00:00.000Z",
+    "updatedAt": "2026-01-20T00:00:00.000Z"
+  },
+  {
+    "slug": "protocol-convergence-mcp-a2a",
+    "title": "Protocol Convergence: MCP and A2A Are the Same Bet",
+    "type": "research",
+    "category": "news",
+    "excerpt": "Anthropic's MCP and Google's A2A are often presented as competing standards. They are actually converging on the same architectural insight.",
+    "tags": ["mcp", "a2a", "protocols", "interoperability"],
+    "readTime": 5,
+    "published": true,
+    "featured": false,
+    "status": "published",
+    "locale": "en",
+    "publishedAt": "2026-03-25T00:00:00.000Z",
+    "updatedAt": "2026-03-25T00:00:00.000Z"
+  }
+]
+
+// ── Resource categories (data only — icons stay in TypeScript) ────────────────
+
+const resourceCategories = [
+  { "key": "tools",     "label": "Developer Tools",       "description": "AI APIs, CLI utilities, cloud services, and monitoring platforms that accelerate modern development.", "count": "60+",  "accent": "#34d399", "path": "/en/resources/tools",     "subCategories": ["AI & LLM","CLI & DevOps","APIs & Data","Monitoring","Testing","UI Components","State Management","Auth","Storage","Search","Queue & Jobs","Feature Flags"] },
+  { "key": "repos",     "label": "Open Source Repos",     "description": "Essential GitHub repositories every TypeScript and full-stack developer should know and bookmark.", "count": "40+",  "accent": "#60a5fa", "path": "/en/resources/repos",     "subCategories": ["TypeScript","Python","Go/Rust","AI/LLM","MCP","Starters","Learning"] },
+  { "key": "workflows", "label": "Automation Workflows",  "description": "CI/CD pipelines, n8n templates, and AI automation patterns ready to adapt for your projects.", "count": "15+",  "accent": "#a78bfa", "path": "/en/resources/workflows", "subCategories": ["CI/CD","n8n","AI Patterns"] },
+  { "key": "prompts",   "label": "AI Prompts",            "description": "System prompts, task prompts, and meta-prompts for code review, architecture, and documentation.", "count": "20+",  "accent": "#fbbf24", "path": "/en/resources/prompts",   "subCategories": ["System","Task","Meta","DevOps","Data","Business"] },
+  { "key": "mcp",       "label": "MCP Servers",           "description": "Model Context Protocol servers for Claude — filesystem, GitHub, databases, browser automation, and custom integrations.", "count": "30+", "accent": "#22d3ee", "path": "/en/resources/mcp",       "subCategories": ["official","database","productivity","devops","ai","communication"] },
+  { "key": "agents",    "label": "AI Agent Templates",    "description": "Production-ready agent architectures: ReAct, multi-agent orchestration, RAG, memory, and critic-loop patterns.", "count": "15+", "accent": "#f472b6", "path": "/en/resources/agents",    "subCategories": ["patterns"] },
+  { "key": "skills",    "label": "Skills & Capabilities", "description": "Claude Code skills (slash commands), Hermes agent capabilities, and AI tool-use patterns you can deploy today.", "count": "20+", "accent": "#fb923c", "path": "/en/resources/skills",    "subCategories": ["builtin","custom"] }
+]
+
+// ── Resource items — exported from registries.ts ──────────────────────────────
+
+const tools = [
+  { "id": "tool-claude-api",     "name": "Claude API",       "subCat": "AI & LLM",         "url": "https://anthropic.com/api",              "pricing": "Paid"     },
+  { "id": "tool-openai-api",     "name": "OpenAI API",       "subCat": "AI & LLM",         "url": "https://platform.openai.com",            "pricing": "Paid"     },
+  { "id": "tool-langchain",      "name": "LangChain",        "subCat": "AI & LLM",         "url": "https://langchain.com",                  "pricing": "OSS"      },
+  { "id": "tool-ollama",         "name": "Ollama",           "subCat": "AI & LLM",         "url": "https://ollama.com",                     "pricing": "Free"     },
+  { "id": "tool-n8n",            "name": "n8n",              "subCat": "AI & LLM",         "url": "https://n8n.io",                         "pricing": "OSS"      },
+  { "id": "tool-groq",           "name": "Groq",             "subCat": "AI & LLM",         "url": "https://groq.com",                       "pricing": "Freemium" },
+  { "id": "tool-together-ai",    "name": "Together AI",      "subCat": "AI & LLM",         "url": "https://together.ai",                    "pricing": "Paid"     },
+  { "id": "tool-replicate",      "name": "Replicate",        "subCat": "AI & LLM",         "url": "https://replicate.com",                  "pricing": "Paid"     },
+  { "id": "tool-bun",            "name": "Bun",              "subCat": "CLI & DevOps",     "url": "https://bun.sh",                         "pricing": "OSS"      },
+  { "id": "tool-turso",          "name": "Turso",            "subCat": "CLI & DevOps",     "url": "https://turso.tech",                     "pricing": "Freemium" },
+  { "id": "tool-railway",        "name": "Railway",          "subCat": "CLI & DevOps",     "url": "https://railway.app",                    "pricing": "Freemium" },
+  { "id": "tool-flyio",          "name": "Fly.io",           "subCat": "CLI & DevOps",     "url": "https://fly.io",                         "pricing": "Freemium" },
+  { "id": "tool-doppler",        "name": "Doppler",          "subCat": "CLI & DevOps",     "url": "https://doppler.com",                    "pricing": "Freemium" },
+  { "id": "tool-kamal",          "name": "Kamal",            "subCat": "CLI & DevOps",     "url": "https://kamal-deploy.org",               "pricing": "OSS"      },
+  { "id": "tool-coolify",        "name": "Coolify",          "subCat": "CLI & DevOps",     "url": "https://coolify.io",                     "pricing": "OSS"      },
+  { "id": "tool-turbo",          "name": "Turbo",            "subCat": "CLI & DevOps",     "url": "https://turbo.build",                    "pricing": "OSS"      },
+  { "id": "tool-supabase",       "name": "Supabase",         "subCat": "APIs & Data",      "url": "https://supabase.com",                   "pricing": "Freemium" },
+  { "id": "tool-upstash",        "name": "Upstash",          "subCat": "APIs & Data",      "url": "https://upstash.com",                    "pricing": "Freemium" },
+  { "id": "tool-resend",         "name": "Resend",           "subCat": "APIs & Data",      "url": "https://resend.com",                     "pricing": "Freemium" },
+  { "id": "tool-stripe",         "name": "Stripe",           "subCat": "APIs & Data",      "url": "https://stripe.com",                     "pricing": "Paid"     },
+  { "id": "tool-neon",           "name": "Neon",             "subCat": "APIs & Data",      "url": "https://neon.tech",                      "pricing": "Freemium" },
+  { "id": "tool-planetscale",    "name": "PlanetScale",      "subCat": "APIs & Data",      "url": "https://planetscale.com",                "pricing": "Freemium" },
+  { "id": "tool-triggerdev",     "name": "Trigger.dev",      "subCat": "APIs & Data",      "url": "https://trigger.dev",                    "pricing": "OSS"      },
+  { "id": "tool-sentry",         "name": "Sentry",           "subCat": "Monitoring",       "url": "https://sentry.io",                      "pricing": "Freemium" },
+  { "id": "tool-posthog",        "name": "PostHog",          "subCat": "Monitoring",       "url": "https://posthog.com",                    "pricing": "OSS"      },
+  { "id": "tool-axiom",          "name": "Axiom",            "subCat": "Monitoring",       "url": "https://axiom.co",                       "pricing": "Freemium" },
+  { "id": "tool-betterstack",    "name": "Better Stack",     "subCat": "Monitoring",       "url": "https://betterstack.com",                "pricing": "Freemium" },
+  { "id": "tool-otel",           "name": "OpenTelemetry",    "subCat": "Monitoring",       "url": "https://opentelemetry.io",               "pricing": "OSS"      },
+  { "id": "tool-playwright",     "name": "Playwright",       "subCat": "Testing",          "url": "https://playwright.dev",                 "pricing": "OSS"      },
+  { "id": "tool-vitest",         "name": "Vitest",           "subCat": "Testing",          "url": "https://vitest.dev",                     "pricing": "OSS"      },
+  { "id": "tool-msw",            "name": "MSW",              "subCat": "Testing",          "url": "https://mswjs.io",                       "pricing": "OSS"      },
+  { "id": "tool-testing-lib",    "name": "Testing Library",  "subCat": "Testing",          "url": "https://testing-library.com",            "pricing": "OSS"      },
+  { "id": "tool-fakerjs",        "name": "Faker.js",         "subCat": "Testing",          "url": "https://fakerjs.dev",                    "pricing": "OSS"      },
+  { "id": "tool-k6",             "name": "k6",               "subCat": "Testing",          "url": "https://k6.io",                          "pricing": "OSS"      },
+  { "id": "tool-radix",          "name": "Radix UI",         "subCat": "UI Components",    "url": "https://radix-ui.com",                   "pricing": "OSS"      },
+  { "id": "tool-shadcn",         "name": "shadcn/ui",        "subCat": "UI Components",    "url": "https://ui.shadcn.com",                  "pricing": "OSS"      },
+  { "id": "tool-headlessui",     "name": "Headless UI",      "subCat": "UI Components",    "url": "https://headlessui.com",                 "pricing": "OSS"      },
+  { "id": "tool-mantine",        "name": "Mantine",          "subCat": "UI Components",    "url": "https://mantine.dev",                    "pricing": "OSS"      },
+  { "id": "tool-jotai",          "name": "Jotai",            "subCat": "State Management", "url": "https://jotai.org",                      "pricing": "OSS"      },
+  { "id": "tool-zustand",        "name": "Zustand",          "subCat": "State Management", "url": "https://zustand-demo.pmnd.rs",           "pricing": "OSS"      },
+  { "id": "tool-tanstack-query", "name": "TanStack Query",   "subCat": "State Management", "url": "https://tanstack.com/query",             "pricing": "OSS"      },
+  { "id": "tool-authjs",         "name": "Auth.js",          "subCat": "Auth",             "url": "https://authjs.dev",                     "pricing": "OSS"      },
+  { "id": "tool-better-auth",    "name": "Better Auth",      "subCat": "Auth",             "url": "https://better-auth.com",                "pricing": "OSS"      },
+  { "id": "tool-clerk",          "name": "Clerk",            "subCat": "Auth",             "url": "https://clerk.com",                      "pricing": "Freemium" },
+  { "id": "tool-r2",             "name": "Cloudflare R2",    "subCat": "Storage",          "url": "https://cloudflare.com/r2",              "pricing": "Freemium" },
+  { "id": "tool-s3",             "name": "AWS S3",           "subCat": "Storage",          "url": "https://aws.amazon.com/s3",              "pricing": "Paid"     },
+  { "id": "tool-meilisearch",    "name": "Meilisearch",      "subCat": "Search",           "url": "https://meilisearch.com",                "pricing": "OSS"      },
+  { "id": "tool-typesense",      "name": "Typesense",        "subCat": "Search",           "url": "https://typesense.org",                  "pricing": "OSS"      },
+  { "id": "tool-bullmq",         "name": "BullMQ",           "subCat": "Queue & Jobs",     "url": "https://bullmq.io",                      "pricing": "OSS"      },
+  { "id": "tool-inngest",        "name": "Inngest",          "subCat": "Queue & Jobs",     "url": "https://inngest.com",                    "pricing": "Freemium" },
+  { "id": "tool-growthbook",     "name": "GrowthBook",       "subCat": "Feature Flags",    "url": "https://growthbook.io",                  "pricing": "OSS"      },
+  { "id": "tool-launchdarkly",   "name": "LaunchDarkly",     "subCat": "Feature Flags",    "url": "https://launchdarkly.com",               "pricing": "Paid"     }
+]
+
+const repos = [
+  { "id": "repo-typescript",       "org": "microsoft",            "name": "TypeScript",               "lang": "TypeScript", "stars": "101k", "url": "https://github.com/microsoft/TypeScript",                   "cat": "TypeScript" },
+  { "id": "repo-nextjs",           "org": "vercel",               "name": "next.js",                  "lang": "TypeScript", "stars": "128k", "url": "https://github.com/vercel/next.js",                         "cat": "TypeScript" },
+  { "id": "repo-shadcn",           "org": "shadcn-ui",            "name": "ui",                       "lang": "TypeScript", "stars": "82k",  "url": "https://github.com/shadcn-ui/ui",                           "cat": "TypeScript" },
+  { "id": "repo-zustand",          "org": "pmndrs",               "name": "zustand",                  "lang": "TypeScript", "stars": "50k",  "url": "https://github.com/pmndrs/zustand",                         "cat": "TypeScript" },
+  { "id": "repo-zod",              "org": "colinhacks",           "name": "zod",                      "lang": "TypeScript", "stars": "35k",  "url": "https://github.com/colinhacks/zod",                         "cat": "TypeScript" },
+  { "id": "repo-trpc",             "org": "trpc",                 "name": "trpc",                     "lang": "TypeScript", "stars": "35k",  "url": "https://github.com/trpc/trpc",                              "cat": "TypeScript" },
+  { "id": "repo-prisma",           "org": "prisma",               "name": "prisma",                   "lang": "TypeScript", "stars": "41k",  "url": "https://github.com/prisma/prisma",                          "cat": "TypeScript" },
+  { "id": "repo-n8n",              "org": "n8n-io",               "name": "n8n",                      "lang": "TypeScript", "stars": "51k",  "url": "https://github.com/n8n-io/n8n",                             "cat": "TypeScript" },
+  { "id": "repo-langchain-py",     "org": "langchain-ai",         "name": "langchain",                "lang": "Python",     "stars": "96k",  "url": "https://github.com/langchain-ai/langchain",                 "cat": "Python"     },
+  { "id": "repo-anthropic-py",     "org": "anthropics",           "name": "anthropic-sdk-python",     "lang": "Python",     "stars": "3.8k", "url": "https://github.com/anthropics/anthropic-sdk-python",        "cat": "Python"     },
+  { "id": "repo-pydantic-ai",      "org": "pydantic",             "name": "pydantic-ai",              "lang": "Python",     "stars": "8.4k", "url": "https://github.com/pydantic/pydantic-ai",                   "cat": "Python"     },
+  { "id": "repo-langgraph",        "org": "langchain-ai",         "name": "langgraph",                "lang": "Python",     "stars": "12k",  "url": "https://github.com/langchain-ai/langgraph",                 "cat": "Python"     },
+  { "id": "repo-autogen",          "org": "microsoft",            "name": "autogen",                  "lang": "Python",     "stars": "38k",  "url": "https://github.com/microsoft/autogen",                      "cat": "Python"     },
+  { "id": "repo-fastapi",          "org": "tiangolo",             "name": "fastapi",                  "lang": "Python",     "stars": "80k",  "url": "https://github.com/tiangolo/fastapi",                       "cat": "Python"     },
+  { "id": "repo-ollama",           "org": "ollama",               "name": "ollama",                   "lang": "Go",         "stars": "103k", "url": "https://github.com/ollama/ollama",                          "cat": "Go/Rust"    },
+  { "id": "repo-biome",            "org": "biomejs",              "name": "biome",                    "lang": "Rust",       "stars": "17k",  "url": "https://github.com/biomejs/biome",                          "cat": "Go/Rust"    },
+  { "id": "repo-claude-code",      "org": "anthropics",           "name": "claude-code",              "lang": "TypeScript", "stars": "12k",  "url": "https://github.com/anthropics/claude-code",                 "cat": "AI/LLM"     },
+  { "id": "repo-instructor",       "org": "jxnl",                 "name": "instructor",               "lang": "Python",     "stars": "10k",  "url": "https://github.com/jxnl/instructor",                        "cat": "AI/LLM"     },
+  { "id": "repo-mem0",             "org": "mem0ai",               "name": "mem0",                     "lang": "Python",     "stars": "26k",  "url": "https://github.com/mem0ai/mem0",                            "cat": "AI/LLM"     },
+  { "id": "repo-mcp-servers",      "org": "modelcontextprotocol", "name": "servers",                  "lang": "TypeScript", "stars": "9.2k", "url": "https://github.com/modelcontextprotocol/servers",           "cat": "MCP"        },
+  { "id": "repo-mcp-ts-sdk",       "org": "modelcontextprotocol", "name": "typescript-sdk",           "lang": "TypeScript", "stars": "6.1k", "url": "https://github.com/modelcontextprotocol/typescript-sdk",    "cat": "MCP"        },
+  { "id": "repo-fastmcp",          "org": "jlowin",               "name": "fastmcp",                  "lang": "Python",     "stars": "4.2k", "url": "https://github.com/jlowin/fastmcp",                         "cat": "MCP"        },
+  { "id": "repo-t3",               "org": "t3-oss",               "name": "create-t3-app",            "lang": "TypeScript", "stars": "26k",  "url": "https://github.com/t3-oss/create-t3-app",                  "cat": "Starters"   },
+  { "id": "repo-bulletproof",      "org": "alan2207",             "name": "bulletproof-react",        "lang": "TypeScript", "stars": "29k",  "url": "https://github.com/alan2207/bulletproof-react",             "cat": "Starters"   },
+  { "id": "repo-algorithms",       "org": "trekhleb",             "name": "javascript-algorithms",    "lang": "JavaScript", "stars": "188k", "url": "https://github.com/trekhleb/javascript-algorithms",         "cat": "Learning"   },
+  { "id": "repo-system-design",    "org": "donnemartin",          "name": "system-design-primer",     "lang": "Python",     "stars": "280k", "url": "https://github.com/donnemartin/system-design-primer",       "cat": "Learning"   },
+  { "id": "repo-roadmap",          "org": "kamranahmedse",        "name": "developer-roadmap",        "lang": "TypeScript", "stars": "305k", "url": "https://github.com/kamranahmedse/developer-roadmap",        "cat": "Learning"   },
+  { "id": "repo-build-your-own-x", "org": "codecrafters-io",      "name": "build-your-own-x",         "lang": "Markdown",   "stars": "310k", "url": "https://github.com/codecrafters-io/build-your-own-x",       "cat": "Learning"   }
+]
+
+const workflows = [
+  { "id": "wf-0",  "title": "Typecheck + Lint + Test → Build → Lighthouse CI",   "type": "cicd", "complexity": "Medium" },
+  { "id": "wf-1",  "title": "Docker Multi-stage Build with Layer Cache",          "type": "cicd", "complexity": "Medium" },
+  { "id": "wf-2",  "title": "Semantic Release with Changelog Generation",         "type": "cicd", "complexity": "Low"    },
+  { "id": "wf-3",  "title": "GitHub Issue → Auto-label → Notify Slack",          "type": "n8n",  "complexity": "Low"    },
+  { "id": "wf-4",  "title": "RSS Feed → AI Summary → Telegram Channel",          "type": "n8n",  "complexity": "Medium" },
+  { "id": "wf-5",  "title": "CRM Lead → Enrich → Assign → Welcome Email",        "type": "n8n",  "complexity": "High"   },
+  { "id": "wf-6",  "title": "Daily Metrics Digest → Email Report",                "type": "n8n",  "complexity": "Medium" },
+  { "id": "wf-7",  "title": "New GitHub Star → Thank You Tweet (X)",              "type": "n8n",  "complexity": "Medium" },
+  { "id": "wf-8",  "title": "Nightly SEO Audit → Linear Issue Creator",           "type": "n8n",  "complexity": "High"   },
+  { "id": "wf-9",  "title": "RAG Pipeline: Ingest → Chunk → Embed → Retrieve",   "type": "ai",   "complexity": "High"   },
+  { "id": "wf-10", "title": "Multi-Agent Loop: Planner → Executor → Critic",     "type": "ai",   "complexity": "High"   },
+  { "id": "wf-11", "title": "Document Classification with Confidence Scoring",    "type": "ai",   "complexity": "Medium" },
+  { "id": "wf-12", "title": "Structured Output Pipeline with Zod Validation",     "type": "ai",   "complexity": "Low"    },
+  { "id": "wf-13", "title": "Streaming Agent with Real-Time UI Updates",          "type": "ai",   "complexity": "High"   }
+]
+
+const prompts = [
+  { "id": "pr-0",  "title": "Senior TypeScript Code Reviewer",       "cat": "System",   "models": ["Claude 3.5 Sonnet","GPT-4o","Gemini 1.5 Pro"] },
+  { "id": "pr-1",  "title": "Architecture Decision Advisor",          "cat": "System",   "models": ["Claude 3 Opus","GPT-4o"] },
+  { "id": "pr-2",  "title": "Technical Documentation Writer",         "cat": "System",   "models": ["Claude 3.5 Sonnet","GPT-4o"] },
+  { "id": "pr-3",  "title": "Fullstack Code Generator",               "cat": "System",   "models": ["Claude 3.5 Sonnet","GPT-4o","Claude 3 Opus"] },
+  { "id": "pr-4",  "title": "Security-First Code Reviewer",           "cat": "System",   "models": ["Claude 3.5 Sonnet","GPT-4o","Claude 3 Opus"] },
+  { "id": "pr-5",  "title": "Product Manager — PRD Writer",           "cat": "System",   "models": ["Claude 3.5 Sonnet","GPT-4o"] },
+  { "id": "pr-6",  "title": "E2E Test Writer (Playwright)",            "cat": "Task",     "models": ["Claude 3.5 Sonnet","GPT-4o"] },
+  { "id": "pr-7",  "title": "Performance Bottleneck Finder",          "cat": "Task",     "models": ["Claude 3.5 Sonnet","GPT-4o","Gemini 1.5 Pro"] },
+  { "id": "pr-8",  "title": "Chain of Thought Activator",             "cat": "Meta",     "models": ["Claude 3.5 Sonnet","GPT-4o","Gemini 1.5 Pro","Claude 3 Opus"] },
+  { "id": "pr-9",  "title": "Persona Calibrator",                     "cat": "Meta",     "models": ["Claude 3.5 Sonnet","GPT-4o"] },
+  { "id": "pr-10", "title": "CI/CD Pipeline Debugger",                "cat": "DevOps",   "models": ["Claude 3.5 Sonnet","GPT-4o"] },
+  { "id": "pr-11", "title": "Docker Compose Generator",               "cat": "DevOps",   "models": ["Claude 3.5 Sonnet","GPT-4o"] },
+  { "id": "pr-12", "title": "SQL Query Optimizer",                    "cat": "Data",     "models": ["Claude 3.5 Sonnet","GPT-4o"] },
+  { "id": "pr-13", "title": "Data Pipeline Designer",                 "cat": "Data",     "models": ["Claude 3.5 Sonnet","Claude 3 Opus"] },
+  { "id": "pr-14", "title": "Competitive Analysis Report",            "cat": "Business", "models": ["Claude 3.5 Sonnet","GPT-4o"] },
+  { "id": "pr-15", "title": "Investor Update Writer",                 "cat": "Business", "models": ["Claude 3.5 Sonnet","GPT-4o"] }
+]
+
+const mcp = [
+  { "id": "mcp-filesystem",          "name": "filesystem",          "cat": "official",      "install": "npx @modelcontextprotocol/server-filesystem",          "toolCount": 6  },
+  { "id": "mcp-brave-search",        "name": "brave-search",        "cat": "official",      "install": "npx @modelcontextprotocol/server-brave-search",        "toolCount": 2  },
+  { "id": "mcp-github",              "name": "github",              "cat": "official",      "install": "npx @modelcontextprotocol/server-github",              "toolCount": 5  },
+  { "id": "mcp-postgres",            "name": "postgres",            "cat": "official",      "install": "npx @modelcontextprotocol/server-postgres",            "toolCount": 3  },
+  { "id": "mcp-sqlite",              "name": "sqlite",              "cat": "official",      "install": "npx @modelcontextprotocol/server-sqlite",              "toolCount": 4  },
+  { "id": "mcp-puppeteer",           "name": "puppeteer",           "cat": "official",      "install": "npx @modelcontextprotocol/server-puppeteer",           "toolCount": 5  },
+  { "id": "mcp-fetch",               "name": "fetch",               "cat": "official",      "install": "npx @modelcontextprotocol/server-fetch",               "toolCount": 2  },
+  { "id": "mcp-memory",              "name": "memory",              "cat": "official",      "install": "npx @modelcontextprotocol/server-memory",              "toolCount": 5  },
+  { "id": "mcp-sequential-thinking", "name": "sequential-thinking", "cat": "official",      "install": "npx @modelcontextprotocol/server-sequential-thinking", "toolCount": 1  },
+  { "id": "mcp-mysql",               "name": "mysql",               "cat": "database",      "install": "npx @modelcontextprotocol/server-mysql",               "toolCount": 4  },
+  { "id": "mcp-mongodb",             "name": "mongodb",             "cat": "database",      "install": "npx mcp-server-mongodb",                               "toolCount": 6  },
+  { "id": "mcp-redis",               "name": "redis",               "cat": "database",      "install": "npx mcp-server-redis",                                 "toolCount": 6  },
+  { "id": "mcp-supabase",            "name": "supabase",            "cat": "database",      "install": "npx mcp-server-supabase",                              "toolCount": 3  },
+  { "id": "mcp-google-drive",        "name": "google-drive",        "cat": "productivity",  "install": "npx @modelcontextprotocol/server-gdrive",              "toolCount": 5  },
+  { "id": "mcp-notion",              "name": "notion",              "cat": "productivity",  "install": "npx mcp-notion-server",                                "toolCount": 4  },
+  { "id": "mcp-linear",              "name": "linear",              "cat": "productivity",  "install": "npx @linear/mcp-server",                               "toolCount": 4  },
+  { "id": "mcp-git",                 "name": "git",                 "cat": "devops",        "install": "npx @modelcontextprotocol/server-git",                 "toolCount": 6  },
+  { "id": "mcp-docker",              "name": "docker",              "cat": "devops",        "install": "npx mcp-server-docker",                                "toolCount": 6  },
+  { "id": "mcp-kubernetes",          "name": "kubernetes",          "cat": "devops",        "install": "npx mcp-server-kubernetes",                            "toolCount": 6  },
+  { "id": "mcp-cloudflare",          "name": "cloudflare",          "cat": "devops",        "install": "npx @cloudflare/mcp-server-cloudflare",                "toolCount": 6  },
+  { "id": "mcp-sentry",              "name": "sentry",              "cat": "devops",        "install": "npx mcp-server-sentry",                                "toolCount": 5  },
+  { "id": "mcp-tavily",              "name": "tavily",              "cat": "ai",            "install": "npx tavily-mcp",                                       "toolCount": 2  },
+  { "id": "mcp-stripe",              "name": "stripe",              "cat": "ai",            "install": "npx @stripe/agent-toolkit",                            "toolCount": 4  },
+  { "id": "mcp-slack",               "name": "slack",               "cat": "communication", "install": "npx mcp-server-slack",                                 "toolCount": 4  },
+  { "id": "mcp-gmail",               "name": "gmail",               "cat": "communication", "install": "npx mcp-server-gmail",                                 "toolCount": 5  }
+]
+
+const agents = [
+  { "id": "agent-0",  "title": "ReAct (Reason + Act)",              "stack": ["Claude API","OpenAI","LangChain AgentExecutor"]            },
+  { "id": "agent-1",  "title": "Multi-Agent Orchestration",         "stack": ["LangGraph","AutoGen","CrewAI"]                             },
+  { "id": "agent-2",  "title": "RAG Agent",                         "stack": ["LangChain + pgvector","Weaviate","Pinecone"]               },
+  { "id": "agent-3",  "title": "Memory Agent (Short + Long Term)",  "stack": ["Claude + MCP memory server","LangChain Memory","Mem0"]     },
+  { "id": "agent-4",  "title": "Critic-Refinement Loop",            "stack": ["Claude API with two system prompts"]                       },
+  { "id": "agent-5",  "title": "Tool-Use Pattern (Parallel Calls)", "stack": ["Claude API","OpenAI with parallel_tool_calls"]            },
+  { "id": "agent-6",  "title": "Supervisor / Router Pattern",       "stack": ["LangGraph StateGraph","Claude with structured routing"]    },
+  { "id": "agent-7",  "title": "Event-Driven Agent",                "stack": ["n8n + Claude API","GitHub Actions + Claude","Temporal"]    },
+  { "id": "agent-8",  "title": "Self-Healing Agent",                "stack": ["Claude API","LangGraph error handlers","Temporal"]         },
+  { "id": "agent-9",  "title": "Plan-and-Execute",                  "stack": ["Claude 3 Opus (planner)","Claude Haiku (executor)","LangGraph"] },
+  { "id": "agent-10", "title": "Human-in-the-Loop (HITL)",          "stack": ["Claude API","Slack Approval Bot","LangGraph interrupt()"]  },
+  { "id": "agent-11", "title": "Structured Extraction Agent",       "stack": ["Claude API","Zod","TypeScript"]                            }
+]
+
+const skills = [
+  { "id": "skill-ultrareview", "command": "/ultrareview",     "title": "Ultra Review",         "builtin": true  },
+  { "id": "skill-plan",        "command": "/plan",            "title": "Architecture Planner", "builtin": true  },
+  { "id": "skill-fast",        "command": "/fast",            "title": "Fast Mode",            "builtin": true  },
+  { "id": "skill-deploy",      "command": "/deploy",          "title": "Deploy to Railway",    "builtin": false },
+  { "id": "skill-bundle",      "command": "/bundle",          "title": "Analyze Bundle",       "builtin": false },
+  { "id": "skill-migrate",     "command": "/migrate <name>",  "title": "DB Migration",         "builtin": false },
+  { "id": "skill-review",      "command": "/review",          "title": "Code Review",          "builtin": false },
+  { "id": "skill-optimize",    "command": "/optimize <file>", "title": "Performance Optimizer","builtin": false },
+  { "id": "skill-i18n",        "command": "/i18n",            "title": "i18n Coverage Check",  "builtin": false },
+  { "id": "skill-types",       "command": "/types",           "title": "Type Generation",      "builtin": false }
+]
+
+// ── Write all files ───────────────────────────────────────────────────────────
+
+console.log('\n[export-content] Writing src/content/ JSON files...\n')
+
+write('systems/index.json',        systems)
+write('systems/meta.json',         systemMeta)
+write('labs/index.json',           labs)
+write('projects/index.json',       projects)
+write('research/index.json',       research)
+write('resources/categories.json', resourceCategories)
+write('resources/tools.json',      tools)
+write('resources/repos.json',      repos)
+write('resources/workflows.json',  workflows)
+write('resources/prompts.json',    prompts)
+write('resources/mcp.json',        mcp)
+write('resources/agents.json',     agents)
+write('resources/skills.json',     skills)
+
+console.log(`\n[export-content] ✓ Done. ${13} files written to src/content/`)

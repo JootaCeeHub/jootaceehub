@@ -1,0 +1,366 @@
+[
+  {
+    "id": "tool-claude-api",
+    "name": "Claude API",
+    "subCat": "AI & LLM",
+    "url": "https://anthropic.com/api",
+    "pricing": "Paid"
+  },
+  {
+    "id": "tool-openai-api",
+    "name": "OpenAI API",
+    "subCat": "AI & LLM",
+    "url": "https://platform.openai.com",
+    "pricing": "Paid"
+  },
+  {
+    "id": "tool-langchain",
+    "name": "LangChain",
+    "subCat": "AI & LLM",
+    "url": "https://langchain.com",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-ollama",
+    "name": "Ollama",
+    "subCat": "AI & LLM",
+    "url": "https://ollama.com",
+    "pricing": "Free"
+  },
+  {
+    "id": "tool-n8n",
+    "name": "n8n",
+    "subCat": "AI & LLM",
+    "url": "https://n8n.io",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-groq",
+    "name": "Groq",
+    "subCat": "AI & LLM",
+    "url": "https://groq.com",
+    "pricing": "Freemium"
+  },
+  {
+    "id": "tool-together-ai",
+    "name": "Together AI",
+    "subCat": "AI & LLM",
+    "url": "https://together.ai",
+    "pricing": "Paid"
+  },
+  {
+    "id": "tool-replicate",
+    "name": "Replicate",
+    "subCat": "AI & LLM",
+    "url": "https://replicate.com",
+    "pricing": "Paid"
+  },
+  {
+    "id": "tool-bun",
+    "name": "Bun",
+    "subCat": "CLI & DevOps",
+    "url": "https://bun.sh",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-turso",
+    "name": "Turso",
+    "subCat": "CLI & DevOps",
+    "url": "https://turso.tech",
+    "pricing": "Freemium"
+  },
+  {
+    "id": "tool-railway",
+    "name": "Railway",
+    "subCat": "CLI & DevOps",
+    "url": "https://railway.app",
+    "pricing": "Freemium"
+  },
+  {
+    "id": "tool-flyio",
+    "name": "Fly.io",
+    "subCat": "CLI & DevOps",
+    "url": "https://fly.io",
+    "pricing": "Freemium"
+  },
+  {
+    "id": "tool-doppler",
+    "name": "Doppler",
+    "subCat": "CLI & DevOps",
+    "url": "https://doppler.com",
+    "pricing": "Freemium"
+  },
+  {
+    "id": "tool-kamal",
+    "name": "Kamal",
+    "subCat": "CLI & DevOps",
+    "url": "https://kamal-deploy.org",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-coolify",
+    "name": "Coolify",
+    "subCat": "CLI & DevOps",
+    "url": "https://coolify.io",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-turbo",
+    "name": "Turbo",
+    "subCat": "CLI & DevOps",
+    "url": "https://turbo.build",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-supabase",
+    "name": "Supabase",
+    "subCat": "APIs & Data",
+    "url": "https://supabase.com",
+    "pricing": "Freemium"
+  },
+  {
+    "id": "tool-upstash",
+    "name": "Upstash",
+    "subCat": "APIs & Data",
+    "url": "https://upstash.com",
+    "pricing": "Freemium"
+  },
+  {
+    "id": "tool-resend",
+    "name": "Resend",
+    "subCat": "APIs & Data",
+    "url": "https://resend.com",
+    "pricing": "Freemium"
+  },
+  {
+    "id": "tool-stripe",
+    "name": "Stripe",
+    "subCat": "APIs & Data",
+    "url": "https://stripe.com",
+    "pricing": "Paid"
+  },
+  {
+    "id": "tool-neon",
+    "name": "Neon",
+    "subCat": "APIs & Data",
+    "url": "https://neon.tech",
+    "pricing": "Freemium"
+  },
+  {
+    "id": "tool-planetscale",
+    "name": "PlanetScale",
+    "subCat": "APIs & Data",
+    "url": "https://planetscale.com",
+    "pricing": "Freemium"
+  },
+  {
+    "id": "tool-triggerdev",
+    "name": "Trigger.dev",
+    "subCat": "APIs & Data",
+    "url": "https://trigger.dev",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-sentry",
+    "name": "Sentry",
+    "subCat": "Monitoring",
+    "url": "https://sentry.io",
+    "pricing": "Freemium"
+  },
+  {
+    "id": "tool-posthog",
+    "name": "PostHog",
+    "subCat": "Monitoring",
+    "url": "https://posthog.com",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-axiom",
+    "name": "Axiom",
+    "subCat": "Monitoring",
+    "url": "https://axiom.co",
+    "pricing": "Freemium"
+  },
+  {
+    "id": "tool-betterstack",
+    "name": "Better Stack",
+    "subCat": "Monitoring",
+    "url": "https://betterstack.com",
+    "pricing": "Freemium"
+  },
+  {
+    "id": "tool-otel",
+    "name": "OpenTelemetry",
+    "subCat": "Monitoring",
+    "url": "https://opentelemetry.io",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-playwright",
+    "name": "Playwright",
+    "subCat": "Testing",
+    "url": "https://playwright.dev",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-vitest",
+    "name": "Vitest",
+    "subCat": "Testing",
+    "url": "https://vitest.dev",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-msw",
+    "name": "MSW",
+    "subCat": "Testing",
+    "url": "https://mswjs.io",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-testing-lib",
+    "name": "Testing Library",
+    "subCat": "Testing",
+    "url": "https://testing-library.com",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-fakerjs",
+    "name": "Faker.js",
+    "subCat": "Testing",
+    "url": "https://fakerjs.dev",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-k6",
+    "name": "k6",
+    "subCat": "Testing",
+    "url": "https://k6.io",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-radix",
+    "name": "Radix UI",
+    "subCat": "UI Components",
+    "url": "https://radix-ui.com",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-shadcn",
+    "name": "shadcn/ui",
+    "subCat": "UI Components",
+    "url": "https://ui.shadcn.com",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-headlessui",
+    "name": "Headless UI",
+    "subCat": "UI Components",
+    "url": "https://headlessui.com",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-mantine",
+    "name": "Mantine",
+    "subCat": "UI Components",
+    "url": "https://mantine.dev",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-jotai",
+    "name": "Jotai",
+    "subCat": "State Management",
+    "url": "https://jotai.org",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-zustand",
+    "name": "Zustand",
+    "subCat": "State Management",
+    "url": "https://zustand-demo.pmnd.rs",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-tanstack-query",
+    "name": "TanStack Query",
+    "subCat": "State Management",
+    "url": "https://tanstack.com/query",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-authjs",
+    "name": "Auth.js",
+    "subCat": "Auth",
+    "url": "https://authjs.dev",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-better-auth",
+    "name": "Better Auth",
+    "subCat": "Auth",
+    "url": "https://better-auth.com",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-clerk",
+    "name": "Clerk",
+    "subCat": "Auth",
+    "url": "https://clerk.com",
+    "pricing": "Freemium"
+  },
+  {
+    "id": "tool-r2",
+    "name": "Cloudflare R2",
+    "subCat": "Storage",
+    "url": "https://cloudflare.com/r2",
+    "pricing": "Freemium"
+  },
+  {
+    "id": "tool-s3",
+    "name": "AWS S3",
+    "subCat": "Storage",
+    "url": "https://aws.amazon.com/s3",
+    "pricing": "Paid"
+  },
+  {
+    "id": "tool-meilisearch",
+    "name": "Meilisearch",
+    "subCat": "Search",
+    "url": "https://meilisearch.com",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-typesense",
+    "name": "Typesense",
+    "subCat": "Search",
+    "url": "https://typesense.org",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-bullmq",
+    "name": "BullMQ",
+    "subCat": "Queue & Jobs",
+    "url": "https://bullmq.io",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-inngest",
+    "name": "Inngest",
+    "subCat": "Queue & Jobs",
+    "url": "https://inngest.com",
+    "pricing": "Freemium"
+  },
+  {
+    "id": "tool-growthbook",
+    "name": "GrowthBook",
+    "subCat": "Feature Flags",
+    "url": "https://growthbook.io",
+    "pricing": "OSS"
+  },
+  {
+    "id": "tool-launchdarkly",
+    "name": "LaunchDarkly",
+    "subCat": "Feature Flags",
+    "url": "https://launchdarkly.com",
+    "pricing": "Paid"
+  }
+]

@@ -1,0 +1,26 @@
+{
+  "architectureNotes": [
+    "Protocol-first orchestration through MCP gateway and AURA arbitration.",
+    "Graph memory as persistent operational context for multi-agent continuity.",
+    "Runtime feedback loops feeding orchestration and reliability policies.",
+    "Infrastructure modeled as composable intelligence modules, not isolated apps."
+  ],
+  "stats": [
+    {
+      "value": "18",
+      "label": "MCP Tools"
+    },
+    {
+      "value": "4",
+      "label": "AI Models"
+    },
+    {
+      "value": "240ms",
+      "label": "Avg Latency"
+    },
+    {
+      "value": "99.9%",
+      "label": "Uptime"
+    }
+  ]
+}

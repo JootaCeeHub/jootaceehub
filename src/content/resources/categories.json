@@ -1,0 +1,109 @@
+[
+  {
+    "key": "tools",
+    "label": "Developer Tools",
+    "description": "AI APIs, CLI utilities, cloud services, and monitoring platforms that accelerate modern development.",
+    "count": "60+",
+    "accent": "#34d399",
+    "path": "/en/resources/tools",
+    "subCategories": [
+      "AI & LLM",
+      "CLI & DevOps",
+      "APIs & Data",
+      "Monitoring",
+      "Testing",
+      "UI Components",
+      "State Management",
+      "Auth",
+      "Storage",
+      "Search",
+      "Queue & Jobs",
+      "Feature Flags"
+    ]
+  },
+  {
+    "key": "repos",
+    "label": "Open Source Repos",
+    "description": "Essential GitHub repositories every TypeScript and full-stack developer should know and bookmark.",
+    "count": "40+",
+    "accent": "#60a5fa",
+    "path": "/en/resources/repos",
+    "subCategories": [
+      "TypeScript",
+      "Python",
+      "Go/Rust",
+      "AI/LLM",
+      "MCP",
+      "Starters",
+      "Learning"
+    ]
+  },
+  {
+    "key": "workflows",
+    "label": "Automation Workflows",
+    "description": "CI/CD pipelines, n8n templates, and AI automation patterns ready to adapt for your projects.",
+    "count": "15+",
+    "accent": "#a78bfa",
+    "path": "/en/resources/workflows",
+    "subCategories": [
+      "CI/CD",
+      "n8n",
+      "AI Patterns"
+    ]
+  },
+  {
+    "key": "prompts",
+    "label": "AI Prompts",
+    "description": "System prompts, task prompts, and meta-prompts for code review, architecture, and documentation.",
+    "count": "20+",
+    "accent": "#fbbf24",
+    "path": "/en/resources/prompts",
+    "subCategories": [
+      "System",
+      "Task",
+      "Meta",
+      "DevOps",
+      "Data",
+      "Business"
+    ]
+  },
+  {
+    "key": "mcp",
+    "label": "MCP Servers",
+    "description": "Model Context Protocol servers for Claude — filesystem, GitHub, databases, browser automation, and custom integrations.",
+    "count": "30+",
+    "accent": "#22d3ee",
+    "path": "/en/resources/mcp",
+    "subCategories": [
+      "official",
+      "database",
+      "productivity",
+      "devops",
+      "ai",
+      "communication"
+    ]
+  },
+  {
+    "key": "agents",
+    "label": "AI Agent Templates",
+    "description": "Production-ready agent architectures: ReAct, multi-agent orchestration, RAG, memory, and critic-loop patterns.",
+    "count": "15+",
+    "accent": "#f472b6",
+    "path": "/en/resources/agents",
+    "subCategories": [
+      "patterns"
+    ]
+  },
+  {
+    "key": "skills",
+    "label": "Skills & Capabilities",
+    "description": "Claude Code skills (slash commands), Hermes agent capabilities, and AI tool-use patterns you can deploy today.",
+    "count": "20+",
+    "accent": "#fb923c",
+    "path": "/en/resources/skills",
+    "subCategories": [
+      "builtin",
+      "custom"
+    ]
+  }
+]
