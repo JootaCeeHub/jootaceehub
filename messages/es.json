@@ -850,5 +850,87 @@
         "description": "Diseño de sistemas integrados con IA, patrones de infraestructura y showcase de arquitectura distribuida."
       }
     }
+  },
+  "changelog": {
+    "badge": "Historial de Versiones",
+    "title": "Changelog",
+    "description": "Hitos de ingeniería, decisiones de arquitectura y mejoras de producción registradas a lo largo de todas las fases de desarrollo.",
+    "phases": [
+      {
+        "phase": "Fase 5",
+        "date": "Junio 2026",
+        "status": "in-progress",
+        "title": "Lanzamiento a Producción",
+        "summary": "Lanzamiento público controlado con revisión de seguridad, QA de SEO, QA de accesibilidad, monitoreo de errores, panel de analítica y backup/restore.",
+        "highlights": [
+          "Integración de Plausible Analytics — sin cookies, privacy-first",
+          "Monitoreo de errores con Sentry y taxonomía AppError",
+          "AdminAuthGate — 4 modos de autenticación (Supabase, Google, Password, abierto)",
+          "Checklist de lanzamiento con 10 objetivos rastreados",
+          "Página pública de notas de versión"
+        ]
+      },
+      {
+        "phase": "Fase 4",
+        "date": "Junio 2026",
+        "status": "complete",
+        "title": "Optimización de Rendimiento",
+        "summary": "Análisis de bundle por ruta, separación de chunks del admin, optimización del hero 3D, efectos por nivel de dispositivo, fuentes auto-alojadas, optimización de imágenes, medición de INP y budgets de rendimiento en CI.",
+        "highlights": [
+          "Hook usePerfTier — detección de nivel de dispositivo con caché en sessionStorage",
+          "R3F frameloop pausado al hacer scroll (~30% reducción de CPU en reposo)",
+          "Fuentes auto-alojadas — sin solicitudes externas de fuentes",
+          "Job de Lighthouse CI para mobile añadido",
+          "Script postbuild chunk-manifest.mjs — 110 chunks, 7.7 MB rastreados"
+        ]
+      },
+      {
+        "phase": "Fase 3",
+        "date": "Junio 2026",
+        "status": "complete",
+        "title": "Expansión de Funcionalidades",
+        "summary": "Ecosistema de Labs, feed de inteligencia, capa de GitHub, sistemas admin, journal, investigación, playground y rutas de preview.",
+        "highlights": [
+          "Labs: plataformas AURA, Trading AI, CRM, ERP",
+          "Agregador de feed de inteligencia con señales en vivo",
+          "Capa de GitHub con estadísticas en tiempo real",
+          "Sistema de contenido para journal e investigación",
+          "Paneles de analítica en admin con métricas CWV"
+        ]
+      },
+      {
+        "phase": "Fase 2",
+        "date": "Junio 2026",
+        "status": "complete",
+        "title": "Consolidación de Arquitectura",
+        "summary": "Refactor estructural en 10 pasos — ADRs, SSoT de tokens de diseño, esquema ContentItem, módulos de datos, slicing del store admin, división de panels, centralización de auth y hub de IA.",
+        "highlights": [
+          "Store admin dividido en 10 manejadores de dominio",
+          "3 paneles monolíticos divididos (ContentPanel → 6, StudioPanel → 4, GitHubLayerPanel → 5)",
+          "SSoT de tokens de diseño en src/lib/design/tokens.ts",
+          "Estrategia de auth centralizada con token de Google movido a sessionStorage",
+          "Ruta hub de IA en /[locale]/ai/"
+        ]
+      },
+      {
+        "phase": "Fase 1",
+        "date": "Mayo–Junio 2026",
+        "status": "complete",
+        "title": "Fundación",
+        "summary": "Next.js 16 App Router, exportación estática, i18n personalizado, CMS admin, PWA, CI/CD, infraestructura de pruebas, validación Zod y límites de error.",
+        "highlights": [
+          "Sistema i18n personalizado reemplazando next-intl (compatible con exportación estática)",
+          "CMS Admin con useReducer + Context + persistencia en localStorage",
+          "401 pruebas pasando con Vitest + React Testing Library",
+          "CI/CD: GitHub Actions en 3 etapas (quality → build → lighthouse)",
+          "SectionErrorBoundary + taxonomía de errores centralizada"
+        ]
+      }
+    ],
+    "statusBadge": {
+      "complete": "Completado",
+      "in-progress": "En Progreso",
+      "planned": "Planificado"
+    }
   }
 }

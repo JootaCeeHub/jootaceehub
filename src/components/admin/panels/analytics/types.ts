@@ -13,6 +13,7 @@ export type Tab =
   | 'phase2'
   | 'phase3'
   | 'phase4'
+  | 'phase5'
 
 export type CWVStatus = 'good' | 'needs-improvement' | 'poor'
 

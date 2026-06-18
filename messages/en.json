@@ -850,5 +850,87 @@
         "description": "AI-integrated systems design, infrastructure patterns, and distributed architecture showcase."
       }
     }
+  },
+  "changelog": {
+    "badge": "Release History",
+    "title": "Changelog",
+    "description": "Engineering milestones, architecture decisions, and production improvements tracked across all development phases.",
+    "phases": [
+      {
+        "phase": "Phase 5",
+        "date": "June 2026",
+        "status": "in-progress",
+        "title": "Production Launch",
+        "summary": "Controlled public launch with security review, SEO QA, accessibility QA, error monitoring, analytics dashboard, and backup/restore infrastructure.",
+        "highlights": [
+          "Plausible Analytics integration — privacy-first, no cookies",
+          "Sentry error monitoring with AppError taxonomy",
+          "AdminAuthGate — 4-mode auth (Supabase, Google, Password, open)",
+          "Launch readiness checklist with 10 tracked goals",
+          "Release notes public page"
+        ]
+      },
+      {
+        "phase": "Phase 4",
+        "date": "June 2026",
+        "status": "complete",
+        "title": "Performance Optimization",
+        "summary": "Bundle analysis by route, admin chunk separation, 3D hero optimization, device-tier effects gating, self-hosted fonts, image optimization, INP measurement, and CI performance budgets.",
+        "highlights": [
+          "usePerfTier hook — device tier detection with sessionStorage cache",
+          "R3F frameloop paused on scroll-out (~30% idle CPU reduction)",
+          "Self-hosted fonts — zero external font requests",
+          "Mobile Lighthouse CI job added",
+          "chunk-manifest.mjs postbuild script — 110 chunks, 7.7 MB tracked"
+        ]
+      },
+      {
+        "phase": "Phase 3",
+        "date": "June 2026",
+        "status": "complete",
+        "title": "Feature Expansion",
+        "summary": "Labs ecosystem, intelligence feed, GitHub layer, admin systems, journal, research, playground, and preview routes.",
+        "highlights": [
+          "Labs: AURA, Trading AI, CRM, ERP platforms",
+          "Intelligence feed aggregator with live signals",
+          "GitHub layer with real-time stats",
+          "Journal and research content system",
+          "Admin analytics panels with CWV metrics"
+        ]
+      },
+      {
+        "phase": "Phase 2",
+        "date": "June 2026",
+        "status": "complete",
+        "title": "Architecture Consolidation",
+        "summary": "10-step structural refactor — ADRs, design token SSoT, ContentItem schema, data modules, admin store slicing, panel splitting, auth centralization, and AI hub.",
+        "highlights": [
+          "Admin store sliced into 10 domain handlers",
+          "3 monolithic panels split (ContentPanel → 6, StudioPanel → 4, GitHubLayerPanel → 5)",
+          "Design token SSoT at src/lib/design/tokens.ts",
+          "Auth strategy centralized with Google token moved to sessionStorage",
+          "AI hub route at /[locale]/ai/"
+        ]
+      },
+      {
+        "phase": "Phase 1",
+        "date": "May–June 2026",
+        "status": "complete",
+        "title": "Foundation",
+        "summary": "Next.js 16 App Router, static export, custom i18n, admin CMS, PWA, CI/CD, testing infrastructure, Zod validation, and error boundaries.",
+        "highlights": [
+          "Custom i18n system replacing next-intl (static export compatible)",
+          "Admin CMS with useReducer + Context + localStorage persistence",
+          "401 passing tests with Vitest + React Testing Library",
+          "CI/CD: 3-stage GitHub Actions (quality → build → lighthouse)",
+          "SectionErrorBoundary + centralized error taxonomy"
+        ]
+      }
+    ],
+    "statusBadge": {
+      "complete": "Complete",
+      "in-progress": "In Progress",
+      "planned": "Planned"
+    }
   }
 }

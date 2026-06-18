@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { ArrowUp, Command } from 'lucide-react'
 import { brand } from '@/lib/config/brand'
 import { useTranslations } from '@/lib/i18n/context'
+import { LocaleLink } from '@/lib/i18n/link'
 
 function GitHubIcon({ className }: { className?: string }) {
   return (
@@ -222,6 +223,12 @@ export function Footer() {
                 <span className="text-primary/60">⌘K</span>
                 Command palette
               </span>
+              <LocaleLink
+                href="/changelog"
+                className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground/60 hover:text-primary transition-colors"
+              >
+                Changelog
+              </LocaleLink>
               <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground/60">
                 {t('techStack')}
               </span>
