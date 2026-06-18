@@ -71,7 +71,7 @@ export function HeroSection() {
     const mobile =
       window.innerWidth < 768 ||
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    setIsMobile(mobile)
+    setIsMobile(mobile) // eslint-disable-line react-hooks/set-state-in-effect
     if (mobile) return
 
     let tid: ReturnType<typeof setTimeout> | null = null

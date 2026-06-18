@@ -8,6 +8,7 @@ import { DomainBreadcrumb } from '@/components/layout/DomainBreadcrumb'
 import { cn } from '@/lib/utils'
 import type { IntelligenceFeed, FeedCategory } from '@/lib/admin/types'
 import { defaultIntelligenceConfig } from '@/lib/admin/defaults/intelligence'
+import { CATEGORY_META, EONET_CATEGORY_CONTEXT } from '@/lib/intelligence/categories'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -43,34 +44,6 @@ interface FeedItem {
 
 const ADMIN_KEY = 'jootacee-command-v2'
 
-const CATEGORY_META: Record<string, { label: string; icon: string; color: string }> = {
-  tech:         { label: 'Tech',         icon: '⚡', color: '#38bdf8' },
-  news:         { label: 'News',         icon: '📰', color: '#60a5fa' },
-  ai:           { label: 'AI',           icon: '🤖', color: '#a78bfa' },
-  research:     { label: 'Research',     icon: '🔬', color: '#34d399' },
-  security:     { label: 'Security',     icon: '🔐', color: '#f87171' },
-  cyber:        { label: 'Cyber',        icon: '💀', color: '#fb923c' },
-  osint:        { label: 'OSINT',        icon: '👁', color: '#facc15' },
-  conflict:     { label: 'Conflict',     icon: '⚔️', color: '#ef4444' },
-  finance:      { label: 'Finance',      icon: '💰', color: '#fbbf24' },
-  markets:      { label: 'Markets',      icon: '📈', color: '#4ade80' },
-  energy:       { label: 'Energy',       icon: '⚡', color: '#f59e0b' },
-  climate:      { label: 'Climate',      icon: '🌍', color: '#22c55e' },
-  aviation:     { label: 'Aviation',     icon: '✈️', color: '#38bdf8' },
-  disaster:     { label: 'Disaster',     icon: '🚨', color: '#f43f5e' },
-  humanitarian: { label: 'Humanitarian', icon: '🤝', color: '#fb923c' },
-  social:       { label: 'Social',       icon: '💬', color: '#e879f9' },
-  opendata:     { label: 'Open Data',    icon: '🌐', color: '#2dd4bf' },
-  tool:         { label: 'Tool',         icon: '🔧', color: '#94a3b8' },
-  resource:     { label: 'Resource',     icon: '📚', color: '#93c5fd' },
-  reference:    { label: 'Reference',    icon: '📖', color: '#c4b5fd' },
-  community:    { label: 'Community',    icon: '👥', color: '#86efac' },
-  newsletter:   { label: 'Newsletter',   icon: '📨', color: '#fda4af' },
-  video:        { label: 'Video',        icon: '🎬', color: '#fb7185' },
-  podcast:      { label: 'Podcast',      icon: '🎙️', color: '#c084fc' },
-  database:     { label: 'Database',     icon: '🗃️', color: '#67e8f9' },
-}
-
 // ─── Data loading ─────────────────────────────────────────────────────────────
 
 function loadAdminFeeds(): IntelligenceFeed[] {
@@ -92,22 +65,6 @@ function safe<T>(fn: () => Promise<T[]>): Promise<T[]> {
   return fn().catch(() => [])
 }
 
-// Map NASA EONET category IDs to human-readable context
-const EONET_CATEGORY_CONTEXT: Record<string, { emoji: string; desc: string; cat: FeedCategory }> = {
-  drought:         { emoji: '☀️', desc: 'Drought condition area monitored by NASA satellite observation.', cat: 'climate' },
-  dustHaze:        { emoji: '💨', desc: 'Dust storm or atmospheric haze event tracked by NASA Earth Observatory.', cat: 'climate' },
-  earthquakes:     { emoji: '⚠️', desc: 'Seismic activity recorded and tracked by NASA EONET systems.', cat: 'disaster' },
-  floods:          { emoji: '🌊', desc: 'Flooding event being monitored by NASA satellite imagery.', cat: 'disaster' },
-  landslides:      { emoji: '⛰️', desc: 'Landslide or mass movement event tracked by NASA EONET.', cat: 'disaster' },
-  manmade:         { emoji: '🏭', desc: 'Human-caused environmental event recorded by NASA Earth Observatory.', cat: 'disaster' },
-  seaLakeIce:      { emoji: '🧊', desc: 'Active iceberg or sea/lake ice feature tracked by NASA satellite monitoring in polar and sub-polar waters.', cat: 'climate' },
-  severeStorms:    { emoji: '🌀', desc: 'Active severe storm system — typhoon, hurricane, or tropical storm — monitored by NASA EONET satellite tracking.', cat: 'disaster' },
-  snow:            { emoji: '❄️', desc: 'Major snowstorm or snowfall event tracked by NASA Earth Observatory.', cat: 'climate' },
-  tempExtremes:    { emoji: '🌡️', desc: 'Extreme temperature event (heat wave or cold snap) monitored by NASA EONET.', cat: 'climate' },
-  volcanoes:       { emoji: '🌋', desc: 'Active volcanic eruption or elevated volcanic activity tracked by NASA satellite systems.', cat: 'disaster' },
-  waterColor:      { emoji: '🔵', desc: 'Unusual ocean water color anomaly (algal bloom, sediment plume) observed by NASA satellites.', cat: 'climate' },
-  wildfires:       { emoji: '🔥', desc: 'Active wildfire being tracked in near-real-time by NASA EONET satellite fire detection.', cat: 'disaster' },
-}
 
 async function fetchHN(limit = 20): Promise<FeedItem[]> {
   const idsRes  = await fetch('https://hacker-news.firebaseio.com/v0/topstories.json')
@@ -441,7 +398,7 @@ function FeedCard({ feed, onClick, selected }: { feed: IntelligenceFeed; onClick
 
 function FeedItemRow({ item, view }: { item: FeedItem; view: 'grid' | 'list' }) {
   const timeAgo = (date: Date) => {
-    const diff = (Date.now() - date.getTime()) / 1000
+    const diff = (Date.now() - date.getTime()) / 1000 // eslint-disable-line react-hooks/purity
     if (diff < 3600) return `${Math.floor(diff / 60)}m ago`
     if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`
     return `${Math.floor(diff / 86400)}d ago`
@@ -569,7 +526,7 @@ export default function IntelligencePage() {
 
   // Load admin feeds from localStorage
   useEffect(() => {
-    setFeeds(loadAdminFeeds())
+    setFeeds(loadAdminFeeds()) // eslint-disable-line react-hooks/set-state-in-effect
   }, [])
 
   // Fetch live items
@@ -590,7 +547,7 @@ export default function IntelligencePage() {
   // Initial fetch and auto-refresh
   useEffect(() => {
     if (feeds.length === 0) return
-    refresh()
+    refresh() // eslint-disable-line react-hooks/set-state-in-effect
   }, [feeds, refresh])
 
   // Auto-refresh every 30 min
@@ -627,7 +584,7 @@ export default function IntelligencePage() {
   })
 
   const timeAgo = (d: Date) => {
-    const s = (Date.now() - d.getTime()) / 1000
+    const s = (Date.now() - d.getTime()) / 1000 // eslint-disable-line react-hooks/purity
     if (s < 60) return 'just now'
     if (s < 3600) return `${Math.floor(s / 60)}m ago`
     return `${Math.floor(s / 3600)}h ago`

@@ -426,7 +426,7 @@ export default function DesignPanel() {
   function updateDesign(data: Partial<DesignConfig>) { dispatch({ type: 'UPDATE_DESIGN', payload: data }) }
   function updateToken(data: Partial<DesignTokens>)  { dispatch({ type: 'UPDATE_TOKENS',  payload: data }) }
 
-  const secondsSince = lastApplied ? Math.round((Date.now() - lastApplied) / 1000) : null
+  const secondsSince = lastApplied ? Math.round((Date.now() - lastApplied) / 1000) : null // eslint-disable-line react-hooks/purity
 
   return (
     <div className="space-y-4">

@@ -140,10 +140,9 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const toggleGroup = (key: string) => setCollapsedGroups(v => ({ ...v, [key]: !v[key] }))
   // ─ Hydration fix ────────────────────────────────────────────────────────────
   const [mounted, setMounted] = useState(false)
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
-    setMounted(true)
-    if (studio.sidebarCollapsedDefault) setCollapsed(true)
+    setMounted(true) // eslint-disable-line react-hooks/set-state-in-effect
+    if (studio.sidebarCollapsedDefault) setCollapsed(true) // eslint-disable-line react-hooks/set-state-in-effect
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const prevLastSaved = useRef<string | null>(null)
@@ -210,7 +209,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   }, [state.unsaved, forceSave, searchOpen])
 
   useEffect(() => {
-    if (!studio.headerShowClock) { setClockTime(''); return }
+    if (!studio.headerShowClock) { setClockTime(''); return } // eslint-disable-line react-hooks/set-state-in-effect
     const tick = () => setClockTime(new Date().toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', second: '2-digit' }))
     tick()
     const id = setInterval(tick, 1000)

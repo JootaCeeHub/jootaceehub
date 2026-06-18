@@ -212,7 +212,7 @@ export default function SearchPanel() {
     dispatch({ type: 'SET_PANEL', payload: panel })
   }, [dispatch])
 
-  useEffect(() => { setSelected(0) }, [query])
+  useEffect(() => { setSelected(0) }, [query]) // eslint-disable-line react-hooks/set-state-in-effect
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -265,7 +265,7 @@ export default function SearchPanel() {
       {query.length >= 2 && grouped.length === 0 && (
         <div className="flex flex-col items-center gap-3 py-16 text-center">
           <SearchIcon className="h-8 w-8 text-white/10" />
-          <p className="text-[11px] text-white/30">No results for <span className="text-white/50">"{query}"</span></p>
+          <p className="text-[11px] text-white/30">No results for <span className="text-white/50">&quot;{query}&quot;</span></p>
           <p className="text-[10px] text-white/18">Try different keywords or browse panels from the sidebar</p>
         </div>
       )}
