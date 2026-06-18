@@ -6,6 +6,27 @@
 
 ---
 
+## ✅ PHASE 2 — ARCHITECTURE CONSOLIDATION (completed 2026-06-17)
+
+Phase 1 feature freeze has been **lifted**. All 10 architecture consolidation steps are complete.
+
+**Phase 2 summary:**
+- Paso 1: ADRs (5 decisions) + ownership map in `docs/`
+- Paso 2: Design token SSoT → `src/lib/design/tokens.ts`
+- Paso 3: ContentItem schema → `src/lib/content/`
+- Paso 4: Inline data → data modules (`lib/systems/`, `lib/resources/`, `lib/intelligence/`)
+- Paso 5: Admin store sliced into 10 domain handlers (10 slice files under `lib/admin/slices/`)
+- Paso 6: 3 monolithic panels split (ContentPanel→6 sub-files, StudioPanel→4, GitHubLayerPanel→5)
+- Paso 7: Auth strategy centralized → `lib/auth/strategy.ts`; Google token moved to sessionStorage
+- Paso 8: Design token separation verified (ui.ts → unidirectional from lib/design/)
+- Paso 9: AI hub page at `/[locale]/ai/` (+2 static pages = 103 total)
+- Paso 10: AGENTS.md updated, freeze lifted
+
+**Current quality baseline:**
+- 0 TypeScript errors · 0 lint errors · 401 tests · 103 static pages
+
+---
+
 ## STACK
 
 ```

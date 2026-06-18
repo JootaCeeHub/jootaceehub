@@ -191,3 +191,95 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - `src/test/setup.ts`: test setup with Next.js mocks
 - `.github/workflows/ci.yml`: 3-stage CI (quality → build → lighthouse)
 - `.husky/pre-commit`: lint-staged + typecheck + test
+- `src/lib/config/csp.ts`: CSP string — single source of truth; reflected in `_headers` and root layout `<meta>`
+- `src/components/admin/AdminAuthGate.tsx`: 4-mode auth (Supabase → Google → Password → open). Production build without auth configured blocks access.
+- `knip.json`: unused dep/export detection config
+
+## Phase 1 — Performance Baseline (2026-06-17)
+
+Captured after stabilization (lint=0 errors, tests=401 pass, build=101 pages).
+
+| Metric | Value |
+|--------|-------|
+| Lighthouse Performance | 44 |
+| Lighthouse Accessibility | 96 |
+| Lighthouse Best Practices | 96 |
+| Lighthouse SEO | 100 |
+| Total JS chunks | 106 |
+| Total JS raw | 7.6 MB |
+| Total JS gzip | ~2.1 MB |
+| Largest chunk (raw/gzip) | 384 KB / 91 KB |
+| Landing page HTML | 112 KB |
+| Admin HTML | 60 KB |
+
+**Bottlenecks identified:** Three.js/R3F (shader compilation requires `unsafe-eval`; lazy-loaded but still large), Framer Motion, GSAP. Performance score (44) is blocked by TBT from large JS parse time — addressed in Phase 2 via aggressive code splitting.
+
+## Phase 1 — Sources of Truth
+
+| What | Where |
+|------|-------|
+| Admin state types | `src/lib/admin/types.ts` |
+| Admin initial state | `src/lib/admin/state.ts` |
+| Admin Zod schema | `src/lib/admin/schema.ts` |
+| Admin reducer + context | `src/lib/admin/store.tsx` |
+| Admin localStorage key | `'jootacee-command-v2'` |
+| i18n translations | `messages/en.json` + `messages/es.json` (438 keys, perfect parity) |
+| Design tokens (CVA) | `src/styles/ui.ts` |
+| CSP | `src/lib/config/csp.ts` (meta + `_headers`) |
+| Security headers | `public/_headers` |
+| Brand config | `src/lib/config/brand.ts` |
+| Feature freeze status | `CLAUDE.md` Phase 1 section |
+
+## Phase 1 — Security Findings
+
+| Finding | Severity | Status |
+|---------|----------|--------|
+| Admin open-access in production (no env vars) | High | Fixed — production build blocks with setup screen |
+| Admin apiKey/accessToken persisted in localStorage plaintext | Medium | Documented — Phase 2 (encryption or server-side storage) |
+| `unsafe-inline` + `unsafe-eval` in CSP | Low | Documented — required by Next.js static export + Three.js |
+| `@types/jszip` unnecessary runtime dep | Low | Fixed — removed from package.json |
+
+---
+
+## Phase 2 — Architecture Consolidation (completed 2026-06-17)
+
+10-step structural refactor. Zero functional changes, zero AdminState shape changes.
+
+### Sources of Truth (updated)
+
+| What | Where |
+|------|-------|
+| Admin reducer | `src/lib/admin/store.tsx` (slim shell, delegates to SLICE_HANDLERS) |
+| Admin slice handlers | `src/lib/admin/slices/` (10 domain files) |
+| Design token runtime vars | `src/lib/design/tokens.ts` |
+| Design tokens CVA (static) | `src/styles/ui.ts` |
+| Auth mode detection | `src/lib/auth/strategy.ts` |
+| Content schema (Zod) | `src/lib/content/schema.ts` |
+| Systems data | `src/lib/systems/data.ts` |
+| Resources data | `src/lib/resources/index.ts` + sub-files |
+| Intelligence categories | `src/lib/intelligence/categories.ts` |
+| Architecture decisions | `docs/adr/ADR-001 through ADR-005` |
+| Bounded context map | `docs/ownership.md` |
+
+### Panel LOC reduction
+
+| Panel | Before | After | Sub-files |
+|-------|--------|-------|-----------|
+| ContentPanel | 3011 | 565 | `panels/content/` (6 files) |
+| StudioPanel | 1895 | 700 | `panels/studio/` (5 files) |
+| GitHubLayerPanel | 1357 | 81 | `panels/github/` (5 files) |
+
+### New routes
+
+| Route | Purpose |
+|-------|---------|
+| `/[locale]/ai/` | AI hub — links to Labs, Intelligence, Agents, Systems (+2 static pages) |
+
+### Quality gate at Phase 2 close
+
+| Metric | Value |
+|--------|-------|
+| TypeScript errors | 0 |
+| Lint errors | 0 |
+| Tests | 401 passing |
+| Static pages | 103 |
