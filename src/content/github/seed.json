@@ -1,0 +1,24 @@
+{
+  "_note": "Canonical seed data — committed to Git. public/data/github.json is the generated output (a refreshed snapshot from CI or a static copy of this seed).",
+  "profile": {
+    "username": "JootaCeeHub",
+    "displayName": "JootaCeeHub",
+    "url": "https://github.com/JootaCeeHub",
+    "avatarUrl": "https://avatars.githubusercontent.com/u/199308670?v=4"
+  },
+  "pinnedRepos": [
+    "jootaceehub"
+  ],
+  "primaryLanguages": [
+    "TypeScript",
+    "Rust",
+    "Python"
+  ],
+  "topics": [
+    "ai",
+    "architecture",
+    "nextjs",
+    "typescript",
+    "open-source"
+  ]
+}

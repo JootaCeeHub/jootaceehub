@@ -35,3 +35,25 @@ export {
 
 export type { ContentItem, ContentType, ContentStatus, ContentLocale } from './types'
 export { ContentItemSchema, ArticleMetaSchema } from './schema'
+
+// ── Repository interface + filter helper ──────────────────────────────────────
+export type { ContentFilter, ContentRepository } from './repository'
+export { applyContentFilter } from './repository'
+
+// ── Canonical ID scheme ───────────────────────────────────────────────────────
+export { makeCanonicalId, parseCanonicalId, isCanonicalId, slugify } from './canonical-id'
+export type { CanonicalId } from './canonical-id'
+
+// ── Unified taxonomy (tags · categories · series) ─────────────────────────────
+export {
+  ALL_TAGS,
+  ALL_CATEGORIES,
+  ALL_SERIES,
+  getTagBySlug,
+  getCategoryBySlug,
+  getSeriesBySlug,
+  resolveTagLabels,
+  resolveTagObjects,
+  normaliseTagSlugs,
+} from './taxonomy'
+export type { Tag, TaxonomyCategory, Series } from './taxonomy'

@@ -1,6 +1,10 @@
 // ─── Shared resource data ─────────────────────────────────────────────────────
-// Single source of truth for all resource page data.
-// Import from here in both page files AND admin ContentPanel.
+// @deprecated — canonical data has migrated to src/content/resources/*.json.
+// The src/lib/content/json-loaders.ts exports (TOOLS_JSON, REPOS_JSON, etc.)
+// are the authoritative source. This file is kept as a curated in-code
+// reference and for any consumers that depend on the richer `Tool` shape
+// (with description and category fields not present in the JSON registry).
+// Do NOT add new entries here — update src/content/resources/ instead.
 
 // ─── Tools ───────────────────────────────────────────────────────────────────
 
