@@ -33,6 +33,10 @@ const eslintConfig = defineConfig([
     "src/test/**",
     // Node CJS scripts (not transpiled)
     "scripts/**",
+    // VPS Content API — separate Node server with its own tsconfig
+    "api/**",
+    // Worktrees created by agent isolation
+    ".claude/worktrees/**",
   ]),
 ]);
 

@@ -4,7 +4,7 @@
 import React, { useState, useMemo, useEffect, useCallback, useRef, useDeferredValue } from 'react'
 import {
   BarChart3, Gauge, Zap, Search, Shield, Layers, Code2,
-  AlertTriangle, Copy, CheckCircle2, Package, Play, Loader2, Radio, Sparkles, Clock, Construction, Rocket, Hammer, GitBranch,
+  AlertTriangle, Copy, CheckCircle2, Package, Play, Loader2, Radio, Sparkles, Clock, Construction, Rocket, Hammer, GitBranch, Server,
 } from 'lucide-react'
 import { useAdmin } from '@/lib/admin/store'
 
@@ -40,6 +40,7 @@ import { Phase4Tab }      from './analytics/tabs/Phase4Tab'
 import { Phase5Tab }          from './analytics/tabs/Phase5Tab'
 import { StabilizationTab }  from './analytics/tabs/StabilizationTab'
 import { Phase2CmsTab }      from './analytics/tabs/Phase2CmsTab'
+import { Phase3VPSTab }      from './analytics/tabs/Phase3VPSTab'
 
 // ─── Analytics lib ────────────────────────────────────────────────────────────
 import {
@@ -644,6 +645,7 @@ export default function AnalyticsPanel() {
     { id: 'phase5',        label: 'Phase 5',     icon: Rocket       },
     { id: 'stabilization', label: 'Stab P1',    icon: Hammer       },
     { id: 'phase2cms',     label: 'CMS P2',     icon: GitBranch    },
+    { id: 'phase3vps',    label: 'VPS P3',     icon: Server       },
   ]
 
   const exportBtnCls = (done: boolean) =>
@@ -897,6 +899,7 @@ export default function AnalyticsPanel() {
       {activeTab === 'phase5'        && <Phase5Tab />}
       {activeTab === 'stabilization' && <StabilizationTab />}
       {activeTab === 'phase2cms'     && <Phase2CmsTab />}
+      {activeTab === 'phase3vps'     && <Phase3VPSTab />}
     </div>
   )
 }
