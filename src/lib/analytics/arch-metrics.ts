@@ -290,9 +290,9 @@ export function buildAuthStrategyChecks(): AuditCheck[] {
     },
     {
       label: 'AuthMode enum',
-      value: 'supabase | google | password | open',
+      value: 'google | password | open',
       pass:  true,
-      hint:  '4-mode type exported for external use in tests and documentation',
+      hint:  '3-mode type after Phase 5 Supabase removal (ADR-008). detectAuthMode() checks NEXT_PUBLIC_GOOGLE_CLIENT_ID → NEXT_PUBLIC_ADMIN_PASS → open.',
     },
     {
       label: 'ADR-003 documents auth strategy',

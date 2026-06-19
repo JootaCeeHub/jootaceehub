@@ -113,13 +113,16 @@ const REMOVAL_ITEMS: RemovalItem[] = [
   {
     id: 'npm-package',
     title: '@supabase/supabase-js — uninstalled',
-    desc: 'npm uninstall @supabase/supabase-js. Bundle impact ~280 KB removed.',
+    desc: 'npm uninstall @supabase/supabase-js. CI YAML env vars removed.',
     files: [
-      'package.json — @supabase/supabase-js removed',
+      'package.json — @supabase/supabase-js removed from dependencies',
       'package-lock.json — lock entries removed',
       '.env.example — NEXT_PUBLIC_SUPABASE_URL + NEXT_PUBLIC_SUPABASE_ANON_KEY removed',
+      '.github/workflows/ci.yml — NEXT_PUBLIC_SUPABASE_URL + NEXT_PUBLIC_SUPABASE_ANON_KEY env vars removed',
+      'src/lib/analytics/arch-metrics.ts — AuthMode updated: google | password | open',
+      'src/lib/analytics/launch-metrics.ts — security check descriptions updated (no more SUPABASE_URL)',
     ],
-    detail: '@supabase/supabase-js + its transitive deps (realtime-js, postgrest-js, storage-js, functions-js, auth-js, websocket, etc.) are no longer in the bundle. Estimated gzip savings: ~80–120 KB.',
+    detail: '@supabase/supabase-js + all transitive deps (realtime-js, postgrest-js, storage-js, functions-js, auth-js, ws, etc.) are no longer in the bundle. The package had 16 direct dependencies. Net JS raw: 7,690 KB (up 90 KB from new Phase5 analytics tabs; Supabase chunk offset by new content). No direct import of @supabase/supabase-js remains in any .ts/.tsx file.',
   },
 ]
 
@@ -128,7 +131,8 @@ const QUALITY_GATE = {
   lint: '0 errors',
   tests: '416 passing (37 files)',
   build: '107 static pages',
-  bundle: '~80–120 KB gzip savings (Supabase removed)',
+  'JS raw': '7,690 KB (116 chunks)',
+  'supabase imports': '0 (confirmed via grep)',
 }
 
 export default function Phase5SupabaseTab() {
