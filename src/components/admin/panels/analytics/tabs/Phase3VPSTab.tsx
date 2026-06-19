@@ -35,11 +35,11 @@ const VPS_GOALS: VPSGoal[] = [
   {
     id: 'read-write',
     title: 'Content Read/Write',
-    description: 'CRUD operations for all content types (systems, labs, projects, research, resources, articles, collections, taxonomies). Path-traversal protection via resolve() prefix assertion. JSON types validated with Zod; MDX types accepted as raw text/plain.',
+    description: 'CRUD operations for all content types (systems, labs, projects, research, resources, articles, collections, taxonomies). Path-traversal protection via resolve() prefix assertion. Auto-creates parent directory on write (mkdir recursive). JSON types validated with Zod; MDX types accepted as raw text/plain. SHA-256 checksum returned on write.',
     status: 'done',
     icon: FileJson,
     files: ['api/src/routes/content.ts', 'api/src/lib/content-store.ts'],
-    endpoints: ['GET /content', 'GET /content/:type/:slug', 'PUT /content/:type/:slug', 'DELETE /content/:type/:slug'],
+    endpoints: ['GET /content', 'GET /content/:type', 'GET /content/:type/:slug', 'PUT /content/:type/:slug', 'DELETE /content/:type/:slug'],
   },
   {
     id: 'zod-validation',
@@ -52,7 +52,7 @@ const VPS_GOALS: VPSGoal[] = [
   {
     id: 'git-commit',
     title: 'Git Commit + Push',
-    description: 'simple-git wrapper for staging, committing, and pushing content changes. Supports committing specific files or all src/content/ changes. Log endpoint filters to content-only commits. Git user set from env before every operation.',
+    description: 'simple-git wrapper for staging, committing, and pushing content changes. Supports committing specific files or all src/content/ changes. getLog() uses git.raw() with --name-only for reliable file-list parsing (fixed from options-object format). Git user set from env before every operation.',
     status: 'done',
     icon: GitCommit,
     files: ['api/src/lib/git-ops.ts', 'api/src/routes/git.ts'],
@@ -79,19 +79,20 @@ const VPS_GOALS: VPSGoal[] = [
   {
     id: 'atomic-deploy',
     title: 'Atomic Deploy — Blue/Green',
-    description: 'Blue-green deployment via Nginx symlink swap. Copies dist/ into the inactive slot, then atomically updates the NGINX_ROOT symlink. Nginx never serves a partial build. Slot detection reads the current symlink target.',
+    description: 'Blue-green deployment via ln -sfn (calls rename(2) — truly atomic on Linux). Copies dist/ into the inactive slot, then swaps the NGINX_ROOT symlink. Nginx never serves a partial build. Slot detection reads the current symlink target. rollbackDeploy() swaps back without re-building.',
     status: 'done',
     icon: Zap,
     files: ['api/src/lib/atomic-deploy.ts'],
+    endpoints: ['POST /build/deploy-rollback'],
   },
   {
     id: 'rollback',
-    title: 'Git Rollback',
-    description: 'git revert --no-edit <hash> + push. Returns the new revert commit hash and original. Also exposes rollbackDeploy() in atomic-deploy.ts to swap the Nginx symlink back to the previous slot without a full rebuild.',
+    title: 'Git Rollback + Deploy Rollback',
+    description: 'Two rollback layers: (1) POST /git/rollback — git revert --no-edit <hash> + push (content rollback). (2) POST /build/deploy-rollback — swaps Nginx symlink to previous slot immediately without rebuild (static asset rollback). Use both in sequence for a full revert.',
     status: 'done',
     icon: RotateCcw,
-    files: ['api/src/lib/atomic-deploy.ts', 'api/src/routes/git.ts'],
-    endpoints: ['POST /git/rollback'],
+    files: ['api/src/lib/atomic-deploy.ts', 'api/src/routes/git.ts', 'api/src/routes/build.ts'],
+    endpoints: ['POST /git/rollback', 'POST /build/deploy-rollback'],
   },
   {
     id: 'audit-log',
@@ -268,6 +269,30 @@ export function Phase3VPSTab() {
               <div>
                 <span className="font-mono text-[10px] text-white/65">{f.path}</span>
                 <span className="ml-2 font-mono text-[10px] text-white/30">— {f.desc}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Validation audit */}
+      <div className="rounded-xl border border-white/8 bg-white/3 px-5 py-4">
+        <div className="mb-3 font-mono text-[9px] uppercase tracking-[0.2em] text-white/40">Phase 3 Deep Validation — Fixes Applied</div>
+        <div className="space-y-2">
+          {([
+            { fix: 'content-store.ts — writeContent: mkdir(recursive) before writeFile', reason: 'ENOENT crash on new content type directories that don\'t exist yet' },
+            { fix: 'atomic-deploy.ts — ln -sfn via execFile instead of unlink+symlink', reason: 'ln -sfn calls rename(2) — truly atomic; previous unlink+symlink left a window where nginx served nothing' },
+            { fix: 'git-ops.ts — getLog() rewritten with git.raw(--name-only)', reason: 'simple-git log() ignored --name-only flag in options-object format; raw output now parsed with custom separator' },
+            { fix: 'build.ts — POST /build/deploy-rollback added', reason: 'rollbackDeploy() existed in atomic-deploy.ts but was unreachable; now exposed as an endpoint' },
+            { fix: 'package.json — multer + @types/multer removed', reason: 'Hono 4 handles FormData natively; multer was declared but never imported in any file' },
+          ] as { fix: string; reason: string }[]).map((item) => (
+            <div key={item.fix} className="rounded-lg border border-emerald-400/10 bg-emerald-400/4 px-3 py-2.5">
+              <div className="flex items-start gap-2">
+                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-400" />
+                <div>
+                  <div className="font-mono text-[10px] text-emerald-300/80">{item.fix}</div>
+                  <div className="mt-0.5 font-mono text-[9px] text-white/30">{item.reason}</div>
+                </div>
               </div>
             </div>
           ))}

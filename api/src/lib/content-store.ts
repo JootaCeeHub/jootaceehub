@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto'
-import { readFile, writeFile, unlink, readdir, stat } from 'node:fs/promises'
-import { join, resolve, extname } from 'node:path'
+import { readFile, writeFile, unlink, readdir, stat, mkdir } from 'node:fs/promises'
+import { join, resolve, extname, dirname } from 'node:path'
 import { env } from '../env.js'
 import { MDX_TYPES, CONTENT_TYPES } from '../types.js'
 import type { ContentType } from '../types.js'
@@ -152,6 +152,7 @@ export async function writeContent(
   }
 
   const buf = Buffer.from(serialized, 'utf-8')
+  await mkdir(dirname(filePath), { recursive: true })
   await writeFile(filePath, buf)
 
   const checksum = createHash('sha256').update(buf).digest('hex')

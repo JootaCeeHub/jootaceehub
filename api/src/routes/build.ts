@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { z } from 'zod'
 import { authMiddleware } from '../auth/middleware.js'
 import { enqueue, getJob, getHistory, runBuild, isBuildRunning } from '../lib/build-queue.js'
+import { rollbackDeploy } from '../lib/atomic-deploy.js'
 import { appendAudit } from '../lib/audit-log.js'
 import { env } from '../env.js'
 import type { HonoEnv } from '../types.js'
@@ -92,6 +93,34 @@ router.get('/history', authMiddleware, async (c) => {
 
   const history = getHistory(limit)
   return c.json({ success: true, data: history, meta: { count: history.length, limit } })
+})
+
+// ---------------------------------------------------------------------------
+// POST /build/deploy-rollback — swap Nginx symlink back to previous slot
+// Does NOT re-run npm build; just swaps the already-deployed slot.
+// Use /git/rollback first to revert content, then trigger this to serve the old dist.
+// ---------------------------------------------------------------------------
+
+router.post('/deploy-rollback', authMiddleware, async (c) => {
+  const actor = c.get('actor')
+  const ip = clientIP(c)
+
+  try {
+    const result = await rollbackDeploy()
+
+    await appendAudit({
+      actor,
+      action: 'build.deploy-rollback',
+      resource: 'nginx-root',
+      detail: `swapped from=${result.from} to=${result.to}`,
+      ip,
+    })
+
+    return c.json({ success: true, data: result })
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err)
+    return c.json({ success: false, error: msg }, 500)
+  }
 })
 
 export default router

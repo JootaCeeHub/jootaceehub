@@ -63,37 +63,49 @@ export async function getStatus(): Promise<GitStatus> {
 
 /**
  * Returns the last N commits that touched src/content/ (or all files if pathFilter is empty).
+ * Uses `git log --name-only` via raw output to reliably capture changed file names.
  */
 export async function getLog(
   limit = 20,
   pathFilter = 'src/content',
 ): Promise<GitLogEntry[]> {
   const git = getGit()
-  const log = await git.log({
-    '--max-count': String(limit),
-    '--': pathFilter ? [pathFilter] : [],
-    // include list of changed files per commit
-    '--name-only': null,
-  })
 
-  return log.all.map((entry) => {
-    // simple-git puts file list in the `diff` field when --name-only is used
-    // but the typings vary; we fall back to an empty array safely
-    const filesChanged: string[] = []
-    if ('diff' in entry && entry.diff && typeof entry.diff === 'object') {
-      const diff = entry.diff as { files?: Array<{ file: string }> }
-      if (Array.isArray(diff.files)) {
-        filesChanged.push(...diff.files.map((f) => f.file))
-      }
-    }
+  // Use raw git log with a machine-readable separator so we can parse file lists reliably.
+  const SEP = '---ENTRY---'
+  const FORMAT = `${SEP}%H%n%an%n%ae%n%aI%n%s`
+  const args = [
+    'log',
+    `--max-count=${limit}`,
+    `--format=${FORMAT}`,
+    '--name-only',
+  ]
+  if (pathFilter) args.push('--', pathFilter)
+
+  const raw = await git.raw(args)
+
+  // Split on our separator, filter empty chunks
+  const chunks = raw.split(SEP).filter((c) => c.trim())
+
+  return chunks.map((chunk): GitLogEntry => {
+    const lines = chunk.split('\n').filter(Boolean)
+    const [hash = '', author = '', email = '', date = '', ...rest] = lines
+
+    // rest[0] is the commit message (subject); remaining lines after a blank are file names
+    const msgIndex = 0
+    const message = rest[msgIndex] ?? ''
+    // Files follow after the message (there may be a blank line gap)
+    const filesChanged = rest.slice(1).filter(
+      (l) => !l.startsWith(' ') && l.length > 0 && l !== message,
+    )
 
     return {
-      hash: entry.hash,
-      shortHash: entry.hash.slice(0, 8),
-      message: entry.message,
-      author: entry.author_name,
-      email: entry.author_email,
-      date: entry.date,
+      hash,
+      shortHash: hash.slice(0, 8),
+      message,
+      author,
+      email,
+      date,
       filesChanged,
     }
   })

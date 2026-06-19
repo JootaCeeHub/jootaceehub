@@ -1,7 +1,11 @@
-import { symlink, unlink, readlink, cp } from 'node:fs/promises'
+import { readlink, cp } from 'node:fs/promises'
 import { stat } from 'node:fs/promises'
+import { execFile } from 'node:child_process'
+import { promisify } from 'node:util'
 import { resolve } from 'node:path'
 import { env } from '../env.js'
+
+const execFileAsync = promisify(execFile)
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -66,14 +70,9 @@ export async function atomicDeploy(distPath: string): Promise<DeployResult> {
   // Copy dist/ into the inactive slot
   await cp(distPath, nextSlotPath, { recursive: true, force: true })
 
-  // Update the Nginx symlink
-  const nginxRoot = env.NGINX_ROOT
-  try {
-    await unlink(nginxRoot)
-  } catch {
-    // Symlink didn't exist — that's fine on first deploy
-  }
-  await symlink(nextSlotPath, nginxRoot)
+  // Update the Nginx symlink atomically via `ln -sfn`.
+  // `ln -sfn` calls rename(2) internally — atomic on Linux, safe under concurrent readers.
+  await execFileAsync('ln', ['-sfn', nextSlotPath, env.NGINX_ROOT])
 
   return {
     from: currentSlot,
@@ -103,13 +102,7 @@ export async function rollbackDeploy(): Promise<DeployResult> {
     )
   }
 
-  const nginxRoot = env.NGINX_ROOT
-  try {
-    await unlink(nginxRoot)
-  } catch {
-    // ignore
-  }
-  await symlink(prevSlotPath, nginxRoot)
+  await execFileAsync('ln', ['-sfn', prevSlotPath, env.NGINX_ROOT])
 
   return {
     from: currentSlot,

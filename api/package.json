@@ -15,12 +15,10 @@
     "simple-git": "^3.27.0",
     "zod": "^3.23.8",
     "sharp": "^0.33.5",
-    "dotenv": "^16.4.5",
-    "multer": "^1.4.5-lts.1"
+    "dotenv": "^16.4.5"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
-    "@types/multer": "^1.4.12",
     "tsx": "^4.19.2",
     "typescript": "^5.6.0"
   },
