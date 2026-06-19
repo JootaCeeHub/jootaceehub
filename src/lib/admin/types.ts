@@ -1,3 +1,15 @@
+// ─── AI module — imported so types are available within this file ────────────
+// Canonical definitions live in src/lib/ai/types.ts.
+// Imported here for use inside AdminState / AdminAction; re-exported below for
+// backward-compatible consumers that import from @/lib/admin/types.
+import type {
+  LLMProvider,
+  LLMProfile,
+  ChatMessage,
+  ChatConversation,
+  AIConfig,
+} from '@/lib/ai/types'
+
 // ─── Panel Registry ──────────────────────────────────────────────────────────
 
 export type EntryType =
@@ -717,42 +729,10 @@ export interface NavEntry {
 }
 
 // ─── AI Assistant ─────────────────────────────────────────────────────────────
+// Canonical types live in src/lib/ai/types.ts (imported at the top of this file).
+// Re-exported here for backward compatibility — prefer importing from @/lib/ai.
 
-export type LLMProvider = 'gemini' | 'claude' | 'openai' | 'ollama' | 'hermes'
-
-export interface LLMProfile {
-  id: string
-  provider: LLMProvider
-  label: string
-  model: string
-  apiKey: string
-  baseUrl?: string
-}
-
-export interface ChatMessage {
-  id: string
-  role: 'user' | 'assistant' | 'system'
-  content: string
-  timestamp: string
-  model?: string
-}
-
-export interface ChatConversation {
-  id: string
-  title: string
-  messages: ChatMessage[]
-  profileId: string
-  createdAt: string
-  updatedAt: string
-}
-
-export interface AIConfig {
-  conversations: ChatConversation[]
-  activeConversationId: string | null
-  profiles: LLMProfile[]
-  activeProfileId: string | null
-  siteContextEnabled: boolean
-}
+export type { LLMProvider, LLMProfile, ChatMessage, ChatConversation, AIConfig }
 
 // ─── Integrations ─────────────────────────────────────────────────────────────
 

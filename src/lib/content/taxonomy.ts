@@ -8,7 +8,8 @@
  * evolve without touching consumers.
  */
 
-import tagsRaw from '@/content/taxonomies/tags.json'
+import tagsRaw   from '@/content/taxonomies/tags.json'
+import seriesRaw from '@/content/taxonomies/series.json'
 
 // ── Tag ───────────────────────────────────────────────────────────────────────
 
@@ -39,19 +40,17 @@ export interface Series {
 
 // ── Canonical data ────────────────────────────────────────────────────────────
 
-const raw = tagsRaw as {
-  tags: Tag[]
-  categories: TaxonomyCategory[]
-}
+const tagsData   = tagsRaw   as { tags: Tag[]; categories: TaxonomyCategory[] }
+const seriesData = seriesRaw as { series: Series[] }
 
-export const ALL_TAGS: readonly Tag[] = raw.tags
-export const ALL_CATEGORIES: readonly TaxonomyCategory[] = raw.categories
+export const ALL_TAGS: readonly Tag[]               = tagsData.tags
+export const ALL_CATEGORIES: readonly TaxonomyCategory[] = tagsData.categories
 
 /**
- * Phase 3: populate when src/content/taxonomies/series.json is added.
- * Kept here as a stable export so consumers don't need to be updated later.
+ * Populated from src/content/taxonomies/series.json.
+ * Add series entries there; this export picks them up automatically.
  */
-export const ALL_SERIES: readonly Series[] = []
+export const ALL_SERIES: readonly Series[] = seriesData.series
 
 // ── Lookup helpers ────────────────────────────────────────────────────────────
 

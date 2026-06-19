@@ -1,4 +1,4 @@
-import type { LLMProfile, ChatMessage } from '@/lib/admin/types'
+import type { LLMProfile, ChatMessage } from '@/lib/ai/types'
 
 export interface LLMResponse {
   content: string
