@@ -44,15 +44,25 @@ export const SYSTEMS_META: SystemMeta = systemsMetaRaw as SystemMeta
 
 // ── Labs ──────────────────────────────────────────────────────────────────────
 
-export interface LabJsonMetric { label: string; value: string }
+export interface LabJsonMetric { label: string; value: string; unit: string }
+
+export interface LabJsonStackItem {
+  name: string
+  category: 'runtime' | 'ml' | 'data' | 'infra' | 'protocol'
+}
 
 export interface LabJsonEntry {
   key: string
+  id: string
+  slug: string
   name: string
   tagline: string
   status: string
   description: string
-  stack: string[]
+  version: string
+  uptime: string
+  region: string
+  stack: LabJsonStackItem[]
   metrics: LabJsonMetric[]
   accent: string
   visible: boolean

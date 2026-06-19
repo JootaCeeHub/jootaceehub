@@ -1,169 +1,149 @@
 [
   {
     "key": "trading-ai",
-    "name": "Trading AI",
-    "tagline": "Quantitative intelligence engine",
+    "id": "trading-ai",
+    "slug": "trading-ai",
+    "name": "Trading Intelligence Platform",
+    "tagline": "Multi-signal AI execution engine for systematic markets.",
     "status": "beta",
-    "description": "Real-time algorithmic trading engine with signal processing, risk modeling, and autonomous execution across multiple asset classes.",
-    "stack": [
-      "Python",
-      "FastAPI",
-      "PostgreSQL",
-      "Redis",
-      "React"
-    ],
+    "description": "Combines LSTM-based price prediction, momentum signal analysis, and risk-adjusted position sizing into a unified execution pipeline. Built for systematic, data-driven trading at scale.",
+    "version": "0.4.1",
+    "uptime": "99.2%",
+    "region": "EU-WEST-1",
+    "accent": "#49b7ff",
+    "visible": true,
     "metrics": [
-      {
-        "label": "Signals/day",
-        "value": "847"
-      },
-      {
-        "label": "Accuracy",
-        "value": "73.4%"
-      },
-      {
-        "label": "Latency",
-        "value": "12ms"
-      },
-      {
-        "label": "Trades",
-        "value": "2.1k"
-      }
+      { "label": "Signals / day",     "value": "847",  "unit": "" },
+      { "label": "Signal accuracy",   "value": "73.4", "unit": "%" },
+      { "label": "Execution latency", "value": "12",   "unit": "ms" },
+      { "label": "Open positions",    "value": "38",   "unit": "" }
     ],
-    "accent": "#34d399",
-    "visible": true
+    "stack": [
+      { "name": "Python 3.12", "category": "runtime" },
+      { "name": "FastAPI",     "category": "runtime" },
+      { "name": "TensorFlow",  "category": "ml" },
+      { "name": "Pandas",      "category": "ml" },
+      { "name": "PostgreSQL",  "category": "data" },
+      { "name": "Redis",       "category": "data" },
+      { "name": "Docker",      "category": "infra" },
+      { "name": "WebSocket",   "category": "protocol" }
+    ]
   },
   {
     "key": "stl-generator",
+    "id": "stl-generator",
+    "slug": "stl-generator",
     "name": "STL Generator",
-    "tagline": "Spatial AI fabrication tool",
+    "tagline": "Natural language to production-ready 3D geometry.",
     "status": "beta",
-    "description": "AI-powered 3D model generation from natural language prompts with parametric design controls and direct STL export for fabrication.",
-    "stack": [
-      "Python",
-      "Three.js",
-      "OpenSCAD",
-      "FastAPI"
-    ],
+    "description": "Translates structured natural language prompts into parametric 3D meshes via an LLM parsing layer, geometry synthesis engine, and mesh optimization pipeline. Outputs STL-compatible geometry for direct manufacturing use.",
+    "version": "0.2.3",
+    "uptime": "97.8%",
+    "region": "EU-WEST-1",
+    "accent": "#a78bfa",
+    "visible": true,
     "metrics": [
-      {
-        "label": "Models/day",
-        "value": "312"
-      },
-      {
-        "label": "Accuracy",
-        "value": "89%"
-      },
-      {
-        "label": "Export",
-        "value": "STL/OBJ"
-      },
-      {
-        "label": "Avg time",
-        "value": "4.2s"
-      }
+      { "label": "Models generated",    "value": "234", "unit": "" },
+      { "label": "Avg generation time", "value": "8.2", "unit": "s" },
+      { "label": "Mesh accuracy",       "value": "91",  "unit": "%" },
+      { "label": "Export formats",      "value": "4",   "unit": "" }
     ],
-    "accent": "#818cf8",
-    "visible": true
+    "stack": [
+      { "name": "Python 3.12", "category": "runtime" },
+      { "name": "FastAPI",     "category": "runtime" },
+      { "name": "Three.js",    "category": "runtime" },
+      { "name": "OpenAI API",  "category": "ml" },
+      { "name": "OpenSCAD",    "category": "data" },
+      { "name": "PostgreSQL",  "category": "data" },
+      { "name": "Docker",      "category": "infra" },
+      { "name": "MCP",         "category": "protocol" }
+    ]
   },
   {
     "key": "crm",
+    "id": "crm",
+    "slug": "crm",
     "name": "CRM Platform",
-    "tagline": "Intelligent customer intelligence",
-    "status": "rd",
+    "tagline": "AI-augmented customer intelligence for growth teams.",
+    "status": "development",
     "description": "AI-augmented customer relationship system with predictive scoring, automated touchpoint orchestration, and pipeline intelligence.",
-    "stack": [
-      "Next.js",
-      "PostgreSQL",
-      "Python",
-      "LangChain"
-    ],
-    "metrics": [
-      {
-        "label": "Contacts",
-        "value": "4.2k"
-      },
-      {
-        "label": "Pipelines",
-        "value": "3"
-      },
-      {
-        "label": "AI score",
-        "value": "94%"
-      },
-      {
-        "label": "Automation",
-        "value": "18 flows"
-      }
-    ],
+    "version": "0.1.0",
+    "uptime": "—",
+    "region": "EU-WEST-1",
     "accent": "#f472b6",
-    "visible": true
+    "visible": true,
+    "metrics": [
+      { "label": "Contacts",   "value": "4.2k", "unit": "" },
+      { "label": "Pipelines",  "value": "3",    "unit": "" },
+      { "label": "AI score",   "value": "94",   "unit": "%" },
+      { "label": "Automation", "value": "18",   "unit": " flows" }
+    ],
+    "stack": [
+      { "name": "Next.js",    "category": "runtime" },
+      { "name": "Python",     "category": "runtime" },
+      { "name": "LangChain",  "category": "ml" },
+      { "name": "PostgreSQL", "category": "data" },
+      { "name": "Redis",      "category": "data" },
+      { "name": "Docker",     "category": "infra" },
+      { "name": "REST",       "category": "protocol" }
+    ]
   },
   {
     "key": "erp",
+    "id": "erp",
+    "slug": "erp",
     "name": "ERP Platform",
-    "tagline": "Enterprise automation suite",
-    "status": "rd",
+    "tagline": "Modular enterprise automation suite.",
+    "status": "development",
     "description": "Modular enterprise resource planning system with AI-assisted workflow routing, financial intelligence, and operational dashboards.",
-    "stack": [
-      "Next.js",
-      "PostgreSQL",
-      "Python",
-      "Temporal"
-    ],
-    "metrics": [
-      {
-        "label": "Modules",
-        "value": "7"
-      },
-      {
-        "label": "Workflows",
-        "value": "42"
-      },
-      {
-        "label": "Automation",
-        "value": "68%"
-      },
-      {
-        "label": "Uptime",
-        "value": "99.9%"
-      }
-    ],
+    "version": "0.1.0",
+    "uptime": "—",
+    "region": "EU-WEST-1",
     "accent": "#fb923c",
-    "visible": true
+    "visible": true,
+    "metrics": [
+      { "label": "Modules",    "value": "7",    "unit": "" },
+      { "label": "Workflows",  "value": "42",   "unit": "" },
+      { "label": "Automation", "value": "68",   "unit": "%" },
+      { "label": "Uptime",     "value": "99.9", "unit": "%" }
+    ],
+    "stack": [
+      { "name": "Next.js",   "category": "runtime" },
+      { "name": "Python",    "category": "runtime" },
+      { "name": "Temporal",  "category": "infra" },
+      { "name": "PostgreSQL","category": "data" },
+      { "name": "Redis",     "category": "data" },
+      { "name": "Docker",    "category": "infra" },
+      { "name": "GraphQL",   "category": "protocol" }
+    ]
   },
   {
     "key": "aura",
+    "id": "aura",
+    "slug": "aura",
     "name": "AURA",
-    "tagline": "AI orchestration core platform",
+    "tagline": "AI orchestration core platform.",
     "status": "live",
-    "description": "Central orchestration intelligence that coordinates agents, manages context windows, routes tool calls, and enforces operational policies.",
-    "stack": [
-      "Python",
-      "FastAPI",
-      "Redis",
-      "GraphQL",
-      "React"
-    ],
-    "metrics": [
-      {
-        "label": "Agents",
-        "value": "12"
-      },
-      {
-        "label": "Tool calls/h",
-        "value": "3.4k"
-      },
-      {
-        "label": "Latency",
-        "value": "240ms"
-      },
-      {
-        "label": "Uptime",
-        "value": "99.9%"
-      }
-    ],
+    "description": "Central orchestration intelligence that coordinates agents, manages context windows, routes tool calls, and enforces operational policies across the entire AI stack.",
+    "version": "1.5.2",
+    "uptime": "99.9%",
+    "region": "EU-WEST-1",
     "accent": "#a78bfa",
-    "visible": true
+    "visible": true,
+    "metrics": [
+      { "label": "Agents",       "value": "12",   "unit": "" },
+      { "label": "Tool calls/h", "value": "3.4k", "unit": "" },
+      { "label": "Latency",      "value": "240",  "unit": "ms" },
+      { "label": "Uptime",       "value": "99.9", "unit": "%" }
+    ],
+    "stack": [
+      { "name": "Python",     "category": "runtime" },
+      { "name": "FastAPI",    "category": "runtime" },
+      { "name": "Claude API", "category": "ml" },
+      { "name": "Redis",      "category": "data" },
+      { "name": "GraphQL",    "category": "protocol" },
+      { "name": "MCP",        "category": "protocol" },
+      { "name": "Docker",     "category": "infra" }
+    ]
   }
 ]

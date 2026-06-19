@@ -419,7 +419,21 @@ export const LAB_REGISTRY: Record<string, LabRegistryEntry> = {
   },
 }
 
-export const ALL_LABS = Object.values(LAB_REGISTRY)
+import labsCatalogRaw from '@/content/labs/index.json'
+
+// Catalog view — reads from src/content/labs/index.json (Git canonical).
+// The hub page consumes this; detail pages use LAB_REGISTRY (full arch + roadmap).
+export const ALL_LABS: LabRegistryEntry[] = (labsCatalogRaw as Array<{
+  id: string; slug: string; name: string; tagline: string; description: string
+  status: LabStatus; version: string; uptime: string; region: string; accent: string
+  metrics: { label: string; value: string; unit: string }[]
+  stack: { name: string; category: 'runtime' | 'ml' | 'data' | 'infra' | 'protocol' }[]
+  visible: boolean
+}>).map((lab) => ({
+  ...lab,
+  architecture: LAB_REGISTRY[lab.id]?.architecture ?? { nodes: [], edges: [] },
+  roadmap:      LAB_REGISTRY[lab.id]?.roadmap ?? [],
+}))
 
 export function getLabBySlug(slug: string): LabRegistryEntry | undefined {
   return LAB_REGISTRY[slug]

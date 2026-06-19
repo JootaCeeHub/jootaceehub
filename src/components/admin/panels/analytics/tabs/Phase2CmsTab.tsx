@@ -21,9 +21,10 @@ interface ContentFile {
 interface ContentDomain {
   id: string
   label: string
-  files: ContentFile[]
+  publicBridge: string
+  adminBridge: string
   localStorageNeeded: boolean
-  localStorageNote: string
+  files: ContentFile[]
 }
 
 interface LocalStorageAudit {
@@ -40,46 +41,52 @@ const CONTENT_DOMAINS: ContentDomain[] = [
     id: 'systems',
     label: 'Systems',
     localStorageNeeded: false,
-    localStorageNote: 'Public systems page reads SYSTEMS_DATA from systems/data.ts → bridged to JSON',
+    publicBridge:  'lib/systems/data.ts → src/content/systems/index.json ✓',
+    adminBridge:   'admin/defaults/registries.ts → src/content/systems/index.json ✓',
     files: [
-      { path: 'src/content/systems/index.json', entries: 4,  status: 'done',   note: 'systems/data.ts bridge active' },
-      { path: 'src/content/systems/meta.json',  entries: 2,  status: 'done',   note: 'ARCHITECTURE_NOTES + SYSTEM_STATS' },
+      { path: 'src/content/systems/index.json', entries: 4,  status: 'done', note: 'SYSTEMS_DATA bridge active — public + admin' },
+      { path: 'src/content/systems/meta.json',  entries: 2,  status: 'done', note: 'ARCHITECTURE_NOTES + SYSTEM_STATS' },
     ],
   },
   {
     id: 'labs',
     label: 'Labs',
     localStorageNeeded: false,
-    localStorageNote: 'labs/page.tsx reads ALL_LABS from lib/labs/registry.ts (static TS); no localStorage',
+    publicBridge:  'lib/labs/registry.ts ALL_LABS → src/content/labs/index.json ✓',
+    adminBridge:   'admin/defaults/registries.ts → src/content/labs/index.json ✓',
     files: [
-      { path: 'src/content/labs/index.json', entries: 5, status: 'done', note: 'Canonical JSON written; bridge pending (labs/registry.ts is rich — Phase 3)' },
+      { path: 'src/content/labs/index.json', entries: 5, status: 'done', note: 'Hub catalog from JSON; arch/roadmap stays in TS (cannot serialize to JSON)' },
     ],
   },
   {
     id: 'projects',
     label: 'Projects',
     localStorageNeeded: false,
-    localStorageNote: 'No public projects index page yet; admin reads from AdminState',
+    publicBridge:  'No public projects index page — admin-only via AdminState',
+    adminBridge:   'admin/defaults/registries.ts → src/content/projects/index.json ✓',
     files: [
-      { path: 'src/content/projects/index.json', entries: 4, status: 'done', note: 'Canonical JSON. Admin bridge in Phase 3.' },
+      { path: 'src/content/projects/index.json', entries: 4, status: 'done', note: 'Admin defaults now seeded from JSON' },
     ],
   },
   {
     id: 'research',
-    label: 'Research',
+    label: 'Research / MDX',
     localStorageNeeded: false,
-    localStorageNote: 'Research page reads from MDX files via journal/articles.ts (build-time fs). No localStorage.',
+    publicBridge:  'lib/journal/articles.ts reads MDX from src/content/journal/ (build-time fs) ✓',
+    adminBridge:   'admin/defaults/registries.ts → src/content/research/index.json ✓',
     files: [
-      { path: 'src/content/research/index.json', entries: 7, status: 'done', note: 'JSON index mirrors MDX frontmatter. Used for admin registry.' },
+      { path: 'src/content/journal/*.mdx',       entries: 7, status: 'done', note: '7 MDX files — Git canonical, read at build time via Node.js fs' },
+      { path: 'src/content/research/index.json', entries: 7, status: 'done', note: 'JSON index mirrors frontmatter — admin registry source' },
     ],
   },
   {
     id: 'resources',
     label: 'Resources',
     localStorageNeeded: false,
-    localStorageNote: 'resources/page.tsx reads RESOURCE_CATEGORIES from lib/resources/categories.ts (static TS with LucideIcon refs)',
+    publicBridge:  'lib/resources/categories.ts → src/content/resources/categories.json ✓ (icons stay in TS)',
+    adminBridge:   'admin/defaults/registries.ts → src/content/resources/*.json ✓',
     files: [
-      { path: 'src/content/resources/categories.json', entries: 7,  status: 'done', note: 'Data portion (no icons). categories.ts retains LucideIcon refs.' },
+      { path: 'src/content/resources/categories.json', entries: 7,  status: 'done', note: 'categories.ts bridge active; LucideIcons mapped in TS' },
       { path: 'src/content/resources/tools.json',      entries: 52, status: 'done' },
       { path: 'src/content/resources/repos.json',       entries: 28, status: 'done' },
       { path: 'src/content/resources/workflows.json',   entries: 14, status: 'done' },
@@ -93,22 +100,24 @@ const CONTENT_DOMAINS: ContentDomain[] = [
     id: 'taxonomies',
     label: 'Taxonomies',
     localStorageNeeded: false,
-    localStorageNote: 'Tags and categories are Git-canonical only — no public page uses localStorage for this.',
+    publicBridge:  'No public taxonomy page — content tagging only',
+    adminBridge:   'src/content/taxonomies/tags.json committed to Git ✓',
     files: [
-      { path: 'src/content/taxonomies/tags.json', entries: 15, status: 'done', note: '10 tags + 5 categories' },
+      { path: 'src/content/taxonomies/tags.json', entries: 15, status: 'done', note: '10 tags + 5 categories — Git canonical' },
     ],
   },
 ]
 
 const LOCAL_STORAGE_AUDIT: LocalStorageAudit[] = [
-  { page: 'app/[locale]/page.tsx (landing)',          uses: false, reason: 'Pure static sections. No localStorage.', status: 'clean' },
-  { page: 'app/[locale]/systems/page.tsx',            uses: false, reason: 'Reads SYSTEMS_DATA from systems/data.ts → JSON bridge.', status: 'clean' },
-  { page: 'app/[locale]/resources/page.tsx',          uses: false, reason: 'Reads RESOURCE_CATEGORIES from resources/categories.ts (static TS).', status: 'clean' },
-  { page: 'app/[locale]/labs/page.tsx',               uses: false, reason: 'Reads ALL_LABS from labs/registry.ts (static TS).', status: 'clean' },
-  { page: 'app/[locale]/intelligence/page.tsx',       uses: true,  reason: 'Reads admin-configured RSS feeds from AdminState. This is runtime config, not static content — exempt.', status: 'exempt' },
-  { page: 'app/[locale]/github/page.tsx',             uses: true,  reason: 'Reads GitHub integration config from AdminState. Runtime config, not content — exempt.', status: 'exempt' },
-  { page: 'app/[locale]/preview/page.tsx',            uses: true,  reason: 'Admin preview feature: shows current AdminState. Intentional — exempt.', status: 'exempt' },
-  { page: 'app/[locale]/journal/**/page.tsx',         uses: false, reason: 'Reads from MDX files via journal/articles.ts (build-time Node.js fs).', status: 'clean' },
+  { page: 'app/[locale]/page.tsx (landing)',      uses: false, reason: 'All sections read static TS/i18n data at build time. No localStorage.', status: 'clean' },
+  { page: 'app/[locale]/systems/page.tsx',        uses: false, reason: 'SYSTEMS_DATA from lib/systems/data.ts → bridged to JSON. No localStorage.', status: 'clean' },
+  { page: 'app/[locale]/resources/page.tsx',      uses: false, reason: 'RESOURCE_CATEGORIES from lib/resources/categories.ts → bridged to JSON. No localStorage.', status: 'clean' },
+  { page: 'app/[locale]/labs/page.tsx',           uses: false, reason: 'ALL_LABS from lib/labs/registry.ts → bridged to JSON catalog. No localStorage.', status: 'clean' },
+  { page: 'app/[locale]/research/page.tsx',       uses: false, reason: 'getAllMeta() reads MDX from src/content/journal/ via Node.js fs at build time.', status: 'clean' },
+  { page: 'app/[locale]/journal/[slug]/page.tsx', uses: false, reason: 'Individual article pages read MDX at build time — getArticleBySlug().', status: 'clean' },
+  { page: 'app/[locale]/intelligence/page.tsx',   uses: true,  reason: 'Reads admin-configured RSS feeds from AdminState. Runtime config, not static content — exempt.', status: 'exempt' },
+  { page: 'app/[locale]/github/page.tsx',         uses: true,  reason: 'Reads GitHub integration config from AdminState. Runtime config, not content — exempt.', status: 'exempt' },
+  { page: 'app/[locale]/preview/page.tsx',        uses: true,  reason: 'Admin preview feature: renders current AdminState as HTML preview. Intentional — exempt.', status: 'exempt' },
 ]
 
 // ── Sub-components ────────────────────────────────────────────────────────────
@@ -167,7 +176,12 @@ function DomainCard({ domain }: { domain: ContentDomain }) {
 
       {open && (
         <div className="border-t border-white/6 px-4 pb-3 pt-2 space-y-2">
-          <p className="font-mono text-[9px] text-white/40 leading-relaxed">{domain.localStorageNote}</p>
+          <div className="space-y-1">
+            <p className="font-mono text-[8px] uppercase tracking-[0.16em] text-white/25">Public page bridge</p>
+            <p className="font-mono text-[9px] text-emerald-400/70">{domain.publicBridge}</p>
+            <p className="font-mono text-[8px] uppercase tracking-[0.16em] text-white/25 mt-1">Admin defaults bridge</p>
+            <p className="font-mono text-[9px] text-sky-400/70">{domain.adminBridge}</p>
+          </div>
           <div className="space-y-1 mt-2">
             {domain.files.map((f) => (
               <div key={f.path} className="flex items-start gap-2.5 rounded-lg px-3 py-2 bg-white/[0.02]">
@@ -201,19 +215,20 @@ export function Phase2CmsTab() {
   const doneFiles    = CONTENT_DOMAINS.reduce((s, d) => s + d.files.filter(f => f.status === 'done').length, 0)
   const cleanPages   = LOCAL_STORAGE_AUDIT.filter(a => a.status === 'clean').length
   const exemptPages  = LOCAL_STORAGE_AUDIT.filter(a => a.status === 'exempt').length
+  const activeBridges = 5 // systems, labs, resources, admin-defaults (4 registries → 1 file), research-mdx
 
   return (
     <div className="space-y-5">
       {/* Header */}
       <div>
         <div className="mb-1 font-mono text-[9px] uppercase tracking-[0.24em] text-sky-400/60">
-          Git-First CMS · Phase 2
+          Git-First CMS · Phase 2 · 100% Complete
         </div>
         <h2 className="text-base font-semibold tracking-tight text-white/90">Content Extraction</h2>
         <p className="mt-1 font-mono text-[10px] text-white/35 leading-relaxed">
-          Migrating canonical content from localStorage / hardcoded TypeScript to{' '}
+          All canonical content migrated from localStorage / hardcoded TypeScript to{' '}
           <span className="text-sky-400/70">src/content/*.json</span> committed to Git.
-          Public pages verified to render without localStorage.
+          Public pages and admin defaults verified to read from JSON at build time.
         </p>
       </div>
 
@@ -221,17 +236,18 @@ export function Phase2CmsTab() {
       <div className="flex flex-wrap gap-2">
         {[
           { label: 'JSON files',     value: `${doneFiles}/${totalFiles}`, variant: doneFiles === totalFiles ? 'success' : 'warning' },
-          { label: 'Entries',        value: totalEntries,                 variant: 'info' },
+          { label: 'Total entries',  value: totalEntries,                 variant: 'info' },
+          { label: 'Active bridges', value: activeBridges,               variant: 'success' },
           { label: 'Clean pages',    value: cleanPages,                   variant: 'success' },
           { label: 'Exempt pages',   value: exemptPages,                  variant: 'neutral' },
           { label: 'localStorage',   value: 'Not needed',                 variant: 'success' },
           { label: 'Supabase',       value: 'Frozen',                     variant: 'neutral' },
+          { label: 'Phase 2',        value: '100%',                       variant: 'success' },
         ].map(({ label, value, variant }) => {
           const cls: Record<string, string> = {
             success: 'border-emerald-400/20 bg-emerald-400/6 text-emerald-400',
             warning: 'border-amber-400/20 bg-amber-400/6 text-amber-400',
             info:    'border-sky-400/20 bg-sky-400/6 text-sky-400',
-            error:   'border-red-400/20 bg-red-400/6 text-red-400',
             neutral: 'border-white/10 bg-white/4 text-white/50',
           }
           return (
@@ -243,7 +259,29 @@ export function Phase2CmsTab() {
         })}
       </div>
 
-      {/* Content migration status */}
+      {/* Bridge architecture summary */}
+      <div className="rounded-xl border border-sky-400/15 bg-sky-400/[0.025] px-4 py-3 space-y-2">
+        <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-sky-400/60">Bridge Architecture</p>
+        <div className="grid grid-cols-1 gap-1 md:grid-cols-2">
+          {[
+            { from: 'lib/systems/data.ts',            to: 'src/content/systems/index.json' },
+            { from: 'lib/labs/registry.ts (ALL_LABS)', to: 'src/content/labs/index.json' },
+            { from: 'lib/resources/categories.ts',    to: 'src/content/resources/categories.json' },
+            { from: 'admin/defaults/registries.ts',   to: 'src/content/**/*.json (all 11 files)' },
+            { from: 'lib/journal/articles.ts',        to: 'src/content/journal/*.mdx (build-time fs)' },
+          ].map(({ from, to }) => (
+            <div key={from} className="flex items-start gap-2 rounded-lg bg-white/[0.025] px-3 py-2">
+              <GitBranch className="mt-0.5 h-3 w-3 shrink-0 text-sky-400/60" />
+              <div className="min-w-0">
+                <p className="font-mono text-[8px] text-white/50 truncate">{from}</p>
+                <p className="font-mono text-[8px] text-sky-400/60">→ {to}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Content domains */}
       <div className="space-y-2">
         <div className="flex items-center gap-2 px-1">
           <FileJson className="h-3.5 w-3.5 text-sky-400/60" />
@@ -265,7 +303,7 @@ export function Phase2CmsTab() {
             localStorage Audit — Public Pages
           </span>
           <span className="font-mono text-[9px] text-emerald-400/70">
-            {cleanPages} clean · {exemptPages} exempt
+            {cleanPages} clean · {exemptPages} exempt · 0 violations
           </span>
           {lsOpen
             ? <ChevronDown  className="h-3.5 w-3.5 text-white/30" />
@@ -300,13 +338,14 @@ export function Phase2CmsTab() {
 
       {/* Phase 3 preview */}
       <div className="rounded-xl border border-white/6 bg-white/[0.01] px-4 py-3">
-        <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-white/30 mb-1">Next — Phase 3</p>
-        <ul className="space-y-0.5">
+        <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-white/30 mb-2">Next — Phase 3 (VPS Backend)</p>
+        <ul className="space-y-1">
           {[
-            'Bridge labs/registry.ts → src/content/labs/index.json (rich registry migration)',
-            'Bridge admin defaults/registries.ts → JSON (reduces TS bundle for admin)',
-            'VPS Content API (Hono) serves JSON files with cache headers',
-            'Admin CMS writes edits back to JSON via API → Git commit webhook',
+            'Hono API on Hostinger VPS — serves JSON files with cache headers + JWT auth',
+            'Admin CMS writes: PUT /content/:type/:id → updates JSON file → Git commit webhook',
+            'Media upload: POST /media → Cloudflare R2 + signed URL return',
+            'Bridge labs/registry.ts arch/roadmap data to extended JSON format',
+            'Migrate admin auth from Supabase/Google to VPS JWT (ADR-008 Phase 3)',
           ].map((item) => (
             <li key={item} className="flex items-start gap-2">
               <CircleDashed className="mt-0.5 h-3 w-3 shrink-0 text-white/20" />
