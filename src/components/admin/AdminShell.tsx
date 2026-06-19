@@ -42,6 +42,7 @@ import { useAdmin } from '@/lib/admin/store'
 import { useAuth } from '@/lib/auth/context'
 import { useAdminStateSync } from '@/hooks/useAdminStateSync'
 import type { AdminPanel } from '@/lib/admin/types'
+import { VPSSyncBar } from './VPSSyncBar'
 
 // ─── Panel + Group registry ────────────────────────────────────────────────────
 
@@ -79,6 +80,7 @@ const PANEL_GROUPS: PanelGroup[] = [
     panels: [
       { id: 'command',        label: 'Overview',       icon: LayoutDashboard, accent: '#22d3ee', desc: 'Publishing dashboard'      },
       { id: 'analytics',      label: 'Analytics',      icon: BarChart3,    accent: '#f43f5e', desc: 'Metrics & performance'       },
+      { id: 'vps',            label: 'VPS / Deploy',   icon: Server,       accent: '#38bdf8', desc: 'Git-first CMS backend'       },
       { id: 'labs',           label: 'Labs',           icon: FlaskConical,  accent: '#f59e0b', desc: 'Experiments & demos'         },
       { id: 'taxonomy',       label: 'Taxonomy',       icon: Tag,           accent: '#34d399', desc: 'Tags, categories & media'    },
     ],
@@ -636,6 +638,8 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                 <kbd className="hidden rounded border border-white/10 bg-white/5 px-1 py-0.5 text-[7.5px] text-white/25 sm:inline">⌘K</kbd>
               </button>
             )}
+            {/* VPS sync status */}
+            {mounted && <VPSSyncBar />}
             {/* Last-backup indicator */}
             {mounted && (
               <span

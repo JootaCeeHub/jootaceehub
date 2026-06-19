@@ -41,6 +41,7 @@ import { Phase5Tab }          from './analytics/tabs/Phase5Tab'
 import { StabilizationTab }  from './analytics/tabs/StabilizationTab'
 import { Phase2CmsTab }      from './analytics/tabs/Phase2CmsTab'
 import { Phase3VPSTab }      from './analytics/tabs/Phase3VPSTab'
+import { Phase4AdminTab }    from './analytics/tabs/Phase4AdminTab'
 
 // ─── Analytics lib ────────────────────────────────────────────────────────────
 import {
@@ -646,6 +647,7 @@ export default function AnalyticsPanel() {
     { id: 'stabilization', label: 'Stab P1',    icon: Hammer       },
     { id: 'phase2cms',     label: 'CMS P2',     icon: GitBranch    },
     { id: 'phase3vps',    label: 'VPS P3',     icon: Server       },
+    { id: 'phase4admin',  label: 'Admin P4',   icon: Zap          },
   ]
 
   const exportBtnCls = (done: boolean) =>
@@ -900,6 +902,7 @@ export default function AnalyticsPanel() {
       {activeTab === 'stabilization' && <StabilizationTab />}
       {activeTab === 'phase2cms'     && <Phase2CmsTab />}
       {activeTab === 'phase3vps'     && <Phase3VPSTab />}
+      {activeTab === 'phase4admin'   && <Phase4AdminTab />}
     </div>
   )
 }

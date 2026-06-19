@@ -880,6 +880,13 @@ export const AdminStateSchema = z.object({
   }).optional(),
   unsaved: z.boolean(),
   lastSaved: z.string().datetime().nullable(),
+  vpsStatus: z.object({
+    state: z.enum(['idle', 'saving', 'saved', 'validating', 'building', 'deployed', 'failed']),
+    message: z.string(),
+    jobId: z.string().optional(),
+    error: z.string().optional(),
+    lastSyncAt: z.string().optional(),
+  }).optional(),
 })
 
 export type ValidatedAdminState = z.infer<typeof AdminStateSchema>

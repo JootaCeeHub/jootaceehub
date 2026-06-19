@@ -1,4 +1,5 @@
 import type { AdminState, StudioConfig } from './types'
+import { VPS_SYNC_IDLE } from './types'
 import {
   defaultSystemsRegistry,
   defaultLabsRegistry,
@@ -270,4 +271,5 @@ export const createInitialState = (): AdminState => ({
   studioConfig: defaultStudioConfig,
   unsaved: false,
   lastSaved: null,
+  vpsStatus: VPS_SYNC_IDLE,
 })

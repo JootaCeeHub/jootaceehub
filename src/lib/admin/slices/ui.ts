@@ -1,4 +1,5 @@
 import type { AdminState, AdminAction } from '../types'
+import { VPS_SYNC_IDLE } from '../types'
 
 export function uiHandler(state: AdminState, action: AdminAction): AdminState | null {
   switch (action.type) {
@@ -12,6 +13,10 @@ export function uiHandler(state: AdminState, action: AdminAction): AdminState | 
       return { ...state, pagesActiveTab: action.payload }
     case 'MARK_SAVED':
       return { ...state, unsaved: false, lastSaved: new Date().toISOString() }
+    case 'SET_VPS_STATUS':
+      return { ...state, vpsStatus: action.payload }
+    case 'CLEAR_VPS_ERROR':
+      return { ...state, vpsStatus: VPS_SYNC_IDLE }
     default:
       return null
   }

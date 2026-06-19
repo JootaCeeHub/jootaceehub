@@ -43,6 +43,7 @@ export type AdminPanel =
   | 'studio'
   | 'search'
   | 'taxonomy'
+  | 'vps'
 
 // ─── Studio Config (Command Center settings) ──────────────────────────────────
 
@@ -1205,6 +1206,24 @@ export interface NavbarSettings {
   animateOnScroll: boolean
 }
 
+// ─── VPS Sync State (Phase 4) ─────────────────────────────────────────────────
+
+/**
+ * The 6 sync states for VPS content mutations.
+ * idle → saving → saved → validating → building → deployed | failed
+ */
+export type VpsSyncState = 'idle' | 'saving' | 'saved' | 'validating' | 'building' | 'deployed' | 'failed'
+
+export interface VpsSyncStatus {
+  state: VpsSyncState
+  message: string
+  jobId?: string
+  error?: string
+  lastSyncAt?: string
+}
+
+export const VPS_SYNC_IDLE: VpsSyncStatus = { state: 'idle', message: '' }
+
 // ─── Root State ───────────────────────────────────────────────────────────────
 
 export interface AdminState {
@@ -1267,6 +1286,8 @@ export interface AdminState {
   // Meta
   unsaved: boolean
   lastSaved: string | null
+  // VPS Sync (Phase 4 — ephemeral, not persisted to localStorage)
+  vpsStatus: VpsSyncStatus
 }
 
 // ─── Actions ──────────────────────────────────────────────────────────────────
@@ -1458,3 +1479,6 @@ export type AdminAction =
   | { type: 'SET_DEPLOY_HOOK_URL'; payload: string }
   | { type: 'DEPLOY_TRIGGERED'; payload: string }
   | { type: 'STUDIO_RESET' }
+  // VPS Sync (Phase 4)
+  | { type: 'SET_VPS_STATUS'; payload: VpsSyncStatus }
+  | { type: 'CLEAR_VPS_ERROR' }
