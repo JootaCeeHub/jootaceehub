@@ -1,16 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { subscribe, unsubscribe } from './subscribe'
 
-// Base mock — new subscriber, no existing record, successful insert
-vi.mock('@/lib/supabase/client', () => ({
-  supabase: {
-    from: () => ({
-      select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: null, error: null }) }) }),
-      insert: async () => ({ error: null }),
-      update: () => ({ eq: async () => ({ error: null }) }),
-    }),
-  },
-}))
+// No Supabase: tests run against the live subscribe function.
+// Resend is not configured in test (NEXT_PUBLIC_RESEND_API_KEY absent),
+// so notifyResend is a no-op and subscribe returns optimistic success.
 
 describe('subscribe — email validation', () => {
   beforeEach(() => vi.clearAllMocks())
@@ -37,7 +30,7 @@ describe('subscribe — email validation', () => {
 describe('subscribe — successful submission', () => {
   beforeEach(() => vi.clearAllMocks())
 
-  it('returns success for valid email', async () => {
+  it('returns success for valid email (no Resend configured)', async () => {
     const result = await subscribe('test@example.com')
     expect(result.status).toBe('success')
     expect(result.message).toBeTruthy()
@@ -59,16 +52,21 @@ describe('subscribe — successful submission', () => {
   })
 })
 
-describe('subscribe — error handling', () => {
-  it('returns error message string on success', async () => {
+describe('subscribe result shape', () => {
+  it('result always has status and message', async () => {
     const result = await subscribe('test@example.com')
-    expect(typeof result.message).toBe('string')
-    expect(result.message.length).toBeGreaterThan(0)
+    expect(result).toHaveProperty('status')
+    expect(result).toHaveProperty('message')
   })
 
   it('status is one of the valid values', async () => {
     const result = await subscribe('test@example.com')
     expect(['success', 'already_subscribed', 'error']).toContain(result.status)
+  })
+
+  it('rejects invalid email before calling Resend', async () => {
+    const result = await subscribe('bad')
+    expect(result.status).toBe('error')
   })
 })
 
@@ -81,18 +79,5 @@ describe('unsubscribe', () => {
   it('returns a message string', async () => {
     const result = await unsubscribe('test@example.com')
     expect(typeof result.message).toBe('string')
-  })
-})
-
-describe('subscribe result shape', () => {
-  it('result always has status and message', async () => {
-    const result = await subscribe('test@example.com')
-    expect(result).toHaveProperty('status')
-    expect(result).toHaveProperty('message')
-  })
-
-  it('rejects invalid email synchronously before hitting DB', async () => {
-    const result = await subscribe('bad')
-    expect(result.status).toBe('error')
   })
 })

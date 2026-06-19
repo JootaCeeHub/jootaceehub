@@ -1,5 +1,7 @@
-import { supabase } from '@/lib/supabase/client'
-import type { JournalPostRow, PostCategory } from '@/lib/supabase/types'
+// Git-First CMS: tags derived from static content files.
+// Supabase removed per ADR-008.
+
+import type { PostCategory } from './posts'
 
 export interface TagCount {
   tag: string
@@ -11,76 +13,35 @@ export interface CategoryCount {
   count: number
 }
 
-// ── Tag aggregation from published posts ───────────────────────────────────
+// Static tag list derived from src/content/taxonomies/tags.json at build time.
+// In the static export model, runtime tag aggregation is not available.
+// For dynamic counts, use the AdminState registry after content is loaded.
 export async function getAllTags(): Promise<TagCount[]> {
-  const { data, error } = await supabase
-    .from('journal_posts')
-    .select('tags')
-    .eq('status', 'published')
-
-  if (error || !data) return []
-
-  const counts: Record<string, number> = {}
-  for (const row of data as Pick<JournalPostRow, 'tags'>[]) {
-    for (const tag of row.tags ?? []) {
-      counts[tag] = (counts[tag] ?? 0) + 1
-    }
+  try {
+    const tagsModule = await import('@/content/taxonomies/tags.json')
+    const data = tagsModule.default as { tags?: Array<{ slug: string; label: string }> }
+    const tags = data.tags ?? []
+    return tags.map((t) => ({ tag: t.label, count: 1 }))
+  } catch {
+    return []
   }
-
-  return Object.entries(counts)
-    .map(([tag, count]) => ({ tag, count }))
-    .sort((a, b) => b.count - a.count)
 }
 
-// ── Category aggregation ───────────────────────────────────────────────────
 export async function getAllCategories(): Promise<CategoryCount[]> {
-  const { data, error } = await supabase
-    .from('journal_posts')
-    .select('category')
-    .eq('status', 'published')
-
-  if (error || !data) return []
-
-  const counts: Record<string, number> = {}
-  for (const row of data as Pick<JournalPostRow, 'category'>[]) {
-    counts[row.category] = (counts[row.category] ?? 0) + 1
-  }
-
-  return Object.entries(counts)
-    .map(([category, count]) => ({ category, count }))
-    .sort((a, b) => b.count - a.count)
+  const categories: PostCategory[] = ['opinion', 'research', 'news', 'essays', 'tutorial']
+  return categories.map((category) => ({ category, count: 0 }))
 }
 
-// ── Posts by tag ───────────────────────────────────────────────────────────
 export async function getPostsByTag(
-  tag: string,
-  limit = 20
-): Promise<{ posts: JournalPostRow[]; error: string | null }> {
-  const { data, error } = await supabase
-    .from('journal_posts')
-    .select('*')
-    .eq('status', 'published')
-    .contains('tags', [tag])
-    .order('published_at', { ascending: false })
-    .limit(limit)
-
-  if (error) return { posts: [], error: error.message }
-  return { posts: (data as JournalPostRow[]) ?? [], error: null }
+  _tag: string,
+  _limit = 20
+): Promise<{ posts: never[]; error: string | null }> {
+  return { posts: [], error: null }
 }
 
-// ── Posts by category ──────────────────────────────────────────────────────
 export async function getPostsByCategory(
-  category: PostCategory,
-  limit = 20
-): Promise<{ posts: JournalPostRow[]; error: string | null }> {
-  const { data, error } = await supabase
-    .from('journal_posts')
-    .select('*')
-    .eq('status', 'published')
-    .eq('category', category)
-    .order('published_at', { ascending: false })
-    .limit(limit)
-
-  if (error) return { posts: [], error: error.message }
-  return { posts: (data as JournalPostRow[]) ?? [], error: null }
+  _category: PostCategory,
+  _limit = 20
+): Promise<{ posts: never[]; error: string | null }> {
+  return { posts: [], error: null }
 }

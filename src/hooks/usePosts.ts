@@ -13,7 +13,6 @@ import {
   estimateReadTime,
 } from '@/lib/cms/posts'
 import type { JournalPostRow, PostsFilter, JournalPostInsert, JournalPostUpdate } from '@/lib/cms/posts'
-import { useSupabaseAuth } from '@/lib/supabase/context'
 
 export interface UsePostsReturn {
   posts: JournalPostRow[]
@@ -29,7 +28,6 @@ export interface UsePostsReturn {
 }
 
 export function usePosts(filter: PostsFilter = {}): UsePostsReturn {
-  const { user } = useSupabaseAuth()
   const [posts, setPosts] = useState<JournalPostRow[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -56,21 +54,20 @@ export function usePosts(filter: PostsFilter = {}): UsePostsReturn {
     title: string,
     category: JournalPostRow['category']
   ): Promise<JournalPostRow | null> => {
-    if (!user) return null
     const insert: JournalPostInsert = {
       title,
       slug: slugify(title),
       category,
       content: '',
       status: 'draft',
-      author_id: user.id,
+      author_id: 'admin',
       read_time: 1,
     }
     const { post, error: e } = await createPost(insert)
     if (e) { setError(e); return null }
     refresh()
     return post
-  }, [user, refresh])
+  }, [refresh])
 
   const savePost = useCallback(async (id: string, update: JournalPostUpdate): Promise<boolean> => {
     const content = update.content

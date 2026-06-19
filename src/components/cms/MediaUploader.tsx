@@ -66,8 +66,6 @@ export default function MediaUploader({ onUploaded, folder, multiple = true }: M
       onUploaded({
         filename: item.file.name,
         original_url: result.secure_url,
-        cloudinary_public_id: result.public_id,
-        cloudinary_url: result.secure_url,
         width: result.width ?? null,
         height: result.height ?? null,
         size_bytes: result.bytes,

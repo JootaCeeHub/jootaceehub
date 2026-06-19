@@ -1,6 +1,5 @@
 import { GoogleAuthProvider } from '@/components/providers/GoogleAuthProvider'
 import { AuthProvider } from '@/lib/auth/context'
-import { SupabaseAuthProvider } from '@/lib/supabase/context'
 import { AdminProvider } from '@/lib/admin/store'
 import AdminAuthGate from '@/components/admin/AdminAuthGate'
 import AdminShell from '@/components/admin/AdminShell'
@@ -25,18 +24,16 @@ export default function AdminLayout({
   return (
     <GoogleAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <AuthProvider>
-        <SupabaseAuthProvider>
-          <I18nProvider locale="en" messages={messagesEn}>
-            <DocumentLang locale="en" />
-            <AdminProvider>
-              <AdminAuthGate>
-                <AdminShell>
-                  <PanelRouter />
-                </AdminShell>
-              </AdminAuthGate>
-            </AdminProvider>
-          </I18nProvider>
-        </SupabaseAuthProvider>
+        <I18nProvider locale="en" messages={messagesEn}>
+          <DocumentLang locale="en" />
+          <AdminProvider>
+            <AdminAuthGate>
+              <AdminShell>
+                <PanelRouter />
+              </AdminShell>
+            </AdminAuthGate>
+          </AdminProvider>
+        </I18nProvider>
       </AuthProvider>
     </GoogleAuthProvider>
   )

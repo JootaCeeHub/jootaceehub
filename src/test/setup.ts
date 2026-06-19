@@ -26,24 +26,6 @@ global.IntersectionObserver = vi.fn(function MockIntersectionObserver(
 
 // ── Module mocks ───────────────────────────────────────────────────────────
 
-// Mock @supabase/supabase-js so tests never need real credentials.
-// Individual test files can override this with vi.mock('@/lib/supabase/client').
-vi.mock('@/lib/supabase/client', () => ({
-  supabase: {
-    from: () => ({
-      select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: null, error: null }), single: async () => ({ data: null, error: null }) }) }),
-      insert: async () => ({ data: null, error: null }),
-      update: () => ({ eq: async () => ({ data: null, error: null }) }),
-      upsert: () => ({ onConflict: async () => ({ data: null, error: null }) }),
-      delete: () => ({ eq: async () => ({ data: null, error: null }) }),
-    }),
-    auth: {
-      getSession: async () => ({ data: { session: null }, error: null }),
-      onAuthStateChange: () => ({ data: { subscription: { unsubscribe: vi.fn() } } }),
-    },
-  },
-}))
-
 // Mock next/navigation
 vi.mock('next/navigation', () => ({
   usePathname: () => '/en',

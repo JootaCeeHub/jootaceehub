@@ -1,13 +1,41 @@
-import { supabase } from '@/lib/supabase/client'
-import type {
-  JournalPostRow,
-  JournalPostInsert,
-  JournalPostUpdate,
-  PostStatus,
-  PostCategory,
-} from '@/lib/supabase/types'
+// Git-First CMS: content lives in src/content/articles/ as MDX files.
+// Supabase removed per ADR-008. Write operations go through VPS API (Phase 3).
 
-export type { JournalPostRow, JournalPostInsert, JournalPostUpdate, PostStatus, PostCategory }
+export type PostStatus = 'draft' | 'published' | 'archived'
+export type PostCategory = 'opinion' | 'research' | 'news' | 'essays' | 'tutorial'
+
+export interface JournalPostRow {
+  id: string
+  slug: string
+  title: string
+  excerpt: string | null
+  content: string
+  status: PostStatus
+  category: PostCategory
+  tags: string[]
+  cover_image_url: string | null
+  read_time: number
+  author_id: string
+  published_at: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface JournalPostInsert {
+  slug: string
+  title: string
+  excerpt?: string | null
+  content?: string
+  status?: PostStatus
+  category: PostCategory
+  tags?: string[]
+  cover_image_url?: string | null
+  read_time?: number
+  author_id: string
+  published_at?: string | null
+}
+
+export type JournalPostUpdate = Partial<Omit<JournalPostInsert, 'author_id'>>
 
 export interface PostsFilter {
   status?: PostStatus
@@ -23,108 +51,45 @@ export interface PostsResult {
   error: string | null
 }
 
-// ── List ───────────────────────────────────────────────────────────────────
-export async function listPosts(filter: PostsFilter = {}): Promise<PostsResult> {
-  const { status, category, search, limit = 20, offset = 0 } = filter
+const VPS_MSG = 'Content writes require VPS API (configure NEXT_PUBLIC_CONTENT_API_URL)'
 
-  let query = supabase
-    .from('journal_posts')
-    .select('*', { count: 'exact' })
-    .order('updated_at', { ascending: false })
-    .range(offset, offset + limit - 1)
-
-  if (status) query = query.eq('status', status)
-  if (category) query = query.eq('category', category)
-  if (search) query = query.ilike('title', `%${search}%`)
-
-  const { data, count, error } = await query
-  if (error) return { posts: [], total: 0, error: error.message }
-  return { posts: (data as JournalPostRow[]) ?? [], total: count ?? 0, error: null }
+export async function listPosts(_filter: PostsFilter = {}): Promise<PostsResult> {
+  return { posts: [], total: 0, error: null }
 }
 
-// ── Get single ─────────────────────────────────────────────────────────────
-export async function getPost(id: string): Promise<{ post: JournalPostRow | null; error: string | null }> {
-  const { data, error } = await supabase
-    .from('journal_posts')
-    .select('*')
-    .eq('id', id)
-    .single()
-
-  if (error) return { post: null, error: error.message }
-  return { post: data as JournalPostRow, error: null }
+export async function getPost(_id: string): Promise<{ post: JournalPostRow | null; error: string | null }> {
+  return { post: null, error: null }
 }
 
-export async function getPostBySlug(slug: string): Promise<{ post: JournalPostRow | null; error: string | null }> {
-  const { data, error } = await supabase
-    .from('journal_posts')
-    .select('*')
-    .eq('slug', slug)
-    .single()
-
-  if (error) return { post: null, error: error.message }
-  return { post: data as JournalPostRow, error: null }
+export async function getPostBySlug(_slug: string): Promise<{ post: JournalPostRow | null; error: string | null }> {
+  return { post: null, error: null }
 }
 
-// ── Create ─────────────────────────────────────────────────────────────────
 export async function createPost(
-  insert: JournalPostInsert
+  _insert: JournalPostInsert
 ): Promise<{ post: JournalPostRow | null; error: string | null }> {
-  const { data, error } = await supabase
-    .from('journal_posts')
-    .insert(insert as JournalPostInsert & Record<string, unknown>)
-    .select()
-    .single()
-
-  if (error) return { post: null, error: error.message }
-  return { post: data as JournalPostRow, error: null }
+  return { post: null, error: VPS_MSG }
 }
 
-// ── Update ─────────────────────────────────────────────────────────────────
 export async function updatePost(
-  id: string,
-  update: JournalPostUpdate
+  _id: string,
+  _update: JournalPostUpdate
 ): Promise<{ post: JournalPostRow | null; error: string | null }> {
-  const { data, error } = await supabase
-    .from('journal_posts')
-    .update(update as JournalPostUpdate & Record<string, unknown>)
-    .eq('id', id)
-    .select()
-    .single()
-
-  if (error) return { post: null, error: error.message }
-  return { post: data as JournalPostRow, error: null }
+  return { post: null, error: VPS_MSG }
 }
 
-// ── Publish / Unpublish ────────────────────────────────────────────────────
-export async function publishPost(id: string): Promise<{ error: string | null }> {
-  const { error } = await supabase
-    .from('journal_posts')
-    .update({ status: 'published', published_at: new Date().toISOString() } as JournalPostUpdate & Record<string, unknown>)
-    .eq('id', id)
-
-  return { error: error?.message ?? null }
+export async function publishPost(_id: string): Promise<{ error: string | null }> {
+  return { error: VPS_MSG }
 }
 
-export async function unpublishPost(id: string): Promise<{ error: string | null }> {
-  const { error } = await supabase
-    .from('journal_posts')
-    .update({ status: 'draft', published_at: null } as JournalPostUpdate & Record<string, unknown>)
-    .eq('id', id)
-
-  return { error: error?.message ?? null }
+export async function unpublishPost(_id: string): Promise<{ error: string | null }> {
+  return { error: VPS_MSG }
 }
 
-// ── Delete ─────────────────────────────────────────────────────────────────
-export async function deletePost(id: string): Promise<{ error: string | null }> {
-  const { error } = await supabase
-    .from('journal_posts')
-    .delete()
-    .eq('id', id)
-
-  return { error: error?.message ?? null }
+export async function deletePost(_id: string): Promise<{ error: string | null }> {
+  return { error: VPS_MSG }
 }
 
-// ── Slug generation helper ─────────────────────────────────────────────────
 export function slugify(title: string): string {
   return title
     .toLowerCase()
@@ -136,7 +101,6 @@ export function slugify(title: string): string {
     .replace(/-+/g, '-')
 }
 
-// ── Read-time estimate ─────────────────────────────────────────────────────
 export function estimateReadTime(content: string): number {
   const words = content.trim().split(/\s+/).length
   return Math.max(1, Math.round(words / 200))

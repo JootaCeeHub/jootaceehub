@@ -95,10 +95,10 @@ export default function MediaLibraryPanel() {
           <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
             {assets.map((asset) => (
               <div key={asset.id} className="group relative overflow-hidden rounded-xl border border-white/6 bg-white/3 aspect-square cursor-pointer hover:border-rose-500/30 transition-colors" onClick={() => openAltEdit(asset)} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && openAltEdit(asset)}>
-                {asset.media_type === 'image' && asset.cloudinary_url ? (
+                {asset.media_type === 'image' && asset.original_url ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
-                    src={asset.cloudinary_url}
+                    src={asset.original_url}
                     alt={asset.alt_text ?? asset.filename}
                     className="h-full w-full object-cover"
                     loading="lazy"

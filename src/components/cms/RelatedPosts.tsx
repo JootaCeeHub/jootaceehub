@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import type { JournalPostRow } from '@/lib/supabase/types'
+import type { JournalPostRow } from '@/lib/cms/posts'
 
 export interface RelatedPostsProps {
   posts: JournalPostRow[]

@@ -1,4 +1,4 @@
-import type { JournalPostRow } from '@/lib/supabase/types'
+import type { JournalPostRow } from './posts'
 
 export interface ScoredPost {
   post: JournalPostRow
@@ -6,12 +6,6 @@ export interface ScoredPost {
   sharedTags: string[]
 }
 
-/**
- * Score candidates against `current` using:
- *   - Tag overlap   → 3 pts per shared tag
- *   - Same category → 2 pts
- *   - Published recently (< 90 days) → 1 pt
- */
 export function scoreRelatedPosts(
   current: JournalPostRow,
   candidates: JournalPostRow[]

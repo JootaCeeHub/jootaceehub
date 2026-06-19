@@ -2,9 +2,8 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 
 import { useState, useEffect, useCallback } from 'react'
-import { listMedia, saveMediaAsset, updateMediaAsset, deleteMediaAsset, mimeToMediaType } from '@/lib/cms/media'
-import type { MediaAssetRow, MediaFilter, MediaAssetInsert } from '@/lib/cms/media'
-import { useSupabaseAuth } from '@/lib/supabase/context'
+import { listMedia, updateMediaAsset, deleteMediaAsset } from '@/lib/cms/media'
+import type { MediaAssetRow, MediaFilter } from '@/lib/cms/media'
 
 export interface UseMediaLibraryReturn {
   assets: MediaAssetRow[]
@@ -12,13 +11,11 @@ export interface UseMediaLibraryReturn {
   loading: boolean
   error: string | null
   refresh: () => void
-  saveAsset: (insert: Omit<MediaAssetInsert, 'uploaded_by'>) => Promise<MediaAssetRow | null>
   updateAlt: (id: string, altText: string) => Promise<boolean>
   remove: (id: string) => Promise<boolean>
 }
 
 export function useMediaLibrary(filter: MediaFilter = {}): UseMediaLibraryReturn {
-  const { user } = useSupabaseAuth()
   const [assets, setAssets] = useState<MediaAssetRow[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -41,21 +38,6 @@ export function useMediaLibrary(filter: MediaFilter = {}): UseMediaLibraryReturn
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rev, filter.mediaType, filter.search, filter.limit, filter.offset])
 
-  const saveAsset = useCallback(async (
-    insert: Omit<MediaAssetInsert, 'uploaded_by'>
-  ): Promise<MediaAssetRow | null> => {
-    if (!user) return null
-    const full: MediaAssetInsert = {
-      ...insert,
-      uploaded_by: user.id,
-      media_type: insert.media_type ?? mimeToMediaType(insert.mime_type),
-    }
-    const { asset, error: e } = await saveMediaAsset(full)
-    if (e) { setError(e); return null }
-    refresh()
-    return asset
-  }, [user, refresh])
-
   const updateAlt = useCallback(async (id: string, altText: string): Promise<boolean> => {
     const { error: e } = await updateMediaAsset(id, { alt_text: altText })
     if (e) { setError(e); return false }
@@ -70,5 +52,5 @@ export function useMediaLibrary(filter: MediaFilter = {}): UseMediaLibraryReturn
     return true
   }, [refresh])
 
-  return { assets, total, loading, error, refresh, saveAsset, updateAlt, remove }
+  return { assets, total, loading, error, refresh, updateAlt, remove }
 }

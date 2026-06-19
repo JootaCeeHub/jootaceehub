@@ -2,10 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, waitFor, act } from '@testing-library/react'
 import type { JournalPostRow, JournalPostInsert } from '@/lib/cms/posts'
 
-vi.mock('@/lib/supabase/context', () => ({
-  useSupabaseAuth: vi.fn(),
-}))
-
 vi.mock('@/lib/cms/posts', () => ({
   listPosts:        vi.fn(),
   createPost:       vi.fn(),
@@ -19,7 +15,6 @@ vi.mock('@/lib/cms/posts', () => ({
 
 import { usePosts } from './usePosts'
 import * as postsMod from '@/lib/cms/posts'
-import { useSupabaseAuth } from '@/lib/supabase/context'
 
 const mocked = {
   listPosts:     vi.mocked(postsMod.listPosts),
@@ -28,28 +23,19 @@ const mocked = {
   publishPost:   vi.mocked(postsMod.publishPost),
   unpublishPost: vi.mocked(postsMod.unpublishPost),
   deletePost:    vi.mocked(postsMod.deletePost),
-  auth:          vi.mocked(useSupabaseAuth),
 }
 
 const SAMPLE_POST: JournalPostRow = {
   id: 'p1', slug: 'test', title: 'Test', content: '',
   status: 'draft', category: 'research', tags: [],
-  author_id: 'u1', read_time: 2,
+  author_id: 'admin', read_time: 2,
   created_at: '2026-01-01', updated_at: '2026-01-01',
-  published_at: null, excerpt: null, cover_image: null,
-}
-
-function setupAuth(userId = 'u1') {
-  mocked.auth.mockReturnValue({
-    user: { id: userId } as ReturnType<typeof useSupabaseAuth>['user'],
-    session: null, isConfigured: true, isLoading: false,
-  } as ReturnType<typeof useSupabaseAuth>)
+  published_at: null, excerpt: null, cover_image_url: null,
 }
 
 describe('usePosts', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    setupAuth()
     mocked.listPosts.mockResolvedValue({ posts: [SAMPLE_POST], total: 1, error: null })
   })
 
@@ -70,16 +56,7 @@ describe('usePosts', () => {
     await waitFor(() => expect(mocked.listPosts).toHaveBeenCalledTimes(2))
   })
 
-  it('createDraft returns null when user is not signed in', async () => {
-    mocked.auth.mockReturnValue({
-      user: null, session: null, isConfigured: false, isLoading: false,
-    } as ReturnType<typeof useSupabaseAuth>)
-    const { result } = renderHook(() => usePosts())
-    const post = await result.current.createDraft('New Post', 'research')
-    expect(post).toBeNull()
-  })
-
-  it('createDraft calls createPost and refreshes', async () => {
+  it('createDraft calls createPost with admin as author_id', async () => {
     mocked.createPost.mockResolvedValue({ post: SAMPLE_POST, error: null })
     const { result } = renderHook(() => usePosts())
     await waitFor(() => expect(result.current.loading).toBe(false))
@@ -89,13 +66,22 @@ describe('usePosts', () => {
     })
 
     expect(mocked.createPost).toHaveBeenCalledWith(
-      expect.objectContaining<Partial<JournalPostInsert>>({ title: 'New Post', status: 'draft' })
+      expect.objectContaining<Partial<JournalPostInsert>>({ title: 'New Post', status: 'draft', author_id: 'admin' })
     )
     expect(mocked.listPosts).toHaveBeenCalledTimes(2)
   })
 
+  it('createDraft returns null and sets error when createPost fails', async () => {
+    mocked.createPost.mockResolvedValue({ post: null, error: 'VPS not configured' })
+    const { result } = renderHook(() => usePosts())
+
+    const post = await act(async () => result.current.createDraft('New Post', 'research'))
+    expect(post).toBeNull()
+    expect(result.current.error).toBe('VPS not configured')
+  })
+
   it('savePost calls updatePost with estimated read time', async () => {
-    mocked.updatePost.mockResolvedValue({ error: null })
+    mocked.updatePost.mockResolvedValue({ post: null, error: null })
     const { result } = renderHook(() => usePosts())
     await waitFor(() => expect(result.current.loading).toBe(false))
 
