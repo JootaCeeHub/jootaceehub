@@ -342,15 +342,15 @@ export function Phase2CmsTab() {
           Architecture Layer — Phase 2 CMS Consolidation
         </p>
         <p className="font-mono text-[9px] text-white/35 leading-relaxed">
-          ContentRepository interface, canonical IDs, unified taxonomy, and
-          MDX + AdminState adapters — all complete.
+          ContentRepository interface, canonical IDs wired into converters,
+          unified taxonomy, MDX + AdminState adapters, resources registry from Git JSON — all complete (100%).
         </p>
         <div className="grid grid-cols-1 gap-1.5 md:grid-cols-2">
           {([
             { label: 'ContentRepository<T>',        file: 'lib/content/repository.ts',          done: true,  note: 'findBySlug · findAll · count · search + applyContentFilter helper' },
             { label: 'MDX adapter',                file: 'lib/content/adapters/mdx.ts',        done: true,  note: 'createMdxContentAdapter() — server/build-time, wraps getAllMeta()' },
             { label: 'AdminState adapter',         file: 'lib/content/adapters/admin-state.ts',done: true,  note: 'createRegistryAdapter(snapshot) — client-safe, pure in-memory' },
-            { label: 'Canonical IDs',              file: 'lib/content/canonical-id.ts',        done: true,  note: 'makeCanonicalId · parseCanonicalId · isCanonicalId · slugify' },
+            { label: 'Canonical IDs integrated',   file: 'lib/content/types.ts (5 converters)',done: true,  note: 'makeCanonicalId(type,slug) used in all converters — collision-free IDs' },
             { label: 'Unified taxonomy',           file: 'lib/content/taxonomy.ts',            done: true,  note: 'ALL_TAGS · ALL_CATEGORIES · ALL_SERIES — all from src/content/taxonomies/*.json' },
             { label: 'series.json',                file: 'src/content/taxonomies/series.json', done: true,  note: 'Empty array — Phase 3 populates. taxonomy.ts reads from file (not hardcoded)' },
             { label: 'AI bounded context',         file: 'src/lib/ai/types.ts + index.ts',     done: true,  note: 'LLMProvider · LLMProfile · ChatMessage · ChatConversation · AIConfig moved out of admin/types' },
@@ -358,7 +358,7 @@ export function Phase2CmsTab() {
             { label: 'Publication lifecycle doc',  file: 'docs/publication-lifecycle.md',      done: true,  note: 'Draft → Review → Git commit → Build → Deploy' },
             { label: 'ADR-009',                    file: 'docs/adr/ADR-009-*.md',              done: true,  note: 'Content Repository + Adapter Pattern — decision record' },
             { label: 'GitHub seed data',           file: 'src/content/github/seed.json',       done: true,  note: 'Separates canonical seed from generated public/data/github.json' },
-            { label: 'resources/data.ts deprecated',file: 'lib/resources/data.ts',            done: true,  note: 'Canonical source is now src/content/resources/*.json via json-loaders.ts' },
+            { label: 'Resources registry from JSON',file: 'lib/resources/registry.ts',        done: true,  note: 'RESOURCE_CATEGORIES + all item arrays now load from src/content/resources/*.json via json-loaders' },
             { label: 'AdminState bounded contexts', file: 'lib/admin/slices/ (11 files)',      done: true,  note: 'ai · site · cms · content · design · capabilities · infra · integrations · studio · ui · registries' },
             { label: 'Design modules SSoT',        file: 'lib/design/tokens.ts + styles/ui.ts',done: true, note: 'ADR-005: runtime tokens ↔ static CVA primitives — zero cross-imports (grep verified)' },
             { label: 'Tests: 3 new test files',    file: 'canonical-id · taxonomy · repository',done: true, note: '44 new tests — utilities + filter combinations; total 460 passing' },

@@ -55,10 +55,11 @@ export type {
 
 import type { ArticleMeta } from '@/lib/journal/types'
 import type { ProjectEntry, SystemEntry, LabEntry, ResearchEntry } from '@/lib/admin/types'
+import { makeCanonicalId } from '@/lib/content/canonical-id'
 
 export function articleToContentItem(a: ArticleMeta): ContentItem {
   return {
-    id:          a.slug,
+    id:          makeCanonicalId('article', a.slug),
     type:        'article',
     title:       a.title,
     slug:        a.slug,
@@ -74,7 +75,7 @@ export function articleToContentItem(a: ArticleMeta): ContentItem {
 
 export function projectToContentItem(p: ProjectEntry): ContentItem {
   return {
-    id:          p.id,
+    id:          makeCanonicalId('project', p.slug),
     type:        'project',
     title:       p.title,
     slug:        p.slug,
@@ -90,7 +91,7 @@ export function projectToContentItem(p: ProjectEntry): ContentItem {
 
 export function researchToContentItem(r: ResearchEntry): ContentItem {
   return {
-    id:          r.slug,
+    id:          makeCanonicalId('research', r.slug),
     type:        'research',
     title:       r.title,
     slug:        r.slug,
@@ -106,7 +107,7 @@ export function researchToContentItem(r: ResearchEntry): ContentItem {
 
 export function labToContentItem(l: LabEntry): ContentItem {
   return {
-    id:          l.key,
+    id:          makeCanonicalId('lab', l.key),
     type:        'lab',
     title:       l.name,
     slug:        l.key,
@@ -122,7 +123,7 @@ export function labToContentItem(l: LabEntry): ContentItem {
 
 export function systemToContentItem(s: SystemEntry): ContentItem {
   return {
-    id:          s.key,
+    id:          makeCanonicalId('system', s.key),
     type:        'system',
     title:       s.name,
     slug:        s.key,
