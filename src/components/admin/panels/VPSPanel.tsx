@@ -4,14 +4,15 @@
 import { useState, useEffect } from 'react'
 import {
   Server, LogIn, LogOut, RefreshCw, GitBranch, Hammer, Clock, CheckCircle2,
-  XCircle, AlertTriangle, Upload, Package, Trash2, FileText,
+  XCircle, AlertTriangle, Upload, Package, Trash2, FileText, CloudUpload, FolderSync,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAdmin } from '@/lib/admin/store'
 import { useApiAuth } from '@/hooks/useApiAuth'
 import { useContentSync } from '@/hooks/useContentSync'
-import { apiGitLog, apiGitStatus } from '@/lib/api/git'
-import { apiBuildHistory } from '@/lib/api/build'
+import { useVPSWrite, type VPSContentType } from '@/hooks/useVPSWrite'
+import { apiGitLog, apiGitStatus, apiGitCommit } from '@/lib/api/git'
+import { apiBuildHistory, apiBuildTrigger } from '@/lib/api/build'
 import { apiReadAudit } from '@/lib/api/audit'
 import { isApiConfigured } from '@/lib/api/client'
 import type { GitLogEntry, GitStatus, BuildJob, AuditEntry } from '@/lib/api/types'
@@ -54,9 +55,10 @@ function SyncBadge({ state, message }: { state: string; message: string }) {
 // ─── Main panel ───────────────────────────────────────────────────────────────
 
 export default function VPSPanel() {
-  const { dispatch } = useAdmin()
+  const { state, dispatch } = useAdmin()
   const { state: authState, me, health, error: authError, login, logout, refresh } = useApiAuth()
   const { status: syncStatus, reset: resetSync } = useContentSync()
+  const { push, syncState: vpsWriteState } = useVPSWrite()
 
   const [password, setPassword] = useState('')
   const [loginError, setLoginError] = useState<string | null>(null)
@@ -324,6 +326,84 @@ export default function VPSPanel() {
             ) : (
               <p className="text-[10px] text-white/25">No audit entries.</p>
             )}
+          </Section>
+
+          {/* ── Content Sync ── */}
+          <Section title="Content Sync" icon={FolderSync}>
+            <p className="mb-4 text-[10px] text-white/40">
+              Push AdminState content registries to VPS Git files. Each item becomes a <code className="rounded bg-white/5 px-1 font-mono text-cyan-400">src/content/&lt;type&gt;/&lt;slug&gt;.json</code> file.
+            </p>
+            {([
+              { type: 'projects' as VPSContentType, label: 'Projects',  items: state.projectsRegistry, color: '#a78bfa' },
+              { type: 'labs'     as VPSContentType, label: 'Labs',      items: state.labsRegistry,     color: '#f59e0b' },
+              { type: 'systems'  as VPSContentType, label: 'Systems',   items: state.systemsRegistry,  color: '#38bdf8' },
+              { type: 'research' as VPSContentType, label: 'Research',  items: state.researchRegistry, color: '#34d399' },
+            ]).map(({ type, label, items, color }) => {
+              const s = vpsWriteState[type]
+              return (
+                <div key={type} className="mb-2 flex items-center justify-between gap-3 rounded-lg border border-white/5 bg-white/[0.015] px-3 py-2">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="h-1.5 w-1.5 rounded-full shrink-0" style={{ background: color }} />
+                      <span className="text-[10px] font-medium text-white/70">{label}</span>
+                      <span className="rounded-full bg-white/5 px-1.5 py-0.5 font-mono text-[8px] text-white/30">{items.length} items</span>
+                    </div>
+                    {s.lastSync && (
+                      <p className="mt-0.5 font-mono text-[8px] text-emerald-400/60">
+                        Last sync: {new Date(s.lastSync).toLocaleTimeString()} · {s.pushed} pushed
+                      </p>
+                    )}
+                    {s.error && (
+                      <p className="mt-0.5 font-mono text-[8px] text-red-400/70">{s.error}</p>
+                    )}
+                  </div>
+                  <button
+                    disabled={s.syncing || items.length === 0}
+                    onClick={() => void push(type, items as unknown as Array<{ slug: string } & Record<string, unknown>>)}
+                    className={cn(
+                      'flex shrink-0 items-center gap-1.5 rounded-lg border px-3 py-1 text-[9px] uppercase tracking-widest transition-colors disabled:opacity-40',
+                      s.syncing
+                        ? 'border-blue-400/25 bg-blue-400/8 text-blue-400'
+                        : s.lastSync
+                          ? 'border-emerald-400/20 bg-emerald-400/5 text-emerald-400/80 hover:bg-emerald-400/10'
+                          : 'border-white/8 bg-white/[0.03] text-white/45 hover:bg-white/5 hover:text-white/65',
+                    )}
+                  >
+                    {s.syncing
+                      ? <><RefreshCw className="h-2.5 w-2.5 animate-spin" />Syncing…</>
+                      : <><CloudUpload className="h-2.5 w-2.5" />Push</>
+                    }
+                  </button>
+                </div>
+              )
+            })}
+
+            {/* Commit + build buttons */}
+            <div className="mt-3 flex gap-2 border-t border-white/5 pt-3">
+              <button
+                onClick={async () => {
+                  const res = await apiGitCommit('chore: admin content sync')
+                  if (!res.success) alert(res.error ?? 'Commit failed')
+                }}
+                className="flex items-center gap-1.5 rounded-lg border border-cyan-400/20 bg-cyan-400/6 px-3 py-1.5 text-[9px] text-cyan-400/80 transition-colors hover:bg-cyan-400/12 uppercase tracking-widest"
+              >
+                <GitBranch className="h-3 w-3" />
+                Git commit
+              </button>
+              <button
+                onClick={async () => {
+                  const res = await apiBuildTrigger('Admin panel: manual build')
+                  if (!res.success) alert(res.error ?? 'Build trigger failed')
+                }}
+                className="flex items-center gap-1.5 rounded-lg border border-blue-400/20 bg-blue-400/6 px-3 py-1.5 text-[9px] text-blue-400/80 transition-colors hover:bg-blue-400/12 uppercase tracking-widest"
+              >
+                <Hammer className="h-3 w-3" />
+                Build + deploy
+              </button>
+            </div>
+            <p className="mt-2 text-[9px] text-white/20">
+              Flow: Push types → Git commit → Build + deploy → Nginx symlink updated atomically
+            </p>
           </Section>
 
           {/* ── Media ── */}
