@@ -1,6 +1,7 @@
-import type { AdminState, AdminAction, CmsStatus, RevisionContentType, ContentRevision } from '../types'
+import type { AdminState, AdminAction, CmsStatus, RevisionContentType, ContentRevision, AuditLogEntry, LocaleRelation, ContentRelation, PublishSchedule } from '../types'
 
 const MAX_REVISIONS = 50
+const MAX_AUDIT = 200
 
 // ─── Auto-note helpers ────────────────────────────────────────────────────────
 
@@ -209,6 +210,109 @@ export function cmsHandler(state: AdminState, action: AdminAction): AdminState |
         ...state,
         integrations: { ...state.integrations, lastDeployTriggeredAt: action.payload },
       }
+
+    // ── Audit Log ─────────────────────────────────────────────────────────────
+    case 'LOG_AUDIT': {
+      const entry: AuditLogEntry = {
+        ...action.payload,
+        id: nanoid(),
+        timestamp: new Date().toISOString(),
+      }
+      const log = [entry, ...(state.auditLog ?? [])].slice(0, MAX_AUDIT)
+      return { ...state, auditLog: log }
+    }
+    case 'CLEAR_AUDIT_LOG':
+      return { ...state, auditLog: [] }
+
+    // ── Locale Relations ──────────────────────────────────────────────────────
+    case 'SET_LOCALE_RELATION': {
+      const existing = (state.localeRelations ?? []).filter(
+        (r) => !(r.contentType === action.payload.contentType &&
+                 (r.enId === action.payload.enId || r.esId === action.payload.esId))
+      )
+      const relation: LocaleRelation = {
+        ...action.payload,
+        id: nanoid(),
+        createdAt: new Date().toISOString(),
+      }
+      return { ...state, localeRelations: [...existing, relation], unsaved: true }
+    }
+    case 'REMOVE_LOCALE_RELATION':
+      return {
+        ...state,
+        localeRelations: (state.localeRelations ?? []).filter((r) => r.id !== action.payload),
+        unsaved: true,
+      }
+
+    // ── Content Relations ─────────────────────────────────────────────────────
+    case 'ADD_CONTENT_RELATION': {
+      const relation: ContentRelation = {
+        ...action.payload,
+        id: nanoid(),
+        createdAt: new Date().toISOString(),
+      }
+      return { ...state, contentRelations: [...(state.contentRelations ?? []), relation], unsaved: true }
+    }
+    case 'REMOVE_CONTENT_RELATION':
+      return {
+        ...state,
+        contentRelations: (state.contentRelations ?? []).filter((r) => r.id !== action.payload),
+        unsaved: true,
+      }
+
+    // ── Publish Scheduler ─────────────────────────────────────────────────────
+    case 'SCHEDULE_PUBLISH': {
+      const schedule: PublishSchedule = {
+        ...action.payload,
+        id: nanoid(),
+        createdAt: new Date().toISOString(),
+        status: 'pending',
+      }
+      return { ...state, publishSchedules: [...(state.publishSchedules ?? []), schedule], unsaved: true }
+    }
+    case 'CANCEL_SCHEDULE':
+      return {
+        ...state,
+        publishSchedules: (state.publishSchedules ?? []).map((s) =>
+          s.id === action.payload ? { ...s, status: 'cancelled' as const } : s
+        ),
+        unsaved: true,
+      }
+    case 'APPLY_SCHEDULED_PUBLISHES': {
+      const now = new Date().toISOString()
+      const due = (state.publishSchedules ?? []).filter(
+        (s) => s.status === 'pending' && s.scheduledAt <= now
+      )
+      if (due.length === 0) return null
+
+      let next = { ...state }
+      for (const s of due) {
+        // Trigger the existing CONTENT_SET_STATUS logic inline
+        if (s.contentType === 'project') {
+          next = {
+            ...next,
+            projectsRegistry: next.projectsRegistry.map((p) =>
+              p.id === s.contentId ? { ...p, cmsStatus: 'published', publishedAt: s.scheduledAt } : p
+            ),
+          }
+        } else if (s.contentType === 'research') {
+          next = {
+            ...next,
+            researchRegistry: next.researchRegistry.map((r) =>
+              r.slug === s.contentId ? { ...r, cmsStatus: 'published', publishedAt: s.scheduledAt } : r
+            ),
+          }
+        }
+      }
+      next = {
+        ...next,
+        publishSchedules: (state.publishSchedules ?? []).map((s) =>
+          due.find((d) => d.id === s.id) ? { ...s, status: 'applied' as const } : s
+        ),
+        unsaved: true,
+      }
+      return next
+    }
 
     default:
       return null

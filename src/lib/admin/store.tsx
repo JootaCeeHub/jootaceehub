@@ -1043,6 +1043,37 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   const stateRef = useRef(state)
   useEffect(() => { stateRef.current = state }, [state])
 
+  // Apply any overdue scheduled publishes on mount
+  useEffect(() => { dispatch({ type: 'APPLY_SCHEDULED_PUBLISHES' }) }, [])
+
+  // ── Multi-device / cross-tab sync via BroadcastChannel ───────────────────
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('BroadcastChannel' in window)) return
+    const channel = new BroadcastChannel('jootacee-admin-sync')
+
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === 'STATE_SYNC') {
+        const validated = AdminStateSchema.safeParse(event.data.state)
+        if (validated.success) {
+          dispatch({ type: 'IMPORT_STATE', payload: validated.data as unknown as AdminState })
+        }
+      }
+    }
+    channel.addEventListener('message', handleMessage)
+    return () => {
+      channel.removeEventListener('message', handleMessage)
+      channel.close()
+    }
+  }, [])
+
+  // Broadcast state to other tabs after each debounced save
+  const broadcastRef = useRef<BroadcastChannel | null>(null)
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('BroadcastChannel' in window)) return
+    broadcastRef.current = new BroadcastChannel('jootacee-admin-sync')
+    return () => { broadcastRef.current?.close() }
+  }, [])
+
   // Async fallback hydration: if localStorage was empty on startup, try IDB → /admin-defaults.json
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -1075,6 +1106,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
       const t = setTimeout(() => {
         dispatch({ type: 'MARK_SAVED' })
         saveState(stateRef.current)
+        broadcastRef.current?.postMessage({ type: 'STATE_SYNC', state: stateRef.current })
       }, 800)
       return () => clearTimeout(t)
     }

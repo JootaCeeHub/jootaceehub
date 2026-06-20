@@ -53,6 +53,48 @@ export const SeriesSchema = z.object({
   createdAt:   z.string(),
 })
 
+// ─── CMS Maturity — Phase 3 Schemas ──────────────────────────────────────────
+
+export const AuditLogEntrySchema = z.object({
+  id: z.string(),
+  action: z.enum(['create', 'update', 'publish', 'unpublish', 'archive', 'rollback', 'schedule', 'delete']),
+  contentType: z.string(),
+  contentId: z.string(),
+  contentSlug: z.string(),
+  timestamp: z.string(),
+  previousStatus: CmsStatusSchema.optional(),
+  newStatus: CmsStatusSchema.optional(),
+  metadata: z.record(z.string(), z.string()).optional(),
+})
+
+export const LocaleRelationSchema = z.object({
+  id: z.string(),
+  contentType: z.enum(['project', 'research', 'lab', 'system']),
+  enId: z.string(),
+  esId: z.string(),
+  createdAt: z.string(),
+})
+
+export const ContentRelationSchema = z.object({
+  id: z.string(),
+  sourceId: z.string(),
+  sourceType: z.enum(['project', 'research', 'lab', 'system']),
+  targetId: z.string(),
+  targetType: z.enum(['project', 'research', 'lab', 'system']),
+  relationType: z.enum(['related', 'references', 'part-of', 'supersedes']),
+  createdAt: z.string(),
+})
+
+export const PublishScheduleSchema = z.object({
+  id: z.string(),
+  contentId: z.string(),
+  contentType: z.enum(['project', 'research', 'lab', 'system']),
+  contentSlug: z.string(),
+  scheduledAt: z.string(),
+  createdAt: z.string(),
+  status: z.enum(['pending', 'applied', 'cancelled']),
+})
+
 // ─── Site Core ────────────────────────────────────────────────────────────────
 
 export const SiteConfigSchema = z.object({
@@ -818,6 +860,10 @@ export const AdminStateSchema = z.object({
   mediaRegistry:    z.array(MediaItemSchema).optional(),
   seriesRegistry:   z.array(SeriesSchema).optional(),
   revisionLog:      z.array(ContentRevisionSchema).optional(),
+  auditLog:         z.array(AuditLogEntrySchema).optional(),
+  localeRelations:  z.array(LocaleRelationSchema).optional(),
+  contentRelations: z.array(ContentRelationSchema).optional(),
+  publishSchedules: z.array(PublishScheduleSchema).optional(),
   studioConfig: z.object({
     sidebarWidth:       z.enum(['compact', 'normal', 'wide']).optional(),
     density:            z.enum(['compact', 'normal', 'comfortable']).optional(),

@@ -65,3 +65,22 @@ export function slugify(text: string): string {
     .replace(/[\s_]+/g, '-')
     .replace(/^-+|-+$/g, '')
 }
+
+/**
+ * Check if a slug is unique within a set of existing canonical IDs.
+ * Returns the colliding IDs if not unique, or null if unique.
+ *
+ * Use this in admin validation before saving a new content item.
+ */
+export function checkSlugUniqueness(
+  slug: string,
+  type: ContentType | string,
+  existingIds: CanonicalId[],
+  excludeId?: CanonicalId,
+): { unique: boolean; collisions: CanonicalId[] } {
+  const candidate = makeCanonicalId(type, slug)
+  const collisions = existingIds.filter(
+    (id) => id === candidate && id !== excludeId
+  )
+  return { unique: collisions.length === 0, collisions }
+}

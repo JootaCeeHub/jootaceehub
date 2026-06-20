@@ -40,6 +40,7 @@ import { Phase4Tab }      from './analytics/tabs/Phase4Tab'
 import { Phase5Tab }          from './analytics/tabs/Phase5Tab'
 import { StabilizationTab }  from './analytics/tabs/StabilizationTab'
 import { Phase2CmsTab }      from './analytics/tabs/Phase2CmsTab'
+import { Phase3CmsTab }      from './analytics/tabs/Phase3CmsTab'
 import { Phase3VPSTab }      from './analytics/tabs/Phase3VPSTab'
 import { Phase4AdminTab }    from './analytics/tabs/Phase4AdminTab'
 import Phase5SupabaseTab    from './analytics/tabs/Phase5SupabaseTab'
@@ -647,6 +648,7 @@ export default function AnalyticsPanel() {
     { id: 'phase5',        label: 'Phase 5',     icon: Rocket       },
     { id: 'stabilization', label: 'Stab P1',    icon: Hammer       },
     { id: 'phase2cms',     label: 'CMS P2',     icon: GitBranch    },
+    { id: 'phase3cms',     label: 'CMS P3',     icon: Layers       },
     { id: 'phase3vps',    label: 'VPS P3',     icon: Server       },
     { id: 'phase4admin',  label: 'Admin P4',   icon: Zap          },
     { id: 'phase5supabase', label: 'Supa P5',  icon: Trash2       },
@@ -903,6 +905,7 @@ export default function AnalyticsPanel() {
       {activeTab === 'phase5'        && <Phase5Tab />}
       {activeTab === 'stabilization' && <StabilizationTab />}
       {activeTab === 'phase2cms'     && <Phase2CmsTab />}
+      {activeTab === 'phase3cms'     && <Phase3CmsTab />}
       {activeTab === 'phase3vps'     && <Phase3VPSTab />}
       {activeTab === 'phase4admin'   && <Phase4AdminTab />}
       {activeTab === 'phase5supabase' && <Phase5SupabaseTab />}

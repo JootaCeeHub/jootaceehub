@@ -41,7 +41,7 @@ export type { ContentFilter, ContentRepository } from './repository'
 export { applyContentFilter } from './repository'
 
 // ── Canonical ID scheme ───────────────────────────────────────────────────────
-export { makeCanonicalId, parseCanonicalId, isCanonicalId, slugify } from './canonical-id'
+export { makeCanonicalId, parseCanonicalId, isCanonicalId, slugify, checkSlugUniqueness } from './canonical-id'
 export type { CanonicalId } from './canonical-id'
 
 // ── Unified taxonomy (tags · categories · series) ─────────────────────────────

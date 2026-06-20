@@ -16,6 +16,7 @@ export type Tab =
   | 'phase5'
   | 'stabilization'
   | 'phase2cms'
+  | 'phase3cms'
   | 'phase3vps'
   | 'phase4admin'
   | 'phase5supabase'

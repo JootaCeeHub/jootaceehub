@@ -386,6 +386,54 @@ export interface ContentRevision {
   snapshot: Record<string, any>
 }
 
+// ─── CMS Maturity — Phase 3 extensions ────────────────────────────────────────
+
+/** Immutable append-only audit record. Max 200 entries (oldest pruned). */
+export interface AuditLogEntry {
+  id: string
+  action: 'create' | 'update' | 'publish' | 'unpublish' | 'archive' | 'rollback' | 'schedule' | 'delete'
+  contentType: string
+  contentId: string
+  contentSlug: string
+  timestamp: string   // ISO 8601
+  previousStatus?: CmsStatus
+  newStatus?: CmsStatus
+  metadata?: Record<string, string>
+}
+
+/** Bi-directional link between en and es variants of the same content. */
+export interface LocaleRelation {
+  id: string
+  contentType: RevisionContentType
+  enId: string        // ContentItem.id of the English version
+  esId: string        // ContentItem.id of the Spanish version
+  createdAt: string
+}
+
+/** Typed cross-reference between two content items. */
+export type ContentRelationType = 'related' | 'references' | 'part-of' | 'supersedes'
+export interface ContentRelation {
+  id: string
+  sourceId: string
+  sourceType: RevisionContentType
+  targetId: string
+  targetType: RevisionContentType
+  relationType: ContentRelationType
+  createdAt: string
+}
+
+/** Scheduled future publish — applied when APPLY_SCHEDULED_PUBLISHES fires on load. */
+export type ScheduleStatus = 'pending' | 'applied' | 'cancelled'
+export interface PublishSchedule {
+  id: string
+  contentId: string
+  contentType: RevisionContentType
+  contentSlug: string
+  scheduledAt: string   // ISO — publish at this UTC timestamp
+  createdAt: string
+  status: ScheduleStatus
+}
+
 // ─── Curated Links ────────────────────────────────────────────────────────────
 
 export type LinkCategory = 'tools' | 'articles' | 'repos' | 'videos' | 'docs' | 'agents' | 'automations' | 'other'
@@ -1261,6 +1309,15 @@ export interface AdminState {
   seriesRegistry: Series[]
   /** Rolling revision log — max 50 entries (oldest pruned). */
   revisionLog: ContentRevision[]
+  // CMS Maturity — Phase 3 extensions
+  /** Append-only audit trail — max 200 entries. */
+  auditLog: AuditLogEntry[]
+  /** Links between English and Spanish variants of the same content. */
+  localeRelations: LocaleRelation[]
+  /** Typed cross-references between content items. */
+  contentRelations: ContentRelation[]
+  /** Scheduled future publishes (applied on store init). */
+  publishSchedules: PublishSchedule[]
   // Command Center
   studioConfig: StudioConfig
   // Meta
@@ -1459,6 +1516,19 @@ export type AdminAction =
   | { type: 'SET_DEPLOY_HOOK_URL'; payload: string }
   | { type: 'DEPLOY_TRIGGERED'; payload: string }
   | { type: 'STUDIO_RESET' }
+  // CMS Maturity — Audit Log
+  | { type: 'LOG_AUDIT'; payload: Omit<AuditLogEntry, 'id' | 'timestamp'> }
+  | { type: 'CLEAR_AUDIT_LOG' }
+  // CMS Maturity — Locale Relations
+  | { type: 'SET_LOCALE_RELATION'; payload: Omit<LocaleRelation, 'id' | 'createdAt'> }
+  | { type: 'REMOVE_LOCALE_RELATION'; payload: string }
+  // CMS Maturity — Content Relations
+  | { type: 'ADD_CONTENT_RELATION'; payload: Omit<ContentRelation, 'id' | 'createdAt'> }
+  | { type: 'REMOVE_CONTENT_RELATION'; payload: string }
+  // CMS Maturity — Scheduler
+  | { type: 'SCHEDULE_PUBLISH'; payload: Omit<PublishSchedule, 'id' | 'createdAt' | 'status'> }
+  | { type: 'CANCEL_SCHEDULE'; payload: string }
+  | { type: 'APPLY_SCHEDULED_PUBLISHES' }
   // VPS Sync (Phase 4)
   | { type: 'SET_VPS_STATUS'; payload: VpsSyncStatus }
   | { type: 'CLEAR_VPS_ERROR' }
