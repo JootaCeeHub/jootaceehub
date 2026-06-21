@@ -73,7 +73,16 @@ const PANEL_GROUPS: PanelGroup[] = [
       { id: 'research',       label: 'Research',       icon: BookOpen,      accent: '#34d399', desc: 'Articles, essays & news'     },
       { id: 'github',         label: 'GitHub',         icon: GitBranch,     accent: '#6ee7b7', desc: 'Repository intelligence'     },
       { id: 'about',          label: 'About',          icon: User,          accent: '#f472b6', desc: 'Bio, skills & timeline'      },
+    ],
+  },
+  {
+    key: 'ai-systems',
+    label: 'AI Systems',
+    collapsible: true,
+    panels: [
+      { id: 'ai',             label: 'AI Assistant',   icon: Bot,           accent: '#c084fc', desc: 'LLM profiles & conversations' },
       { id: 'intelligence',   label: 'Intelligence',   icon: Microscope,    accent: '#c084fc', desc: 'Feeds & data sources'        },
+      { id: 'showcase',       label: 'AI Showcase',    icon: Settings2,     accent: '#6ee7b7', desc: 'AI-generated output demos'   },
     ],
   },
   {
@@ -109,8 +118,6 @@ const PANEL_GROUPS: PanelGroup[] = [
       { id: 'systems',        label: 'Systems',        icon: Network,      accent: '#38bdf8', desc: 'AI architecture'             },
       { id: 'infrastructure', label: 'Infrastructure', icon: Server,       accent: '#6ee7b7', desc: 'Nodes & deploys'             },
       { id: 'integrations',   label: 'Integrations',   icon: Plug,         accent: '#fb923c', desc: 'Sources, APIs & agents'      },
-      { id: 'ai',             label: 'AI Profiles',    icon: Bot,          accent: '#c084fc', desc: 'LLM profiles'                },
-      { id: 'showcase',       label: 'Showcase',       icon: Settings2,    accent: '#6ee7b7', desc: 'AI-generated showcases'      },
     ],
   },
   {
