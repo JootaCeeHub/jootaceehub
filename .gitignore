@@ -2,6 +2,9 @@
 
 # dependencies
 /node_modules
+api/node_modules/
+api/dist/
+api/coverage/
 /.pnp
 .pnp.*
 .yarn/*
@@ -40,3 +43,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# generated runtime artifacts (CI-only; not curated content)
+public/data/project-snapshot.json
+public/data/project-audit-history.json

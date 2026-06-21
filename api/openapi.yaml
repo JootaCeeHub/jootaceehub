@@ -1,0 +1,816 @@
+openapi: 3.1.0
+info:
+  title: JOOTACEEHUB Content API
+  version: 1.0.0
+  description: |
+    VPS backend for the JOOTACEEHUB Git-First CMS (ADR-008).
+    Handles content file operations, Git commits, media uploads, build
+    orchestration, and audit log access. All write operations require a
+    Bearer JWT issued by POST /auth/login.
+
+servers:
+  - url: https://api.jootacee.com
+    description: Production VPS (Hostinger)
+  - url: http://localhost:3001
+    description: Local development
+
+security: []   # Default: no auth. Individual operations override this.
+
+# ─── Shared components ───────────────────────────────────────────────────────
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    SuccessEnvelope:
+      type: object
+      required: [success, data]
+      properties:
+        success:
+          type: boolean
+          enum: [true]
+        data:
+          description: Payload — shape varies by endpoint
+
+    ErrorEnvelope:
+      type: object
+      required: [success, error]
+      properties:
+        success:
+          type: boolean
+          enum: [false]
+        error:
+          type: string
+          description: Human-readable error message (sanitized in production)
+
+    ContentType:
+      type: string
+      enum:
+        - systems
+        - labs
+        - projects
+        - research
+        - resources
+        - taxonomies
+        - articles
+        - collections
+      description: |
+        Canonical content bucket. `articles` and `research` are stored as .mdx;
+        all others are stored as .json.
+
+    ContentFile:
+      type: object
+      required: [slug, type, path]
+      properties:
+        slug:
+          type: string
+        type:
+          $ref: '#/components/schemas/ContentType'
+        path:
+          type: string
+          description: Relative path within CONTENT_ROOT
+
+    AuditEntry:
+      type: object
+      required: [id, ts, actor, action]
+      properties:
+        id:
+          type: string
+          format: uuid
+        ts:
+          type: string
+          format: date-time
+        actor:
+          type: string
+        action:
+          type: string
+          description: Dot-namespaced event (e.g. content.write, auth.login.success)
+        resource:
+          type: string
+          nullable: true
+        detail:
+          type: string
+          nullable: true
+        ip:
+          type: string
+          nullable: true
+
+    MediaFile:
+      type: object
+      required: [url, path, size]
+      properties:
+        url:
+          type: string
+          description: Public URL under /media/
+        path:
+          type: string
+          description: Relative path within MEDIA_ROOT
+        size:
+          type: integer
+          description: File size in bytes
+
+    GitLogEntry:
+      type: object
+      required: [hash, message, author, date]
+      properties:
+        hash:
+          type: string
+        message:
+          type: string
+        author:
+          type: string
+        date:
+          type: string
+          format: date-time
+
+    BuildJob:
+      type: object
+      required: [id, status, startedAt]
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum: [running, success, failed]
+        startedAt:
+          type: string
+          format: date-time
+        finishedAt:
+          type: string
+          format: date-time
+          nullable: true
+        log:
+          type: array
+          items:
+            type: string
+
+  responses:
+    Unauthorized:
+      description: Missing or invalid JWT
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    BadRequest:
+      description: Malformed request body or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    TooManyRequests:
+      description: Rate limited (auth endpoints — 5 failures per 15 min)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+
+# ─── Paths ───────────────────────────────────────────────────────────────────
+
+paths:
+
+  # ── Health ─────────────────────────────────────────────────────────────────
+
+  /health:
+    get:
+      summary: Health check
+      operationId: getHealth
+      tags: [Observability]
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status, version, uptime, ts]
+                properties:
+                  status:
+                    type: string
+                    enum: [ok]
+                  version:
+                    type: string
+                  buildId:
+                    type: string
+                  uptime:
+                    type: integer
+                    description: Seconds since process start
+                  ts:
+                    type: string
+                    format: date-time
+                  memory:
+                    type: object
+                    properties:
+                      heapUsedMB:
+                        type: integer
+                      heapTotalMB:
+                        type: integer
+                      rssMB:
+                        type: integer
+
+  # ── Auth ───────────────────────────────────────────────────────────────────
+
+  /auth/login:
+    post:
+      summary: Obtain a JWT by verifying the admin password
+      operationId: login
+      tags: [Auth]
+      description: |
+        Password is verified using scrypt against the `ADMIN_PASSWORD_HASH`
+        environment variable. Returns a short-lived JWT.
+        Brute-force: max 5 failed attempts per IP per 15-minute window → 429.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [password]
+              properties:
+                password:
+                  type: string
+                  minLength: 1
+      responses:
+        '200':
+          description: JWT issued successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessEnvelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        required: [token, expiresAt]
+                        properties:
+                          token:
+                            type: string
+                          expiresAt:
+                            type: string
+                            format: date-time
+                            nullable: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  /auth/me:
+    get:
+      summary: Introspect the current JWT
+      operationId: getMe
+      tags: [Auth]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: JWT payload
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessEnvelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        required: [sub, iat, exp, expiresAt]
+                        properties:
+                          sub:
+                            type: string
+                          iat:
+                            type: integer
+                          exp:
+                            type: integer
+                          expiresAt:
+                            type: string
+                            format: date-time
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # ── Content ────────────────────────────────────────────────────────────────
+
+  /content:
+    get:
+      summary: List all content files across all types
+      operationId: listAllContent
+      tags: [Content]
+      responses:
+        '200':
+          description: Array of content file descriptors
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessEnvelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ContentFile'
+                      meta:
+                        type: object
+                        properties:
+                          count:
+                            type: integer
+
+  /content/{type}:
+    get:
+      summary: List content files for a specific type
+      operationId: listContentByType
+      tags: [Content]
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ContentType'
+      responses:
+        '200':
+          description: Array of file descriptors for the requested type
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessEnvelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ContentFile'
+                      meta:
+                        type: object
+                        properties:
+                          count:
+                            type: integer
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /content/{type}/{slug}:
+    get:
+      summary: Read a single content file
+      operationId: readContent
+      tags: [Content]
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ContentType'
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Raw file content (MDX string or JSON object)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      summary: Create or replace a content file
+      operationId: writeContent
+      tags: [Content]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ContentType'
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: |
+                For MDX types (articles, research): `{ content: string }`.
+                For JSON types: the content object directly.
+      responses:
+        '200':
+          description: File written successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    delete:
+      summary: Delete a content file
+      operationId: deleteContent
+      tags: [Content]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ContentType'
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: File deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # ── Git ────────────────────────────────────────────────────────────────────
+
+  /git/status:
+    get:
+      summary: Working tree status for src/content/
+      operationId: getGitStatus
+      tags: [Git]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Git status output
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /git/log:
+    get:
+      summary: Recent commits touching src/content/
+      operationId: getGitLog
+      tags: [Git]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: List of recent commits
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessEnvelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/GitLogEntry'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /git/commit:
+    post:
+      summary: Stage all content changes and commit
+      operationId: gitCommit
+      tags: [Git]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [message]
+              properties:
+                message:
+                  type: string
+                  minLength: 1
+                  description: Git commit message
+      responses:
+        '200':
+          description: Commit created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /git/rollback:
+    post:
+      summary: Revert the most recent commit on src/content/
+      operationId: gitRollback
+      tags: [Git]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                hash:
+                  type: string
+                  description: "Specific commit hash to revert (default: HEAD)"
+      responses:
+        '200':
+          description: Commit reverted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # ── Media ──────────────────────────────────────────────────────────────────
+
+  /media:
+    get:
+      summary: List all uploaded media files
+      operationId: listMedia
+      tags: [Media]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Array of media file descriptors
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessEnvelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/MediaFile'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      summary: Upload and process a media file
+      operationId: uploadMedia
+      tags: [Media]
+      security:
+        - bearerAuth: []
+      description: |
+        Accepts multipart/form-data with a single `file` field.
+        Image is re-encoded to WebP via Sharp. Max 10 MB.
+        Path traversal sequences in folder/filename are stripped.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                folder:
+                  type: string
+                  description: "Subfolder within MEDIA_ROOT (default: uploads)"
+      responses:
+        '200':
+          description: File uploaded and processed
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessEnvelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        required: [url, width, height, sizeBytes, checksum]
+                        properties:
+                          url:
+                            type: string
+                          width:
+                            type: integer
+                          height:
+                            type: integer
+                          sizeBytes:
+                            type: integer
+                          checksum:
+                            type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /media/{path}:
+    delete:
+      summary: Delete a media file
+      operationId: deleteMedia
+      tags: [Media]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: path
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Relative path within MEDIA_ROOT (e.g. photos/image.webp)
+      responses:
+        '200':
+          description: File deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+        '400':
+          description: Path traversal attempt or invalid path
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # ── Build ──────────────────────────────────────────────────────────────────
+
+  /build/trigger:
+    post:
+      summary: Trigger a production build
+      operationId: triggerBuild
+      tags: [Build]
+      security:
+        - bearerAuth: []
+      description: |
+        Enqueues `npm run build` in a background child process.
+        Rejected if a build is already running (returns 409).
+        Build times out after 15 minutes (SIGTERM → SIGKILL after 10s).
+        Blue/green slot rotation occurs on success.
+      responses:
+        '200':
+          description: Build enqueued
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessEnvelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/BuildJob'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: A build is already in progress
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+  /build/deploy-rollback:
+    post:
+      summary: Rollback the active deployment to the previous slot
+      operationId: deployRollback
+      tags: [Build]
+      security:
+        - bearerAuth: []
+      description: |
+        Atomically swaps the Nginx symlink back to the previous blue/green slot.
+        Returns an error if there is no previous slot to roll back to.
+      responses:
+        '200':
+          description: Rollback succeeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+        '400':
+          description: Cannot rollback — no previous slot
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # ── Audit ──────────────────────────────────────────────────────────────────
+
+  /audit:
+    get:
+      summary: Read the audit log
+      operationId: getAudit
+      tags: [Observability]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+            minimum: 1
+            maximum: 500
+          description: Maximum number of entries to return (newest first)
+        - name: type
+          in: query
+          schema:
+            type: string
+          description: |
+            Filter by action prefix (e.g. "content" matches content.write,
+            content.delete; "auth" matches auth.login.success, etc.)
+        - name: actor
+          in: query
+          schema:
+            type: string
+          description: Exact match on the `actor` field
+        - name: since
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Return only entries with `ts` ≥ this ISO-8601 timestamp
+      responses:
+        '200':
+          description: Audit entries matching the filters
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessEnvelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/AuditEntry'
+                      meta:
+                        type: object
+                        properties:
+                          count:
+                            type: integer
+                          limit:
+                            type: integer
+                          filters:
+                            type: object
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+tags:
+  - name: Auth
+    description: Authentication — obtain and inspect JWTs
+  - name: Content
+    description: Git-first CMS content file CRUD
+  - name: Git
+    description: Git operations on src/content/ — commit, log, rollback
+  - name: Media
+    description: Image upload, processing (WebP via Sharp), and deletion
+  - name: Build
+    description: Production build orchestration and blue/green deploy rollback
+  - name: Observability
+    description: Health check and audit log
