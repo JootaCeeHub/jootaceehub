@@ -6,6 +6,13 @@ import { env } from '../env.js'
 import type { BuildJob, BuildStatus } from '../types.js'
 
 // ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+
+// Kill build after 15 minutes to prevent runaway processes.
+const MAX_BUILD_MS = 15 * 60 * 1000
+
+// ---------------------------------------------------------------------------
 // In-memory store
 // ---------------------------------------------------------------------------
 
@@ -119,6 +126,16 @@ export function runBuild(jobId: string, repoRoot: string): void {
     stdio: ['ignore', 'pipe', 'pipe'],
   })
 
+  // Kill the child if it exceeds MAX_BUILD_MS to prevent runaway builds.
+  const killTimer = setTimeout(() => {
+    if (!child.killed) {
+      addLog(`[build] TIMEOUT after ${MAX_BUILD_MS / 1000}s — sending SIGTERM`)
+      child.kill('SIGTERM')
+      // Force-kill after 10 s if SIGTERM is not honoured
+      setTimeout(() => { if (!child.killed) child.kill('SIGKILL') }, 10_000)
+    }
+  }, MAX_BUILD_MS)
+
   child.stdout.setEncoding('utf-8')
   child.stderr.setEncoding('utf-8')
 
@@ -131,6 +148,7 @@ export function runBuild(jobId: string, repoRoot: string): void {
   })
 
   child.on('close', (code) => {
+    clearTimeout(killTimer)
     isBuilding = false
     const exitCode = code ?? -1
 

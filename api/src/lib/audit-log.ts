@@ -1,8 +1,16 @@
 import { randomUUID } from 'node:crypto'
-import { appendFile, readFile, mkdir } from 'node:fs/promises'
-import { dirname } from 'node:path'
+import { appendFile, readFile, rename, stat, mkdir } from 'node:fs/promises'
+import { dirname, extname, basename } from 'node:path'
 import { env } from '../env.js'
 import type { AuditEntry } from '../types.js'
+
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+
+// Rotate the log file once it exceeds 5 MB. Keeps up to 3 rotated archives.
+const MAX_LOG_BYTES = 5 * 1024 * 1024
+const MAX_ARCHIVES  = 3
 
 // ---------------------------------------------------------------------------
 // Write queue — ensures concurrent writes are serialised (no interleaving).
@@ -16,6 +24,41 @@ function enqueue(fn: () => Promise<void>): Promise<void> {
 }
 
 // ---------------------------------------------------------------------------
+// Rotation helper
+// ---------------------------------------------------------------------------
+
+/**
+ * Rotates `logPath` when it exceeds MAX_LOG_BYTES.
+ * Existing archives are shifted: .1 → .2 → .3; oldest (.MAX_ARCHIVES) is dropped.
+ * Called inside the write queue — never runs concurrently.
+ */
+async function maybeRotate(logPath: string): Promise<void> {
+  let info
+  try {
+    info = await stat(logPath)
+  } catch {
+    return  // File doesn't exist yet — nothing to rotate
+  }
+
+  if (info.size < MAX_LOG_BYTES) return
+
+  const dir  = dirname(logPath)
+  const base = basename(logPath, extname(logPath))
+  const ext  = extname(logPath)
+
+  // Shift archives: .3 dropped, .2→.3, .1→.2, current→.1
+  for (let i = MAX_ARCHIVES; i >= 1; i--) {
+    const src  = i === 1 ? logPath : `${dir}/${base}.${i - 1}${ext}`
+    const dest = `${dir}/${base}.${i}${ext}`
+    try {
+      await rename(src, dest)
+    } catch {
+      // Archive may not exist yet — skip
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
 
@@ -26,6 +69,7 @@ type NewAuditEntry = Omit<AuditEntry, 'id' | 'ts'>
  *
  * - Generates `id` (UUID v4) and `ts` (ISO-8601 now) automatically.
  * - Creates the log directory and file if they do not exist.
+ * - Rotates the log when it exceeds MAX_LOG_BYTES (size-based, not time-based).
  * - Thread-safe: writes are serialised through an in-memory promise queue.
  */
 export async function appendAudit(entry: NewAuditEntry): Promise<void> {
@@ -40,6 +84,7 @@ export async function appendAudit(entry: NewAuditEntry): Promise<void> {
   await enqueue(async () => {
     const logPath = env.AUDIT_LOG_PATH
     await mkdir(dirname(logPath), { recursive: true })
+    await maybeRotate(logPath)
     await appendFile(logPath, line, 'utf-8')
   })
 }

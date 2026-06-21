@@ -37,6 +37,9 @@ jobs:
       - name: Validate MDX frontmatter
         run: npm run validate:content
 
+      - name: Validate taxonomy relations
+        run: npm run validate:taxonomy
+
       - name: Lint
         run: npm run lint -- --max-warnings=0
 
@@ -69,10 +72,46 @@ jobs:
           name: coverage
           path: coverage/
 
+  # ── Stage 1b: API Quality Gates ────────────────────────────────────────
+  api-check:
+    name: API — Type Check, Build & Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: api/package-lock.json
+
+      - name: Install API dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+
+      - name: Run API tests with coverage
+        run: npm run test:coverage
+
+      - name: Upload API coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-coverage
+          path: api/coverage/
+
   # ── Stage 2: Build ─────────────────────────────────────────────────────
   build:
     name: Build & Export
-    needs: quality
+    needs: [quality, api-check]
     runs-on: ubuntu-latest
     env:
       NEXT_PUBLIC_SITE_URL: https://jootacee.com
@@ -99,6 +138,21 @@ jobs:
 
       - name: Content QA (placeholder scan + route check)
         run: npm run qa:content
+
+      - name: Security audit (deps + headers + secret scan)
+        run: node scripts/security-audit.mjs
+        continue-on-error: true
+
+      - name: Launch checklist (pre-deploy gate)
+        run: node scripts/launch-checklist.mjs
+        env:
+          NEXT_PUBLIC_PLAUSIBLE_DOMAIN: ${{ secrets.NEXT_PUBLIC_PLAUSIBLE_DOMAIN }}
+          NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
+        continue-on-error: true
+
+      - name: Project health snapshot (audit + history)
+        run: node scripts/project-snapshot.mjs --no-tests --json
+        continue-on-error: true
 
       - name: Upload dist artifact
         uses: actions/upload-artifact@v4
@@ -210,3 +264,20 @@ jobs:
           npx @sentry/cli releases set-commits ${{ github.sha }} --auto
           npx @sentry/cli releases finalize ${{ github.sha }}
           npx @sentry/cli releases deploys ${{ github.sha }} new -e production
+
+      - name: Post-deploy smoke test
+        run: |
+          echo "Waiting 10s for Cloudflare CDN propagation…"
+          sleep 10
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://jootacee.com/en/ || echo "000")
+          echo "Landing page status: $STATUS"
+          if [ "$STATUS" != "200" ] && [ "$STATUS" != "301" ] && [ "$STATUS" != "308" ]; then
+            echo "⚠ Post-deploy smoke test returned $STATUS — check Cloudflare Pages"
+          else
+            echo "✅ Post-deploy smoke test passed ($STATUS)"
+          fi
+        continue-on-error: true
+
+      - name: Post-deploy content backup
+        run: node scripts/backup.mjs --dry-run
+        continue-on-error: true
