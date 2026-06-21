@@ -300,7 +300,7 @@ export async function fetchUSASpending(feed: IntelligenceFeed, limit: number): P
   const items = (data.results ?? []).map((a) => {
     const amount = Number(a['Award Amount'] ?? 0)
     return item(feed, {
-      id: String(a['Award ID'] ?? Math.random()),
+      id: String(a['Award ID'] ?? crypto.randomUUID()),
       title: `$${(amount / 1e6).toFixed(1)}M  ·  ${String(a['Recipient Name'] ?? 'Unknown')}  ·  DoD`,
       url: `https://www.usaspending.gov/award/${String(a['Award ID'] ?? '')}`,
       excerpt: `Type: ${String(a['Award Type'] ?? '?')}  ·  ${String(a['Description'] ?? '').slice(0, 100)}`,

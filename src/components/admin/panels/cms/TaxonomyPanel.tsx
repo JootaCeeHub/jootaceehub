@@ -7,7 +7,7 @@ import { useAdmin } from '@/lib/admin/store'
 import type { Tag, Category, Series, RevisionContentType } from '@/lib/admin/types'
 import { downloadContentBundle } from '@/lib/cms/content-export'
 
-function nanoid() { return Math.random().toString(36).slice(2, 10) }
+function nanoid() { return crypto.randomUUID().replace(/-/g, '').slice(0, 8) }
 function now()    { return new Date().toISOString() }
 function toSlug(s: string) { return s.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') }
 

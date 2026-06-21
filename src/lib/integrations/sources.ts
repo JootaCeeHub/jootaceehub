@@ -4,7 +4,7 @@ const TEXT_EXTS = new Set(['.md', '.mdx', '.txt', '.ts', '.tsx', '.js', '.jsx', 
 const MAX_CONTENT_BYTES = 80_000
 
 function uid(): string {
-  return Math.random().toString(36).slice(2) + Date.now().toString(36)
+  return crypto.randomUUID()
 }
 
 function truncate(str: string, max = MAX_CONTENT_BYTES): string {

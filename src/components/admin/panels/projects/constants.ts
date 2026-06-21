@@ -1,6 +1,6 @@
 import type { ProjectStatus, ProjectCategory } from '@/lib/admin/types'
 
-export function uid() { return 'proj-' + Math.random().toString(36).slice(2, 10) }
+export function uid() { return 'proj-' + crypto.randomUUID().replace(/-/g, '').slice(0, 8) }
 export function now() { return new Date().toISOString() }
 
 export const STATUS_OPTIONS: { value: ProjectStatus; label: string }[] = [

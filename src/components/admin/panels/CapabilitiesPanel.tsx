@@ -33,7 +33,7 @@ const PLATFORM_META: Record<PlatformId, { label: string; emoji: string; color: s
 const TRANSPORTS: MCPTransport[] = ['http', 'sse', 'stdio']
 
 function generateId(): string {
-  return Math.random().toString(36).slice(2) + Date.now().toString(36)
+  return crypto.randomUUID()
 }
 
 function Toggle({ enabled, onToggle }: { enabled: boolean; onToggle: () => void }) {

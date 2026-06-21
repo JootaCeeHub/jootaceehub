@@ -48,7 +48,7 @@ Help the user develop their website content, improve copy, generate templates, a
 }
 
 function generateId(): string {
-  return Math.random().toString(36).slice(2) + Date.now().toString(36)
+  return crypto.randomUUID()
 }
 
 export default function AIAssistantPanel() {

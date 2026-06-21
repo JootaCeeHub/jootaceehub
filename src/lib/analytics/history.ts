@@ -24,7 +24,7 @@ const MAX_LEN = 30
 
 export function saveSnapshot(entry: Omit<AnalysisSnapshot, 'id'>): AnalysisSnapshot {
   const snap: AnalysisSnapshot = {
-    id: `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+    id: `${Date.now()}-${crypto.randomUUID().slice(0, 8)}`,
     ...entry,
   }
   try {

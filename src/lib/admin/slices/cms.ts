@@ -11,7 +11,7 @@ function statusNote(from: CmsStatus | undefined, to: CmsStatus): string {
 }
 
 function nanoid(): string {
-  return Math.random().toString(36).slice(2, 10) + Math.random().toString(36).slice(2, 6)
+  return crypto.randomUUID().replace(/-/g, '')
 }
 
 function addAutoRevision(

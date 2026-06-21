@@ -38,5 +38,5 @@ export const PLATFORM_META: Record<PlatformId, { label: string; emoji: string; c
 export const CRON_DELIVERY_PLATFORMS = ['cli', 'telegram', 'discord', 'slack', 'whatsapp', 'signal', 'email']
 
 export function generateId(): string {
-  return Math.random().toString(36).slice(2) + Date.now().toString(36)
+  return crypto.randomUUID()
 }
