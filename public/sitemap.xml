@@ -4,7 +4,7 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://jootacee.com/en/</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-06-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/"/>
@@ -13,7 +13,7 @@
   </url>
   <url>
     <loc>https://jootacee.com/es/</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-06-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/"/>
@@ -22,7 +22,7 @@
   </url>
   <url>
     <loc>https://jootacee.com/en/systems</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-06-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/systems"/>
@@ -31,7 +31,7 @@
   </url>
   <url>
     <loc>https://jootacee.com/es/systems</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-06-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/systems"/>
@@ -40,7 +40,7 @@
   </url>
   <url>
     <loc>https://jootacee.com/en/labs</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-06-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/labs"/>
@@ -49,7 +49,7 @@
   </url>
   <url>
     <loc>https://jootacee.com/es/labs</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-06-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/labs"/>
@@ -58,7 +58,7 @@
   </url>
   <url>
     <loc>https://jootacee.com/en/infrastructure</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-06-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/infrastructure"/>
@@ -67,7 +67,7 @@
   </url>
   <url>
     <loc>https://jootacee.com/es/infrastructure</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-06-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/infrastructure"/>
@@ -76,7 +76,7 @@
   </url>
   <url>
     <loc>https://jootacee.com/en/journal</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-06-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/journal"/>
@@ -85,7 +85,7 @@
   </url>
   <url>
     <loc>https://jootacee.com/es/journal</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-06-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/journal"/>
@@ -94,7 +94,7 @@
   </url>
   <url>
     <loc>https://jootacee.com/en/github</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-06-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/github"/>
@@ -103,7 +103,7 @@
   </url>
   <url>
     <loc>https://jootacee.com/es/github</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-06-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/github"/>
@@ -112,7 +112,7 @@
   </url>
   <url>
     <loc>https://jootacee.com/en/about</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-06-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/about"/>
@@ -121,7 +121,7 @@
   </url>
   <url>
     <loc>https://jootacee.com/es/about</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-06-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/about"/>
@@ -130,7 +130,7 @@
   </url>
   <url>
     <loc>https://jootacee.com/en/contact</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-06-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/contact"/>
@@ -139,11 +139,209 @@
   </url>
   <url>
     <loc>https://jootacee.com/es/contact</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-06-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/contact"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://jootacee.com/es/contact"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://jootacee.com/en/contact"/>
+  </url>
+  <url>
+    <loc>https://jootacee.com/en/changelog</loc>
+    <lastmod>2026-06-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/changelog"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://jootacee.com/es/changelog"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://jootacee.com/en/changelog"/>
+  </url>
+  <url>
+    <loc>https://jootacee.com/es/changelog</loc>
+    <lastmod>2026-06-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/changelog"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://jootacee.com/es/changelog"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://jootacee.com/en/changelog"/>
+  </url>
+  <url>
+    <loc>https://jootacee.com/en/ai</loc>
+    <lastmod>2026-06-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/ai"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://jootacee.com/es/ai"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://jootacee.com/en/ai"/>
+  </url>
+  <url>
+    <loc>https://jootacee.com/es/ai</loc>
+    <lastmod>2026-06-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/ai"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://jootacee.com/es/ai"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://jootacee.com/en/ai"/>
+  </url>
+  <url>
+    <loc>https://jootacee.com/en/resources</loc>
+    <lastmod>2026-06-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/resources"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://jootacee.com/es/resources"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://jootacee.com/en/resources"/>
+  </url>
+  <url>
+    <loc>https://jootacee.com/es/resources</loc>
+    <lastmod>2026-06-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/resources"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://jootacee.com/es/resources"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://jootacee.com/en/resources"/>
+  </url>
+  <url>
+    <loc>https://jootacee.com/en/intelligence</loc>
+    <lastmod>2026-06-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/intelligence"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://jootacee.com/es/intelligence"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://jootacee.com/en/intelligence"/>
+  </url>
+  <url>
+    <loc>https://jootacee.com/es/intelligence</loc>
+    <lastmod>2026-06-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/intelligence"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://jootacee.com/es/intelligence"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://jootacee.com/en/intelligence"/>
+  </url>
+  <url>
+    <loc>https://jootacee.com/en/journal/autonomous-infrastructure-observability</loc>
+    <lastmod>2026-06-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/journal/autonomous-infrastructure-observability"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://jootacee.com/es/journal/autonomous-infrastructure-observability"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://jootacee.com/en/journal/autonomous-infrastructure-observability"/>
+  </url>
+  <url>
+    <loc>https://jootacee.com/es/journal/autonomous-infrastructure-observability</loc>
+    <lastmod>2026-06-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/journal/autonomous-infrastructure-observability"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://jootacee.com/es/journal/autonomous-infrastructure-observability"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://jootacee.com/en/journal/autonomous-infrastructure-observability"/>
+  </url>
+  <url>
+    <loc>https://jootacee.com/en/journal/context-window-as-operating-environment</loc>
+    <lastmod>2026-06-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/journal/context-window-as-operating-environment"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://jootacee.com/es/journal/context-window-as-operating-environment"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://jootacee.com/en/journal/context-window-as-operating-environment"/>
+  </url>
+  <url>
+    <loc>https://jootacee.com/es/journal/context-window-as-operating-environment</loc>
+    <lastmod>2026-06-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/journal/context-window-as-operating-environment"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://jootacee.com/es/journal/context-window-as-operating-environment"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://jootacee.com/en/journal/context-window-as-operating-environment"/>
+  </url>
+  <url>
+    <loc>https://jootacee.com/en/journal/graphrag-vs-vector-retrieval</loc>
+    <lastmod>2026-06-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/journal/graphrag-vs-vector-retrieval"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://jootacee.com/es/journal/graphrag-vs-vector-retrieval"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://jootacee.com/en/journal/graphrag-vs-vector-retrieval"/>
+  </url>
+  <url>
+    <loc>https://jootacee.com/es/journal/graphrag-vs-vector-retrieval</loc>
+    <lastmod>2026-06-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/journal/graphrag-vs-vector-retrieval"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://jootacee.com/es/journal/graphrag-vs-vector-retrieval"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://jootacee.com/en/journal/graphrag-vs-vector-retrieval"/>
+  </url>
+  <url>
+    <loc>https://jootacee.com/en/journal/mcp-ecosystem-expansion-2026</loc>
+    <lastmod>2026-06-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/journal/mcp-ecosystem-expansion-2026"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://jootacee.com/es/journal/mcp-ecosystem-expansion-2026"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://jootacee.com/en/journal/mcp-ecosystem-expansion-2026"/>
+  </url>
+  <url>
+    <loc>https://jootacee.com/es/journal/mcp-ecosystem-expansion-2026</loc>
+    <lastmod>2026-06-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/journal/mcp-ecosystem-expansion-2026"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://jootacee.com/es/journal/mcp-ecosystem-expansion-2026"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://jootacee.com/en/journal/mcp-ecosystem-expansion-2026"/>
+  </url>
+  <url>
+    <loc>https://jootacee.com/en/journal/on-building-systems-that-last</loc>
+    <lastmod>2026-06-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/journal/on-building-systems-that-last"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://jootacee.com/es/journal/on-building-systems-that-last"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://jootacee.com/en/journal/on-building-systems-that-last"/>
+  </url>
+  <url>
+    <loc>https://jootacee.com/es/journal/on-building-systems-that-last</loc>
+    <lastmod>2026-06-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/journal/on-building-systems-that-last"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://jootacee.com/es/journal/on-building-systems-that-last"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://jootacee.com/en/journal/on-building-systems-that-last"/>
+  </url>
+  <url>
+    <loc>https://jootacee.com/en/journal/orchestration-is-the-new-compute</loc>
+    <lastmod>2026-06-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/journal/orchestration-is-the-new-compute"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://jootacee.com/es/journal/orchestration-is-the-new-compute"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://jootacee.com/en/journal/orchestration-is-the-new-compute"/>
+  </url>
+  <url>
+    <loc>https://jootacee.com/es/journal/orchestration-is-the-new-compute</loc>
+    <lastmod>2026-06-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/journal/orchestration-is-the-new-compute"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://jootacee.com/es/journal/orchestration-is-the-new-compute"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://jootacee.com/en/journal/orchestration-is-the-new-compute"/>
+  </url>
+  <url>
+    <loc>https://jootacee.com/en/journal/protocol-convergence-mcp-a2a</loc>
+    <lastmod>2026-06-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/journal/protocol-convergence-mcp-a2a"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://jootacee.com/es/journal/protocol-convergence-mcp-a2a"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://jootacee.com/en/journal/protocol-convergence-mcp-a2a"/>
+  </url>
+  <url>
+    <loc>https://jootacee.com/es/journal/protocol-convergence-mcp-a2a</loc>
+    <lastmod>2026-06-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jootacee.com/en/journal/protocol-convergence-mcp-a2a"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://jootacee.com/es/journal/protocol-convergence-mcp-a2a"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://jootacee.com/en/journal/protocol-convergence-mcp-a2a"/>
   </url>
 </urlset>

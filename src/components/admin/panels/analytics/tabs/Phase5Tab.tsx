@@ -5,6 +5,7 @@ import {
   ChevronDown, ChevronRight, CheckCircle2, CircleDashed,
   Rocket, Shield, Search, Eye, Gauge, FileText,
   AlertTriangle, BarChart3, Database, BookOpen,
+  Users, RotateCcw, Undo2, GitBranch, Target,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
@@ -27,6 +28,11 @@ const GOAL_ICONS: Record<string, React.ComponentType<{ className?: string }>> = 
   'analytics-dashboard': BarChart3,
   'backup-restore':      Database,
   'release-notes':       BookOpen,
+  'closed-beta':         Users,
+  'recovery-drill':      RotateCcw,
+  'rollback-drill':      Undo2,
+  'publish-workflow':    GitBranch,
+  'public-positioning':  Target,
 }
 
 // ─── Status badge ─────────────────────────────────────────────────────────────
@@ -144,14 +150,16 @@ function GoalCard({ goal }: { goal: LaunchGoal }) {
 
 function LaunchReadinessTable() {
   const rows = [
-    { metric: 'Lighthouse Accessibility', baseline: '96',  target: '≥ 95', status: 'pass' },
+    { metric: 'Lighthouse Accessibility', baseline: '96',  target: '≥ 95',  status: 'pass' },
     { metric: 'Lighthouse SEO',           baseline: '100', target: '= 100', status: 'pass' },
-    { metric: 'Lighthouse Best Practices',baseline: '96',  target: '≥ 85', status: 'pass' },
-    { metric: 'Lighthouse Performance',   baseline: '44',  target: '≥ 55', status: 'pending' },
-    { metric: 'TypeScript errors',        baseline: '0',   target: '0',    status: 'pass' },
-    { metric: 'Lint errors',              baseline: '0',   target: '0',    status: 'pass' },
-    { metric: 'Test suite',               baseline: '410', target: '≥ 400', status: 'pass' },
-    { metric: 'Static pages generated',   baseline: '105', target: '≥ 100', status: 'pass' },
+    { metric: 'Lighthouse Best Practices',baseline: '96',  target: '≥ 85',  status: 'pass' },
+    { metric: 'Lighthouse Performance',   baseline: '44',  target: '≥ 55',  status: 'pending' },
+    { metric: 'TypeScript errors',        baseline: '0',   target: '0',     status: 'pass' },
+    { metric: 'Lint errors',              baseline: '0',   target: '0',     status: 'pass' },
+    { metric: 'Test suite',               baseline: '460', target: '≥ 400', status: 'pass' },
+    { metric: 'Static pages generated',   baseline: '107', target: '≥ 100', status: 'pass' },
+    { metric: 'Sitemap entries',          baseline: '38',  target: '≥ 30',  status: 'pass' },
+    { metric: 'Plausible events wired',   baseline: '4',   target: '4',     status: 'pass' },
   ] as const
 
   return (
@@ -274,6 +282,50 @@ export function Phase5Tab() {
           </div>
         </div>
       )}
+
+      {/* 15-item scope coverage map */}
+      <div className="overflow-hidden rounded-xl border border-white/8">
+        <div className="flex items-center gap-2 border-b border-white/8 px-4 py-2.5">
+          <Rocket className="h-3 w-3 text-white/30" />
+          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/50">
+            Phase 5 · 15-item scope coverage map
+          </span>
+        </div>
+        <div className="divide-y divide-white/5">
+          {([
+            { item: 'Closed beta',             goal: 'closed-beta',         status: 'in-progress' },
+            { item: 'Content QA',              goal: 'content-qa',          status: 'done' },
+            { item: 'Security review',         goal: 'security-review',     status: 'done' },
+            { item: 'SEO validation',          goal: 'seo-qa',              status: 'in-progress' },
+            { item: 'Accessibility audit',     goal: 'accessibility-qa',    status: 'done' },
+            { item: 'Recovery drill',          goal: 'recovery-drill',      status: 'in-progress' },
+            { item: 'Deploy rollback drill',   goal: 'rollback-drill',      status: 'in-progress' },
+            { item: 'Backup restore drill',    goal: 'backup-restore',      status: 'done' },
+            { item: 'Publish workflow E2E',    goal: 'publish-workflow',     status: 'in-progress' },
+            { item: 'Lighthouse final',        goal: 'lighthouse-target',   status: 'done' },
+            { item: 'Search Console',          goal: 'seo-qa',              status: 'in-progress' },
+            { item: 'Analytics goals',         goal: 'analytics-dashboard', status: 'in-progress' },
+            { item: 'Public positioning',      goal: 'public-positioning',  status: 'done' },
+            { item: 'Launch changelog',        goal: 'release-notes',       status: 'done' },
+            { item: 'Post-launch monitoring',  goal: 'error-monitoring',    status: 'in-progress' },
+          ] as { item: string; goal: string; status: string }[]).map(({ item, goal, status }) => (
+            <div key={item} className="grid grid-cols-2 gap-4 px-4 py-2">
+              <span className="font-mono text-[10px] text-white/55">{item}</span>
+              <div className="flex items-center justify-end gap-2">
+                <span className="font-mono text-[9px] text-white/30">{goal}</span>
+                <span className={cn(
+                  'rounded-full border px-1.5 py-0.5 font-mono text-[7px] uppercase tracking-wider',
+                  status === 'done'
+                    ? 'border-emerald-400/25 bg-emerald-400/8 text-emerald-400/70'
+                    : 'border-sky-400/25 bg-sky-400/8 text-sky-400/75'
+                )}>
+                  {status === 'done' ? 'done' : 'partial'}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }

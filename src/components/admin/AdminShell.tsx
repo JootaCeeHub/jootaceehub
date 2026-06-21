@@ -36,6 +36,7 @@ import {
   SlidersHorizontal,
   X,
   Tag,
+  Link2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAdmin } from '@/lib/admin/store'
@@ -43,6 +44,7 @@ import { useAuth } from '@/lib/auth/context'
 import { useAdminStateSync } from '@/hooks/useAdminStateSync'
 import type { AdminPanel } from '@/lib/admin/types'
 import { VPSSyncBar } from './VPSSyncBar'
+import { trackEvent } from '@/components/shared/Analytics'
 
 // ─── Panel + Group registry ────────────────────────────────────────────────────
 
@@ -83,6 +85,7 @@ const PANEL_GROUPS: PanelGroup[] = [
       { id: 'vps',            label: 'VPS / Deploy',   icon: Server,       accent: '#38bdf8', desc: 'Git-first CMS backend'       },
       { id: 'labs',           label: 'Labs',           icon: FlaskConical,  accent: '#f59e0b', desc: 'Experiments & demos'         },
       { id: 'taxonomy',       label: 'Taxonomy',       icon: Tag,           accent: '#34d399', desc: 'Tags, categories & media'    },
+      { id: 'cms-relations',  label: 'CMS Relations',  icon: Link2,         accent: '#a78bfa', desc: 'Locale, content & scheduler' },
     ],
   },
   {
@@ -156,6 +159,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   }, [])
 
   useEffect(() => {
+    trackEvent('Admin Opened')
     startTransition(() => {
       setMounted(true)
       if (studio.sidebarCollapsedDefault) setCollapsed(true)

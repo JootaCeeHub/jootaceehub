@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import {
   AlertCircle, ChevronDown, ChevronRight, CheckCircle2, CircleDashed,
   Zap, Package, Box, Smartphone, Image, Type, BarChart3, Gauge,
-  GitPullRequest, Layers,
+  GitPullRequest, Layers, BookOpen, Paintbrush, Radio, ListTodo,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
@@ -27,6 +27,8 @@ const GOAL_ICONS: Record<string, React.ComponentType<{ className?: string }>> = 
   'optimize-images':    Image,
   'measure-inp':        Gauge,
   'ci-budgets':         GitPullRequest,
+  'reader-mode':        BarChart3,
+  'css-paint':          BarChart3,
 }
 
 // ─── Status badge ─────────────────────────────────────────────────────────────
@@ -218,10 +220,11 @@ function BaselineTable() {
 
 function ExecutionOrder() {
   const chains = [
-    { label: 'Diagnostic first', ids: ['bundle-analyzer', 'admin-chunks'], color: '#38bdf8' },
-    { label: 'TBT / 3D',        ids: ['hero-3d', 'mobile-effects', 'reduce-ssr-false'], color: '#f59e0b' },
+    { label: 'Diagnostic first', ids: ['bundle-analyzer', 'admin-chunks'],                       color: '#38bdf8' },
+    { label: 'TBT / 3D',        ids: ['hero-3d', 'mobile-effects', 'reduce-ssr-false'],          color: '#f59e0b' },
     { label: 'FCP / network',   ids: ['prerender-content', 'self-host-fonts', 'optimize-images'], color: '#a78bfa' },
-    { label: 'Measurement',     ids: ['measure-inp', 'ci-budgets'], color: '#34d399' },
+    { label: 'Measurement',     ids: ['measure-inp', 'css-paint', 'ci-budgets'],                 color: '#34d399' },
+    { label: 'Accessibility',   ids: ['reader-mode'],                                             color: '#f472b6' },
   ]
   return (
     <div className="rounded-xl border border-white/8 bg-white/[0.02] p-4 space-y-3">
@@ -363,6 +366,50 @@ export function Phase4Tab() {
           </div>
         </div>
       )}
+
+      {/* 12-item scope coverage map */}
+      <div>
+        <div className="mb-2.5 flex items-center gap-2">
+          <ListTodo className="h-3 w-3 text-white/30" />
+          <span className="font-mono text-[8px] uppercase tracking-[0.18em] text-white/30">
+            Phase 4 — 12 Scope Items → Goal Coverage
+          </span>
+          <div className="h-px flex-1 bg-white/[0.04]" />
+        </div>
+        <div className="grid grid-cols-1 gap-1 md:grid-cols-2">
+          {[
+            { item: 'Budget por ruta',                   goal: 'budgets.json + lighthouserc.json',  done: true,  icon: Package    },
+            { item: 'Mobile performance como error',     goal: 'ci-budgets (error ≥ 0.50)',         done: true,  icon: Smartphone },
+            { item: 'Reducir public initial JS',         goal: 'admin-chunks + bundle-analyzer',    done: true,  icon: Box        },
+            { item: 'Auditar Three/R3F',                 goal: 'hero-3d',                         done: true,  icon: Zap        },
+            { item: 'Pausar canvas fuera de viewport',   goal: 'hero-3d (IntersectionObserver)',  done: true,  icon: Zap        },
+            { item: 'Reader mode',                       goal: 'reader-mode (useReaderMode+CSS)', done: true,  icon: BookOpen   },
+            { item: 'Desactivar efectos medium/low',     goal: 'mobile-effects (usePerfTier)',    done: true,  icon: Smartphone },
+            { item: 'Optimizar imágenes GitHub',         goal: 'optimize-images (WebP+?s=112+lazy)', done: true, icon: Image   },
+            { item: 'Analizar CSS/paint',                goal: 'css-paint (PerformanceObserver)', done: true,  icon: Paintbrush },
+            { item: 'Añadir RUM',                        goal: 'measure-inp (live-metrics.ts)',   done: true,  icon: Radio      },
+            { item: 'Medir long tasks',                  goal: 'measure-inp (observeLongTasks)',  done: true,  icon: Gauge      },
+            { item: 'Optimizar editor/admin independ.',  goal: 'admin-chunks (route isolation)',  done: true,  icon: Box        },
+          ].map(({ item, goal, done: isDone, icon: Icon }) => (
+            <div key={item} className={`flex items-start gap-2 rounded-lg border px-3 py-2 ${
+              isDone ? 'border-emerald-400/10 bg-emerald-400/[0.025]' : 'border-white/6 bg-white/[0.015]'
+            }`}>
+              {isDone
+                ? <CheckCircle2 className="mt-0.5 h-3 w-3 shrink-0 text-emerald-400/60" />
+                : <CircleDashed  className="mt-0.5 h-3 w-3 shrink-0 text-white/20" />
+              }
+              <Icon className="mt-0.5 h-3 w-3 shrink-0 text-white/20" />
+              <div className="min-w-0">
+                <p className="font-mono text-[9px] text-white/60 truncate">{item}</p>
+                <p className="font-mono text-[8px] text-white/25 truncate">{goal}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p className="mt-2 font-mono text-[8px] text-white/20">
+          12/12 scope items covered by {PHASE4_GOALS.length} Phase 4 goals.
+        </p>
+      </div>
 
       {/* Footer note */}
       <div className="rounded-xl border border-white/5 bg-white/[0.015] px-4 py-3">

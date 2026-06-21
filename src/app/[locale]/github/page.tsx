@@ -403,9 +403,13 @@ export default function GitHubPage() {
                   {ghData.profile.avatarUrl && (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
-                      src={ghData.profile.avatarUrl}
+                      src={`${ghData.profile.avatarUrl}${ghData.profile.avatarUrl.includes('?') ? '&' : '?'}s=112`}
                       alt={ghData.profile.displayName}
-                      className="h-14 w-14 shrink-0 rounded-full border border-white/10"
+                      width={56}
+                      height={56}
+                      loading="lazy"
+                      referrerPolicy="no-referrer"
+                      className="h-14 w-14 shrink-0 rounded-full border border-white/10 object-cover"
                     />
                   )}
                   <div className="min-w-0 flex-1">

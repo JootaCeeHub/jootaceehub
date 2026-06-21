@@ -1128,6 +1128,11 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         })
         return false
       }
+      // Snapshot current state to sessionStorage before overwriting.
+      // On bad import: reload tab to recover. Survives until tab close.
+      try {
+        sessionStorage.setItem('jootacee-pre-import-backup', JSON.stringify(stateRef.current))
+      } catch { /* storage quota exceeded — skip backup */ }
       dispatch({ type: 'IMPORT_STATE', payload: validated.data as unknown as AdminState })
       return true
     } catch (err) {

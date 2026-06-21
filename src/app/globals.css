@@ -904,3 +904,17 @@ html.lenis {
 body.fx-glitch-text [data-glitch]:hover {
   animation: glitch-x 0.3s steps(2) infinite;
 }
+
+/* ── Reader Mode — data-reader-mode="true" on <html> ─────────────────── */
+/* Silences all animations and hides non-essential visual layers.         */
+/* Activated by Alt+R or CommandPalette. Stored in sessionStorage.        */
+[data-reader-mode="true"] *,
+[data-reader-mode="true"] *::before,
+[data-reader-mode="true"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+[data-reader-mode="true"] canvas { display: none !important; }
+[data-reader-mode="true"] [data-visual-layer] { display: none !important; }

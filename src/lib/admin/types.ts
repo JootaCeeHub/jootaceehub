@@ -55,6 +55,7 @@ export type AdminPanel =
   | 'studio'
   | 'search'
   | 'taxonomy'
+  | 'cms-relations'
   | 'vps'
 
 // ─── Studio Config (Command Center settings) ──────────────────────────────────

@@ -27,6 +27,28 @@ function addAutoRevision(
   return [...state.revisionLog, rev].slice(-MAX_REVISIONS)
 }
 
+function addAuditEntry(
+  state: AdminState,
+  action: AuditLogEntry['action'],
+  contentType: string,
+  contentId: string,
+  contentSlug: string,
+  previousStatus?: CmsStatus,
+  newStatus?: CmsStatus,
+): AuditLogEntry[] {
+  const entry: AuditLogEntry = {
+    id: nanoid(),
+    action,
+    contentType,
+    contentId,
+    contentSlug,
+    timestamp: new Date().toISOString(),
+    previousStatus,
+    newStatus,
+  }
+  return [entry, ...(state.auditLog ?? [])].slice(0, MAX_AUDIT)
+}
+
 // ─── Restore helpers ──────────────────────────────────────────────────────────
 
 function restoreProject(state: AdminState, rev: ContentRevision): AdminState {
@@ -39,6 +61,7 @@ function restoreProject(state: AdminState, rev: ContentRevision): AdminState {
       p.id === rev.contentId ? { ...p, ...snap } : p
     ),
     revisionLog: addAutoRevision(state, 'project', rev.contentId, snap, `Rolled back to ${rev.savedAt}`),
+    auditLog: addAuditEntry(state, 'rollback', 'project', rev.contentId, snap?.slug ?? rev.contentId),
     unsaved: true,
   }
 }
@@ -53,6 +76,7 @@ function restoreResearch(state: AdminState, rev: ContentRevision): AdminState {
       r.slug === rev.contentId ? { ...r, ...snap } : r
     ),
     revisionLog: addAutoRevision(state, 'research', rev.contentId, snap, `Rolled back to ${rev.savedAt}`),
+    auditLog: addAuditEntry(state, 'rollback', 'research', rev.contentId, snap?.slug ?? rev.contentId),
     unsaved: true,
   }
 }
@@ -152,6 +176,7 @@ export function cmsHandler(state: AdminState, action: AdminAction): AdminState |
       if (contentType === 'project') {
         const item = state.projectsRegistry.find(p => p.id === contentId)
         const note = statusNote(item?.cmsStatus, status)
+        const auditAction: AuditLogEntry['action'] = status === 'published' ? 'publish' : status === 'archived' ? 'archive' : 'update'
         return {
           ...state,
           projectsRegistry: state.projectsRegistry.map(p =>
@@ -160,12 +185,14 @@ export function cmsHandler(state: AdminState, action: AdminAction): AdminState |
               : p
           ),
           revisionLog: addAutoRevision(state, 'project', contentId, item ?? {}, note),
+          auditLog: addAuditEntry(state, auditAction, 'project', contentId, item?.slug ?? contentId, item?.cmsStatus, status),
           unsaved: true,
         }
       }
       if (contentType === 'research') {
         const item = state.researchRegistry.find(r => r.slug === contentId)
         const note = statusNote(item?.cmsStatus, status)
+        const auditAction: AuditLogEntry['action'] = status === 'published' ? 'publish' : status === 'archived' ? 'archive' : 'update'
         return {
           ...state,
           researchRegistry: state.researchRegistry.map(r =>
@@ -174,6 +201,7 @@ export function cmsHandler(state: AdminState, action: AdminAction): AdminState |
               : r
           ),
           revisionLog: addAutoRevision(state, 'research', contentId, item ?? {}, note),
+          auditLog: addAuditEntry(state, auditAction, 'research', contentId, item?.slug ?? contentId, item?.cmsStatus, status),
           unsaved: true,
         }
       }
@@ -183,6 +211,7 @@ export function cmsHandler(state: AdminState, action: AdminAction): AdminState |
           labsRegistry: state.labsRegistry.map(l =>
             l.key === contentId ? { ...l, visible: isPublished } : l
           ),
+          auditLog: addAuditEntry(state, isPublished ? 'publish' : 'unpublish', 'lab', contentId, contentId),
           unsaved: true,
         }
       }
@@ -192,6 +221,7 @@ export function cmsHandler(state: AdminState, action: AdminAction): AdminState |
           systemsRegistry: state.systemsRegistry.map(s =>
             s.key === contentId ? { ...s, visible: isPublished } : s
           ),
+          auditLog: addAuditEntry(state, isPublished ? 'publish' : 'unpublish', 'system', contentId, contentId),
           unsaved: true,
         }
       }

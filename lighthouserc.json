@@ -2,7 +2,8 @@
   "ci": {
     "collect": {
       "staticDistDir": "./dist",
-      "url": ["http://localhost/en/index.html"],
+      "url": ["http://localhost/en/index.html", "http://localhost/es/index.html"],
+      "budgets": [{ "path": "/*", "resourceSizes": [{ "resourceType": "script", "budget": 900 }, { "resourceType": "total", "budget": 2000 }] }],
       "numberOfRuns": 3,
       "settings": {
         "preset": "desktop",

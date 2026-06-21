@@ -37,6 +37,7 @@ const DesignStudioPanel   = lazy(() => import('./panels/DesignStudioPanel'))
 const SearchPanel         = lazy(() => import('./panels/SearchPanel'))
 const StudioPanel         = lazy(() => import('./panels/StudioPanel'))
 const TaxonomyPanel       = lazy(() => import('./panels/cms/TaxonomyPanel').then(m => ({ default: m.TaxonomyPanel })))
+const CmsRelationsPanel   = lazy(() => import('./panels/CmsRelationsPanel').then(m => ({ default: m.CmsRelationsPanel })))
 const VPSPanel            = lazy(() => import('./panels/VPSPanel'))
 
 // ─── Loading skeleton ─────────────────────────────────────────────────────────
@@ -108,6 +109,7 @@ export default function PanelRouter() {
       case 'search':         return <SearchPanel />
       case 'studio':         return <StudioPanel />
       case 'taxonomy':       return <TaxonomyPanel />
+      case 'cms-relations':  return <CmsRelationsPanel />
       case 'vps':            return <VPSPanel />
       default:               return <CommandPanel />
     }

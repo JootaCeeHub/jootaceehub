@@ -1,0 +1,54 @@
+[
+  {
+    "path": "/en/",
+    "resourceSizes": [
+      { "resourceType": "script",     "budget": 800 },
+      { "resourceType": "stylesheet", "budget": 100 },
+      { "resourceType": "image",      "budget": 500 },
+      { "resourceType": "font",       "budget": 200 },
+      { "resourceType": "total",      "budget": 1600 }
+    ],
+    "resourceCounts": [
+      { "resourceType": "script", "budget": 40 }
+    ],
+    "timings": [
+      { "metric": "first-contentful-paint",    "budget": 2000 },
+      { "metric": "interactive",               "budget": 5000 },
+      { "metric": "largest-contentful-paint",  "budget": 2500 },
+      { "metric": "total-blocking-time",       "budget": 500  }
+    ]
+  },
+  {
+    "path": "/es/",
+    "resourceSizes": [
+      { "resourceType": "script",     "budget": 800 },
+      { "resourceType": "stylesheet", "budget": 100 },
+      { "resourceType": "image",      "budget": 500 },
+      { "resourceType": "font",       "budget": 200 },
+      { "resourceType": "total",      "budget": 1600 }
+    ],
+    "resourceCounts": [
+      { "resourceType": "script", "budget": 40 }
+    ],
+    "timings": [
+      { "metric": "first-contentful-paint",    "budget": 2000 },
+      { "metric": "interactive",               "budget": 5000 },
+      { "metric": "largest-contentful-paint",  "budget": 2500 },
+      { "metric": "total-blocking-time",       "budget": 500  }
+    ]
+  },
+  {
+    "path": "/admin/",
+    "resourceSizes": [
+      { "resourceType": "script",     "budget": 1200 },
+      { "resourceType": "stylesheet", "budget": 100  },
+      { "resourceType": "total",      "budget": 2000 }
+    ],
+    "resourceCounts": [
+      { "resourceType": "script", "budget": 60 }
+    ],
+    "timings": [
+      { "metric": "interactive", "budget": 8000 }
+    ]
+  }
+]

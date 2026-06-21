@@ -11,6 +11,7 @@ import { HeroSection } from '@/components/sections/HeroSection'
 import { useTranslations } from '@/lib/i18n'
 import { installConsoleFilter } from '@/lib/logger'
 import { usePerfTier } from '@/hooks/usePerfTier'
+import { useReaderMode } from '@/hooks/useReaderMode'
 import type { ArticleMeta } from '@/lib/journal/types'
 
 // Overlays — defer off critical path
@@ -49,6 +50,7 @@ export function HomeClient({ featured, recent }: HomeClientProps) {
   const [showPreloader, setShowPreloader] = useState(false)
   const t = useTranslations('accessibility')
   const { tier, ready } = usePerfTier()
+  useReaderMode() // installs Alt+R shortcut + restores sessionStorage state
 
   useEffect(() => {
     installConsoleFilter()

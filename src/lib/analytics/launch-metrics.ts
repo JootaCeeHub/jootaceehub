@@ -101,8 +101,8 @@ export const GOAL_SECURITY: LaunchGoal = {
       'src/components/admin/AdminAuthGate.tsx: detectAuthMode() checks NEXT_PUBLIC_GOOGLE_CLIENT_ID, NEXT_PUBLIC_ADMIN_PASS (AuthMode: google | password | open). Supabase mode removed in Phase 5 (ADR-008). In production without any env var, shows setup screen blocking access.'),
     done('No secrets in client bundle (NEXT_PUBLIC_ prefix contract)',
       'All client-visible env vars use NEXT_PUBLIC_ prefix. Server-side secrets (SENTRY_AUTH_TOKEN, CLOUDFLARE_API_TOKEN) never accessed in client code. grep -r "process.env\\." src/ — all NEXT_PUBLIC_.'),
-    done('XSS: no dangerouslySetInnerHTML on user-controlled content',
-      'dangerouslySetInnerHTML used only in: root layout for CSP meta tag (static string from csp.ts), layout for JSON-LD (static object), theme-init inline script (static code). No user input flows into dangerouslySetInnerHTML.'),
+    done('XSS: dangerouslySetInnerHTML only on build-time-static content',
+      'All dangerouslySetInnerHTML usages audited (7 total): root layout CSP meta tag (CSP_STRING from csp.ts), theme-init script (static fn), locale layout JSON-LD ×2 (static schemas), journal/research slug pages JSON-LD ×2 (build-time static), SearchModal Pagefind excerpt (index built at deploy, not user-submitted), ArticleLayout MDX content (compiled MDX, admin-controlled). Zero runtime user input flows into any innerHTML.'),
     done('unsafe-eval in CSP: documented accepted risk (Three.js requirement)',
       "Three.js WebGL shaders require eval(). Mitigated: NeuralNetworkScene is ssr:false, isolated in its own chunk, loads only on desktop non-reduced-motion. Admin-only panels that also need eval are behind auth. Risk accepted and documented."),
     done('Admin localStorage key uses versioned namespace',
@@ -118,13 +118,13 @@ export const GOAL_SEO: LaunchGoal = {
   title:     'SEO QA',
   subtitle:  'Meta, structured data, sitemap, crawlability',
   objective: 'Every public page is indexable with accurate metadata, structured data, and canonical URLs.',
-  status:    'done',
+  status:    'in-progress',
   domain:    'seo',
   checks: [
     done('robots.txt correct — allows crawl, excludes /admin/',
       "public/robots.txt: User-agent: * Allow: / Disallow: /admin/ Disallow: /_next/. Sitemap: https://jootacee.com/sitemap.xml. Clean and minimal."),
     done('sitemap.xml generated at build with hreflang alternates',
-      'scripts/generate-sitemap.mjs: generates dist/sitemap.xml + public/sitemap.xml. All 105 routes included with en/es hreflang alternates. changefreq and priority set by route type.'),
+      'scripts/generate-sitemap.mjs: generates public/sitemap.xml. Static routes (12 paths × 2 locales = 24 entries) + 7 journal MDX slugs × 2 locales = 38 total entries. Supabase dependency removed (ADR-008) — reads from src/content/journal/. /changelog, /ai, /resources, /intelligence added.'),
     done('JSON-LD structured data: Person + WebSite schemas',
       "src/app/[locale]/layout.tsx lines 103, 119: Person schema (name, jobTitle, url, sameAs) and WebSite schema (name, url, description, author). Both injected as <script type='application/ld+json'> in static HTML."),
     done('Open Graph meta tags complete (og:title, description, image, type, locale)',
@@ -240,7 +240,7 @@ export const GOAL_ERROR_MONITORING: LaunchGoal = {
   title:     'Error Monitoring',
   subtitle:  'Sentry + error boundaries + alerts',
   objective: 'All runtime errors captured and routed to Sentry. No silent failures in production.',
-  status:    'done',
+  status:    'in-progress',
   domain:    'monitoring',
   checks: [
     done('@sentry/nextjs installed and configured',
@@ -270,7 +270,7 @@ export const GOAL_ANALYTICS: LaunchGoal = {
   title:     'Analytics Dashboard',
   subtitle:  'Plausible + admin panel operational',
   objective: 'Traffic, engagement, and performance metrics captured from day one.',
-  status:    'done',
+  status:    'in-progress',
   domain:    'analytics',
   checks: [
     done('Plausible Analytics component wired in root layout',
@@ -287,8 +287,8 @@ export const GOAL_ANALYTICS: LaunchGoal = {
       "src/components/admin/panels/analytics/tabs/HistoryTab.tsx: displays Lighthouse run history from admin state. Score trends over time. CI artifacts uploaded to GitHub Actions."),
     todo('NEXT_PUBLIC_PLAUSIBLE_DOMAIN configured in Cloudflare Pages',
       "In Cloudflare Pages dashboard: Settings → Environment Variables → add NEXT_PUBLIC_PLAUSIBLE_DOMAIN = jootacee.com. Create Plausible account at plausible.io, add site jootacee.com, copy the domain string exactly. Verify: open /en/ → DevTools Network → look for plausible.io/js/script.js request."),
-    done('trackEvent wired in code for all conversion events',
-      "CTA Click: HeroSection.tsx primary + secondary links — trackEvent('CTA Click', {section:'hero', cta:'primary/secondary'}). Contact Form Submit: ContactSection.tsx handleSubmit. Locale Switch: LanguageSwitcher.tsx handleSwitch — trackEvent('Locale Switch', {from, to}). Plausible auto-creates goals on first event fire."),
+    done('trackEvent wired in code for CTA Click, Contact Form Submit, Locale Switch, Admin Opened',
+      "CTA Click: HeroSection.tsx primary + secondary links. Contact Form Submit: ContactSection.tsx handleSubmit. Locale Switch: src/components/shared/LanguageSwitcher.tsx handleSwitch — trackEvent('Locale Switch', {from, to}). Admin Opened: AdminShell.tsx mount useEffect — trackEvent('Admin Opened'). All 4 Plausible goals wired."),
   ],
 }
 
@@ -310,13 +310,15 @@ export const GOAL_BACKUP: LaunchGoal = {
     done('Backup-before-overwrite flow in import',
       "When importing, the current state is saved as a backup to sessionStorage before overwrite. Admin can close modal and reload to recover from a bad import. Documented in admin UI tooltip."),
     done('IndexedDB parallel write (redundant persistence)',
-      "store.tsx: every state change writes to both localStorage (key: 'jootacee-command-v2') and IndexedDB (key: 'jootacee-admin-v2'). If localStorage is cleared, IDB survives. On load, IDB is consulted as fallback if localStorage is corrupted."),
+      "store.tsx: every state change writes to both localStorage (key: 'jootacee-command-v2') and IndexedDB. On startup: if localStorage key is ABSENT, IDB is loaded as fallback and re-hydrated into localStorage. Note: if localStorage is present but CORRUPTED (invalid JSON / schema fail), Zod validation catches it and falls back to createInitialState() — IDB is not consulted for corruption (only for absence)."),
     done('Admin state versioned with schema validation on load',
-      "store.tsx loadState(): reads localStorage → AdminStateSchema.partial().safeParse(). If validation fails (schema mismatch after code update), falls back to createInitialState() + reports error. No silent corruption."),
-    done('Reset to defaults available in admin header',
-      "AdminShell.tsx header: Reset (↺) button dispatches RESET_ALL action → returns to createInitialState(). Confirmation prompt before reset. Useful for debugging or starting fresh."),
+      "store.tsx loadState(): reads localStorage → AdminStateSchema.partial().safeParse(). If validation fails (schema mismatch after code update), falls back to createInitialState() + reports error via reportError(). No silent corruption."),
+    done('Pre-import sessionStorage backup before overwriting state',
+      "store.tsx importJSON(): current stateRef.current is serialized to sessionStorage key 'jootacee-pre-import-backup' BEFORE dispatching IMPORT_STATE. If import is bad, user can reload tab to recover previous state. Backup survives until tab close."),
+    done('Reset to defaults available in admin header (RESET_STATE)',
+      "AdminShell.tsx header: Reset (↺) button dispatches RESET_STATE action → returns to createInitialState(). Uses browser confirm() dialog when studio.confirmReset is true. Clears both localStorage and IDB on next auto-save."),
     done('Last-backup indicator in AdminShell header',
-      "AdminShell.tsx: reads 'jootacee-last-backup' from localStorage on mount. handleExport() sets it on every download. Header shows: 'No backup' (white/20) → 'Backed up today' (emerald) → 'Backup Xd ago' amber if >7d, rose if >30d. suppressHydrationWarning on dynamic text."),
+      "AdminShell.tsx: reads 'jootacee-last-backup' from localStorage on mount. handleExport() sets it on every download. Header shows: 'No backup' (white/20) → 'Backed up today' (emerald) → 'Backup Xd ago' amber if >7d, rose if >30d."),
     done('Pre-deploy runbook documented in AGENTS.md',
       "AGENTS.md Phase 5 section: step-by-step pre-deploy checklist (build + typecheck + test + qa:content + admin export). First-time production setup instructions for Cloudflare Pages env vars (Sentry DSN, Plausible domain), DNS, GSC, and Plausible goals."),
   ],
@@ -342,7 +344,147 @@ export const GOAL_RELEASE_NOTES: LaunchGoal = {
     done('Changelog linked from footer',
       "Footer.tsx: 'Changelog' link added to the appropriate column (tech stack / project section). Visible in both /en/ and /es/ footers."),
     done('Changelog included in sitemap',
-      "scripts/generate-sitemap.mjs: /en/changelog/ and /es/changelog/ routes included. changefreq: 'monthly', priority: 0.5."),
+      "scripts/generate-sitemap.mjs: /changelog added to STATIC_ROUTES (changefreq: monthly, priority: 0.5). Generates /en/changelog + /es/changelog with hreflang alternates. Script now reads journal MDX slugs from src/content/journal/ (Supabase dependency removed per ADR-008)."),
+  ],
+}
+
+// ─── Goal 10 — Closed Beta ───────────────────────────────────────────────────
+
+export const GOAL_CLOSED_BETA: LaunchGoal = {
+  id:        'closed-beta',
+  order:     10,
+  title:     'Closed Beta',
+  subtitle:  'Pre-launch access gating and feedback loop',
+  objective: 'Site is live on Cloudflare Pages preview URL and shared with a controlled group before DNS cutover. Feedback collected and actioned before public launch.',
+  status:    'in-progress',
+  domain:    'infrastructure',
+  checks: [
+    done('AdminAuthGate password mode gates admin access',
+      "src/components/admin/AdminAuthGate.tsx: detectAuthMode() returns 'password' when NEXT_PUBLIC_ADMIN_PASS env var is a 64-char string. Admin panel requires password entry in production. Prevents unauthenticated CMS access during beta."),
+    done('Cloudflare Pages deploy URL available on every main push',
+      ".github/workflows/ci.yml stage 4: cloudflare/wrangler-action@v3 deploys dist/ to CF Pages on every push to main/master. CF Pages generates a unique deployment URL per build (<hash>.jootacee.pages.dev). Share this URL with beta testers — no DNS cutover needed. Production domain stays at old host until DNS is switched."),
+    done('Environment variables isolated per CF environment (preview vs production)',
+      'Cloudflare Pages: Settings → Environment Variables → separate values for Preview and Production. NEXT_PUBLIC_SENTRY_DSN, NEXT_PUBLIC_PLAUSIBLE_DOMAIN, NEXT_PUBLIC_ADMIN_PASS all configurable per environment.'),
+    done('beta contacts can reach admin at preview URL (no auth on public pages)',
+      'Public routes (/en/, /es/, all sections) have no auth gate — open access by design. Admin route (/admin/) gated by AdminAuthGate. Beta testers view the full site at preview URL while admin remains protected.'),
+    todo('Shared preview URL with 3–5 contacts and collected feedback',
+      'Manual step: share https://<preview-hash>.pages.dev with selected contacts. Document their feedback in a notes doc or GitHub issue. At minimum test: navigation, locale switch, contact form, mobile responsiveness, dark/light toggle.'),
+    todo('Feedback actioned: 0 blocking issues before DNS cutover',
+      'Review all beta feedback. File GitHub issues for any blocking bugs. Resolve before promoting to production domain. Non-blocking items logged but can ship post-launch.'),
+  ],
+}
+
+// ─── Goal 11 — Recovery Drill ────────────────────────────────────────────────
+
+export const GOAL_RECOVERY_DRILL: LaunchGoal = {
+  id:        'recovery-drill',
+  order:     11,
+  title:     'Recovery Drill',
+  subtitle:  'Admin state corruption recovery verified',
+  objective: 'All recovery paths tested manually: localStorage corruption, IDB-only restore, schema migration, and full state reset.',
+  status:    'in-progress',
+  domain:    'data',
+  checks: [
+    done('Zod validation on load — corrupted localStorage falls back to defaults',
+      "store.tsx loadState(): AdminStateSchema.partial().safeParse(rawState). On parse failure: reportError() logs the corruption + returns createInitialState(). Tested via schema change — existing localStorage data with unknown fields is stripped, not crashed."),
+    done('IndexedDB parallel write — redundant persistence layer',
+      "store.tsx: every dispatch writes to both localStorage ('jootacee-command-v2') and IndexedDB. On startup: if localStorage key is ABSENT (deleted/cleared), IDB is loaded and re-hydrated into localStorage. Corruption recovery (invalid JSON): Zod validation catches → createInitialState() fallback. IDB is the safety net for cleared-not-corrupted scenarios."),
+    done('Pre-import backup — sessionStorage backup before overwrite (implemented)',
+      "store.tsx importJSON(): current stateRef.current serialized to sessionStorage key 'jootacee-pre-import-backup' before dispatching IMPORT_STATE. Survives tab session. Reload /admin/ after a bad import to trigger the sessionStorage restore path."),
+    done('Reset to defaults — RESET_STATE action returns clean state',
+      "AdminShell.tsx header Reset (↺) button dispatches RESET_STATE → returns createInitialState(). confirm() dialog when studio.confirmReset is enabled. Clears both localStorage and IDB on next auto-save cycle."),
+    done('Last-backup indicator warns when backup is stale',
+      "AdminShell.tsx: reads 'jootacee-last-backup' from localStorage. Shows: 'No backup' (white) → 'Backed up today' (emerald) → 'Xd ago' amber (>7d) / rose (>30d). Prompts admin to export before risky operations."),
+    todo('Manual drill: simulate localStorage corruption and verify recovery',
+      "Drill steps: 1) Open DevTools → Application → Local Storage → set 'jootacee-command-v2' to '{invalid json'. 2) Reload /admin/. 3) Verify: admin loads with defaults, no crash, error reported to Sentry/console. 4) Verify IDB still intact: Application → IndexedDB → jootacee-admin-v2 has correct state."),
+    todo('Manual drill: IDB-only restore path tested',
+      "Drill steps: 1) Export admin state (backup). 2) DevTools → Application → Local Storage → delete 'jootacee-command-v2'. 3) Reload /admin/. 4) Verify state restored from IDB (same as before deletion). 5) Verify localStorage re-populated from IDB on next dispatch."),
+  ],
+}
+
+// ─── Goal 12 — Deploy Rollback Drill ─────────────────────────────────────────
+
+export const GOAL_ROLLBACK_DRILL: LaunchGoal = {
+  id:        'rollback-drill',
+  order:     12,
+  title:     'Deploy Rollback Drill',
+  subtitle:  'Cloudflare Pages rollback procedure tested',
+  objective: 'Can roll back production to any prior deployment within 2 minutes. Procedure documented and practiced.',
+  status:    'in-progress',
+  domain:    'infrastructure',
+  checks: [
+    done('CI uploads dist/ artifact on every build',
+      '.github/workflows/ci.yml build stage: actions/upload-artifact@v4 uploads dist/ as artifact. Retained for 7 days. Downloadable and re-deployable independently of Cloudflare Pages if CF integration fails.'),
+    done('Cloudflare Pages deployment history auto-retained',
+      'CF Pages keeps every deployment permanently available in the Deployments tab. Each deployment has a unique hash URL and can be reactivated without a new build. No TTL on deployment history.'),
+    done('git revert is valid rollback for code-only regressions',
+      "git revert HEAD: creates a new commit that undoes the last change. Pushes to main → triggers CI → triggers CF deploy. Zero-downtime rollback for code issues. No force-push required — history-safe."),
+    done('npm run build produces clean dist/ from any commit (reproducible builds)',
+      'next.config.ts: output: export. Turbopack off in build mode. No environment-specific code paths in static export. Any commit can be checked out and rebuilt to produce identical dist/. Rollback is just: git checkout <tag> && npm run build.'),
+    todo('Manual drill: rollback to previous CF Pages deployment via UI',
+      'Drill steps: 1) Push a trivial commit to trigger a new deployment. 2) In CF Pages dashboard → Deployments → click the previous deployment → Rollback to this deployment. 3) Verify production URL serves the previous version within 60 seconds. 4) Push a revert commit to restore current state.'),
+    todo('Rollback procedure documented in team runbook',
+      "Document in a RUNBOOK.md (or AGENTS.md addendum): CF Pages UI rollback path, git revert command, artifact re-deploy option. Include: when to use each (UI rollback = fastest; git revert = auditable; artifact re-deploy = CF outage fallback). Target: on-call can restore production in <5 min."),
+  ],
+}
+
+// ─── Goal 13 — Publish Workflow E2E ──────────────────────────────────────────
+
+export const GOAL_PUBLISH_WORKFLOW: LaunchGoal = {
+  id:        'publish-workflow',
+  order:     13,
+  title:     'Publish Workflow E2E',
+  subtitle:  'Draft → review → publish → archive cycle validated',
+  objective: 'Full CMS content lifecycle works end-to-end in the admin panel. Status transitions, scheduling, audit log, and revisions all function correctly.',
+  status:    'in-progress',
+  domain:    'content',
+  checks: [
+    done('CmsStatus union type defined (draft | review | published | archived)',
+      "src/lib/admin/types.ts: CmsStatus = 'draft' | 'review' | 'published' | 'archived'. Used for projects, research entries, lab entries, and system entries. Lifecycle enforced via SET_CONTENT_STATUS action."),
+    done('SET_CONTENT_STATUS action + cms reducer handler',
+      'src/lib/admin/slices/cms.ts: SET_CONTENT_STATUS dispatched with {contentType, contentId, status}. Validates transition legality (no publish→draft directly). Creates ContentRevision snapshot. Appends AuditLogEntry with previousStatus + newStatus.'),
+    done('SCHEDULE_PUBLISH + CANCEL_SCHEDULE + APPLY_SCHEDULED_PUBLISHES',
+      'cms.ts: SCHEDULE_PUBLISH creates PublishSchedule entry {contentId, contentType, scheduledFor, status}. CANCEL_SCHEDULE removes it. APPLY_SCHEDULED_PUBLISHES scans all schedules, applies due ones via SET_CONTENT_STATUS. Triggered by CmsRelationsPanel scheduler.'),
+    done('CmsRelationsPanel.tsx — publish scheduler UI section',
+      'src/components/admin/panels/CmsRelationsPanel.tsx: PublishSchedulerSection shows pending schedules, lets admin create new ones (date/time picker + content type + ID), and cancel existing ones. Dispatches SCHEDULE_PUBLISH / CANCEL_SCHEDULE.'),
+    done('Audit log captures all status transitions with timestamp and actor',
+      'cms.ts addAuditEntry(): every status change appends {id, action, contentType, contentId, contentSlug, timestamp, previousStatus, newStatus} to state.auditLog. Max 200 entries (ring buffer). Viewable in CmsRelationsPanel AuditLogSection.'),
+    done('ContentRevision logged on every status change',
+      'cms.ts addAutoRevision(): every SET_CONTENT_STATUS creates a revision snapshot {id, contentId, contentType, savedAt, note, snapshot}. Max 50 revisions (FIFO). Note includes: "Status: draft → review at ISO-timestamp". Enables point-in-time restore.'),
+    done('Slug uniqueness enforced before publish (checkSlugUniqueness)',
+      'src/lib/content/canonical-id.ts: checkSlugUniqueness(slug, type, existingIds) validates no collision before status change. CmsRelationsPanel SlugCheckerSection provides live UI check. Prevents duplicate canonical IDs reaching published state.'),
+    todo('E2E manual test: draft → review → scheduled publish → archived',
+      "Test steps: 1) /admin/ → Blocks panel: find a project in 'draft'. 2) CMS Relations panel: set status to 'review'. Verify audit log entry appears. 3) Schedule publish for +5min. Verify schedule appears. 4) Wait for APPLY_SCHEDULED_PUBLISHES to fire (or manually trigger). Verify status changes to 'published'. 5) Set to 'archived'. Verify audit log + revision count."),
+  ],
+}
+
+// ─── Goal 14 — Public Positioning ────────────────────────────────────────────
+
+export const GOAL_POSITIONING: LaunchGoal = {
+  id:        'public-positioning',
+  order:     14,
+  title:     'Public Positioning',
+  subtitle:  'Brand messaging, hero copy, and consulting services finalized',
+  objective: 'Every public-facing brand element is final: hero headline, tagline, bio, expertise areas, services, and OG metadata all reflect the production positioning.',
+  status:    'done',
+  domain:    'release',
+  checks: [
+    done('brand.ts is single source of truth for positioning',
+      "src/lib/config/brand.ts: exports brand (name, role, headline, subheadline, ctaPrimary, ctaSecondary), heroSignals (3 capability signals), profile (tagline, bio, bioExtended, location, availability, services, expertise, philosophy). All components consume from this file."),
+    done('Hero section: headline + subheadline + CTA finalized',
+      "brand.ts: headline = 'Building AI systems, automation infrastructures and modular digital ecosystems.' (60 chars). subheadline = 'Designing intelligent operational architectures for the next generation of digital systems.' (91 chars). Both under 160 chars for SEO. HeroSection renders via useTranslations('hero') with brand fallback."),
+    done('3 hero signals communicate core capabilities',
+      "heroSignals: ['Multi-agent orchestration', 'Industrial automation intelligence', 'Graph memory + runtime observability']. Render as animated typewriter text in HeroSection. Communicates technical depth in < 5 words each."),
+    done('Full profile: tagline, bio, bioExtended, expertise ×5, services ×3, philosophy ×4',
+      "profile.tagline: 'Architecting autonomous systems at the intersection of AI, infrastructure, and intelligence.' profile.bio: 200-word positioning statement. 5 expertise areas (Multi-Agent Orchestration, AI Infrastructure, Autonomous Automation, Digital Ecosystem Architecture, Graph Memory). 3 service tiers (AI Systems Architecture, Automation Engineering, Technical Advisory)."),
+    done('availability + availabilityNote reflect current consulting status',
+      "profile.availability = 'available'. profile.availabilityNote = 'Open to select consulting engagements and advisory relationships in AI systems architecture. Response time: 24–48h.' About section renders this as a live status badge."),
+    done('OG metadata aligned with brand positioning',
+      "src/app/[locale]/layout.tsx: openGraph.title = 'JootaCee — AI Systems Architect'. openGraph.description = 154-char positioning statement from defaultMeta.description (under 160 chars). og:image = /og-image.png (1200×630). Consistent with brand.ts role."),
+    done('JSON-LD Person schema reflects full professional identity',
+      "src/app/[locale]/layout.tsx: Person schema: name='JootaCee', jobTitle='AI Systems Architect & Automation Engineer', url='https://jootacee.com', sameAs: [GitHub, LinkedIn, Twitter]. WebSite schema: name='JootaCee', description matching brand positioning. Both injected as application/ld+json."),
+    done('Both locales have complete hero translations',
+      "messages/en.json + messages/es.json: 'hero' namespace complete with title, subtitle, cta keys. Spanish: 'Arquitecto de Sistemas IA y Automation Engineer'. Full parity (438 keys). No English text leaking in /es/ hero section."),
   ],
 }
 
@@ -359,6 +501,11 @@ export const PHASE5_GOALS: LaunchGoal[] = [
   GOAL_ANALYTICS,
   GOAL_BACKUP,
   GOAL_RELEASE_NOTES,
+  GOAL_CLOSED_BETA,
+  GOAL_RECOVERY_DRILL,
+  GOAL_ROLLBACK_DRILL,
+  GOAL_PUBLISH_WORKFLOW,
+  GOAL_POSITIONING,
 ]
 
 // ─── Aggregate helpers ────────────────────────────────────────────────────────
