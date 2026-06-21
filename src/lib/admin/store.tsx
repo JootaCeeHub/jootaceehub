@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useReducer, useEffect, useCallback, useRef, useMemo } from 'react'
 import type { AdminState, AdminAction } from './types'
-import { createInitialState, defaultStudioConfig } from './state'
+import { createInitialState } from './state'
 import { AdminStateSchema } from './schema'
 import { reportError } from '@/lib/error'
 import { saveToIDB, loadFromIDB } from './idb'

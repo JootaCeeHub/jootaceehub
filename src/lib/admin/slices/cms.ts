@@ -206,22 +206,30 @@ export function cmsHandler(state: AdminState, action: AdminAction): AdminState |
         }
       }
       if (contentType === 'lab') {
+        const labItem = state.labsRegistry.find(l => l.key === contentId)
+        const labNote = statusNote(labItem?.cmsStatus, status)
+        const labAuditAction: AuditLogEntry['action'] = status === 'published' ? 'publish' : status === 'archived' ? 'archive' : 'update'
         return {
           ...state,
           labsRegistry: state.labsRegistry.map(l =>
-            l.key === contentId ? { ...l, visible: isPublished } : l
+            l.key === contentId ? { ...l, visible: isPublished, cmsStatus: status } : l
           ),
-          auditLog: addAuditEntry(state, isPublished ? 'publish' : 'unpublish', 'lab', contentId, contentId),
+          revisionLog: addAutoRevision(state, 'lab', contentId, labItem ?? {}, labNote),
+          auditLog: addAuditEntry(state, labAuditAction, 'lab', contentId, contentId, labItem?.cmsStatus, status),
           unsaved: true,
         }
       }
       if (contentType === 'system') {
+        const sysItem = state.systemsRegistry.find(s => s.key === contentId)
+        const sysNote = statusNote(sysItem?.cmsStatus, status)
+        const sysAuditAction: AuditLogEntry['action'] = status === 'published' ? 'publish' : status === 'archived' ? 'archive' : 'update'
         return {
           ...state,
           systemsRegistry: state.systemsRegistry.map(s =>
-            s.key === contentId ? { ...s, visible: isPublished } : s
+            s.key === contentId ? { ...s, visible: isPublished, cmsStatus: status } : s
           ),
-          auditLog: addAuditEntry(state, isPublished ? 'publish' : 'unpublish', 'system', contentId, contentId),
+          revisionLog: addAutoRevision(state, 'system', contentId, sysItem ?? {}, sysNote),
+          auditLog: addAuditEntry(state, sysAuditAction, 'system', contentId, contentId, sysItem?.cmsStatus, status),
           unsaved: true,
         }
       }

@@ -141,6 +141,7 @@ export const SystemEntrySchema = z.object({
   uptime: z.string(),
   tools: z.number().int().min(0),
   visible: z.boolean(),
+  cmsStatus: CmsStatusSchema.optional(),
 })
 
 // ─── Labs Manager ─────────────────────────────────────────────────────────────
@@ -160,6 +161,7 @@ export const LabEntrySchema = z.object({
   metrics: z.array(LabMetricSchema),
   accent: z.string(),
   visible: z.boolean(),
+  cmsStatus: CmsStatusSchema.optional(),
 })
 
 // ─── Research Manager ────────────────────────────────────────────────────────
@@ -866,6 +868,19 @@ export const AdminStateSchema = z.object({
   localeRelations:  z.array(LocaleRelationSchema).optional(),
   contentRelations: z.array(ContentRelationSchema).optional(),
   publishSchedules: z.array(PublishScheduleSchema).optional(),
+  jobQueue: z.array(z.object({
+    id: z.string(),
+    type: z.enum(['git-commit', 'git-push', 'deploy-hook', 'media-upload', 'publish', 'rollback'] as const),
+    label: z.string(),
+    status: z.enum(['pending', 'running', 'done', 'failed', 'cancelled'] as const),
+    createdAt: z.string(),
+    startedAt: z.string().optional(),
+    completedAt: z.string().optional(),
+    payload: z.record(z.string(), z.unknown()),
+    result: z.record(z.string(), z.unknown()).optional(),
+    error: z.string().optional(),
+    attempts: z.number().int().min(0),
+  })).optional(),
   studioConfig: z.object({
     sidebarWidth:       z.enum(['compact', 'normal', 'wide']).optional(),
     density:            z.enum(['compact', 'normal', 'comfortable']).optional(),

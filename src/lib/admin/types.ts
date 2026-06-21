@@ -57,6 +57,7 @@ export type AdminPanel =
   | 'taxonomy'
   | 'cms-relations'
   | 'vps'
+  | 'cms-workflow'
 
 // ─── Studio Config (Command Center settings) ──────────────────────────────────
 
@@ -243,6 +244,7 @@ export interface SystemEntry {
   uptime: string
   tools: number
   visible: boolean
+  cmsStatus?: CmsStatus
 }
 
 // ─── Labs Manager ─────────────────────────────────────────────────────────────
@@ -264,6 +266,7 @@ export interface LabEntry {
   metrics: LabMetric[]
   accent: string
   visible: boolean
+  cmsStatus?: CmsStatus
 }
 
 // ─── Research Manager ────────────────────────────────────────────────────────
@@ -1137,6 +1140,35 @@ export interface VpsSyncStatus {
 
 export const VPS_SYNC_IDLE: VpsSyncStatus = { state: 'idle', message: '' }
 
+// ─── CMS Job Queue ────────────────────────────────────────────────────────────
+
+export type CmsJobType =
+  | 'git-commit'     // Commit changes to Git via VPS API
+  | 'git-push'       // Push branch to remote
+  | 'deploy-hook'    // Trigger Cloudflare/Netlify/Vercel deploy webhook
+  | 'media-upload'   // Upload media file to VPS
+  | 'publish'        // Full publish pipeline (commit + push + deploy)
+  | 'rollback'       // Revert to a previous revision
+
+export type CmsJobStatus = 'pending' | 'running' | 'done' | 'failed' | 'cancelled'
+
+export interface CmsJob {
+  id: string
+  type: CmsJobType
+  label: string
+  status: CmsJobStatus
+  createdAt: string
+  startedAt?: string
+  completedAt?: string
+  /** Serialisable context — varies by job type */
+  payload: Record<string, unknown>
+  /** Output from the job (e.g. commit SHA, deploy URL) */
+  result?: Record<string, unknown>
+  error?: string
+  /** Number of retry attempts so far */
+  attempts: number
+}
+
 // ─── Root State ───────────────────────────────────────────────────────────────
 
 export interface AdminState {
@@ -1205,6 +1237,8 @@ export interface AdminState {
   publishSchedules: PublishSchedule[]
   // Command Center
   studioConfig: StudioConfig
+  // CMS Job Queue — persisted so in-flight jobs survive page reloads
+  jobQueue: CmsJob[]
   // Meta
   unsaved: boolean
   lastSaved: string | null
@@ -1417,3 +1451,8 @@ export type AdminAction =
   // VPS Sync (Phase 4)
   | { type: 'SET_VPS_STATUS'; payload: VpsSyncStatus }
   | { type: 'CLEAR_VPS_ERROR' }
+  // CMS Job Queue
+  | { type: 'JOB_ADD'; payload: Omit<CmsJob, 'id' | 'createdAt' | 'attempts'> }
+  | { type: 'JOB_UPDATE'; payload: { id: string; data: Partial<CmsJob> } }
+  | { type: 'JOB_CANCEL'; payload: string }
+  | { type: 'JOB_CLEAR_DONE' }
