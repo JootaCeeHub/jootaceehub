@@ -87,3 +87,56 @@ describe('audit-log — appendAudit + readAudit', () => {
     expect(entries[0]!.detail).toBe('after')
   })
 })
+
+describe('audit-log — rotation', () => {
+  let tmp: string
+
+  beforeEach(async () => {
+    tmp = await mkdtemp(join(tmpdir(), 'jootacee-audit-rot-'))
+    const envMod = await import('../env.js')
+    ;(envMod.env as Record<string, string>).AUDIT_LOG_PATH = join(tmp, 'audit.ndjson')
+  })
+
+  afterEach(async () => {
+    await rm(tmp, { recursive: true, force: true })
+  })
+
+  it('does not rotate a small log file', async () => {
+    const { appendAudit, readAudit } = await import('./audit-log.js')
+    await appendAudit({ action: 'test.small', actor: 'admin', detail: 'x' })
+    const entries = await readAudit()
+    expect(entries.length).toBe(1)
+    // No rotation file should exist for a tiny log
+    const { readdir } = await import('node:fs/promises')
+    const files = await readdir(tmp)
+    expect(files.filter((f) => f.endsWith('.ndjson')).length).toBe(1)
+  })
+
+  it('rotates the log when it exceeds MAX_LOG_BYTES (5MB)', async () => {
+    const { appendFile, mkdir } = await import('node:fs/promises')
+    const envMod = await import('../env.js')
+    const logPath = (envMod.env as Record<string, string>).AUDIT_LOG_PATH
+
+    // Pre-fill with 5MB+ of data so the NEXT append triggers rotation
+    await mkdir(tmp, { recursive: true })
+    const bigLine = 'x'.repeat(1024) + '\n'
+    const fivePointOneMB = 5.1 * 1024 * 1024
+    let written = 0
+    while (written < fivePointOneMB) {
+      await appendFile(logPath, bigLine, 'utf-8')
+      written += bigLine.length
+    }
+
+    // Now append one more entry — this should trigger rotation
+    const { appendAudit } = await import('./audit-log.js')
+    await appendAudit({ action: 'test.rotate', actor: 'admin', detail: 'triggers rotation' })
+
+    // The original log should now be small (just the new entry)
+    // and an archive (.1.ndjson) should exist
+    const { readdir } = await import('node:fs/promises')
+    const files = await readdir(tmp)
+    const ndjsonFiles = files.filter((f) => f.includes('.ndjson'))
+    expect(ndjsonFiles.length).toBeGreaterThanOrEqual(2)
+    expect(ndjsonFiles.some((f) => f.includes('.1'))).toBe(true)
+  })
+})
