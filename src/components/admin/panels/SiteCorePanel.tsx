@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { useAdmin } from '@/lib/admin/store'
 
@@ -278,6 +279,9 @@ export default function SiteCorePanel() {
         </div>
       </Section>
 
+      {/* Content API */}
+      <ContentApiSection />
+
       {/* Configuration Preview */}
       <Section title="Configuration Preview" accent="#22d3ee">
         <div className="rounded-lg border border-white/8 bg-black/40 p-3 max-h-52 overflow-y-auto">
@@ -287,5 +291,78 @@ export default function SiteCorePanel() {
         </div>
       </Section>
     </div>
+  )
+}
+
+// ─── Content API section (extracted to avoid extra hook in main component) ────
+
+function ContentApiSection() {
+  const { state, dispatch } = useAdmin()
+  const [pingStatus, setPingStatus] = useState<'idle' | 'checking' | 'ok' | 'error'>('idle')
+  const [pingMs, setPingMs] = useState<number | null>(null)
+
+  const envUrl = process.env.NEXT_PUBLIC_CONTENT_API_URL ?? ''
+  const effectiveUrl = state.site.contentApiUrl || envUrl
+
+  const testConnection = async () => {
+    if (!effectiveUrl) return
+    setPingStatus('checking')
+    const t0 = Date.now()
+    try {
+      const res = await fetch(`${effectiveUrl.replace(/\/$/, '')}/health`, { signal: AbortSignal.timeout(5000) })
+      if (res.ok) {
+        setPingMs(Date.now() - t0)
+        setPingStatus('ok')
+      } else {
+        setPingStatus('error')
+      }
+    } catch {
+      setPingStatus('error')
+    }
+  }
+
+  const statusColor = pingStatus === 'ok' ? 'text-emerald-400 border-emerald-400/20 bg-emerald-400/8'
+    : pingStatus === 'error' ? 'text-red-400 border-red-400/20 bg-red-400/8'
+    : pingStatus === 'checking' ? 'text-amber-400 border-amber-400/20 bg-amber-400/8 animate-pulse'
+    : 'text-white/30 border-white/10 bg-white/4'
+
+  return (
+    <Section title="Content API (VPS Phase 3)" accent="#06b6d4">
+      <div className="space-y-3">
+        <div className="flex items-center gap-2 text-[10px] text-white/40 font-mono">
+          <span className="truncate">Env: {envUrl || '(not set)'}</span>
+        </div>
+        <Field
+          label="Override API URL"
+          value={state.site.contentApiUrl}
+          onChange={(v) => dispatch({ type: 'UPDATE_SITE', payload: { contentApiUrl: v } })}
+          type="url"
+          mono
+          placeholder="https://api.jootacee.com"
+        />
+        <div className="divide-y divide-white/6 pt-1">
+          <Toggle
+            label="Enable Content API"
+            desc="Use VPS API for content reads (Phase 3)"
+            value={state.site.contentApiEnabled}
+            onChange={(v) => dispatch({ type: 'UPDATE_SITE', payload: { contentApiEnabled: v } })}
+          />
+        </div>
+        <div className="flex items-center justify-between pt-1">
+          <span className={cn('inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-mono text-[8px] uppercase tracking-[0.12em]', statusColor)}>
+            <span className="h-1 w-1 rounded-full bg-current" />
+            {pingStatus === 'ok' ? `Connected · ${pingMs}ms` : pingStatus === 'checking' ? 'Checking…' : pingStatus === 'error' ? 'Unreachable' : 'Not tested'}
+          </span>
+          <button
+            type="button"
+            disabled={!effectiveUrl || pingStatus === 'checking'}
+            onClick={testConnection}
+            className="rounded-lg border border-cyan-400/20 bg-cyan-400/8 px-3 py-1 font-mono text-[9px] text-cyan-400 hover:bg-cyan-400/15 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+          >
+            Test connection
+          </button>
+        </div>
+      </div>
+    </Section>
   )
 }

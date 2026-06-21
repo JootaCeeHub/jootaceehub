@@ -205,6 +205,9 @@ export interface SiteConfig {
   enableAnalytics: boolean
   enableTelemetry: boolean
   maintenanceMode: boolean
+  /** VPS Content API base URL — overrides NEXT_PUBLIC_CONTENT_API_URL env var */
+  contentApiUrl: string
+  contentApiEnabled: boolean
 }
 
 export interface SeoConfig {
@@ -573,159 +576,40 @@ export interface GithubConfig {
   displayMode: GithubDisplayMode
 }
 
-// ─── Visual Engine ────────────────────────────────────────────────────────────
+// ─── Visual Engine (extracted to types/design.ts) ─────────────────────────────
+import type {
+  ColorPalette,
+  DesignTokens,
+  DomainAccents,
+  DesignConfig,
+  DesignPersonality,
+  WebEffect,
+  PersonalityConfig,
+  VisualEffectToggle,
+  ShaderPreset,
+  BgGridConfig,
+  VisualEffectsConfig,
+  HeroSceneConfig,
+  PageEffectSlot,
+  PageEffectsMap,
+} from './types/design'
 
-export type ColorPalette = 'ocean' | 'emerald' | 'amber' | 'rose' | 'violet' | 'slate' | 'custom'
-
-export interface DesignTokens {
-  borderRadius: 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full'
-  spacingScale: 'compact' | 'normal' | 'relaxed' | 'spacious'
-  shadowIntensity: 'none' | 'subtle' | 'normal' | 'dramatic'
-  glowIntensity: 'off' | 'subtle' | 'normal' | 'vivid'
-  gradientStyle: 'none' | 'subtle' | 'vibrant' | 'mesh'
-  buttonStyle: 'sharp' | 'rounded' | 'pill'
-  typography: 'system' | 'modern' | 'classic' | 'mono'
-  fontSizeScale: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
-  animationSpeed: 'instant' | 'fast' | 'normal' | 'slow'
-  containerWidth: 'sm' | 'md' | 'lg' | 'xl' | 'full'
-  cardStyle: 'flat' | 'elevated' | 'outlined' | 'ghost'
-  inputStyle: 'flat' | 'outlined' | 'filled' | 'underlined'
-  sectionPadding: 'compact' | 'normal' | 'spacious'
-  // Glass panel system
-  glassBlur: 'none' | 'sm' | 'md' | 'lg' | 'xl'
-  glassOpacity: 'ghost' | 'light' | 'normal' | 'heavy' | 'solid'
-  glassBorderOpacity: 'none' | 'subtle' | 'normal' | 'strong'
+export type {
+  ColorPalette,
+  DesignTokens,
+  DomainAccents,
+  DesignConfig,
+  DesignPersonality,
+  WebEffect,
+  PersonalityConfig,
+  VisualEffectToggle,
+  ShaderPreset,
+  BgGridConfig,
+  VisualEffectsConfig,
+  HeroSceneConfig,
+  PageEffectSlot,
+  PageEffectsMap,
 }
-
-export interface DomainAccents {
-  projects: string
-  research: string
-  resources: string
-  intelligence: string
-  github: string
-  about: string
-}
-
-export interface DesignConfig {
-  darkModeDefault: 'dark' | 'light' | 'system'
-  palette: ColorPalette
-  customPrimary: string
-  customSecondary: string
-  customAccent: string
-  customBackground: string
-  customSurface: string
-  customText: string
-  customBorder: string
-  // Glow & highlight overrides
-  customGlow?: string
-  customGlowSecondary?: string
-  customRing?: string
-  // Muted tone overrides
-  customMuted?: string
-  customMutedFg?: string
-  // Gradient text color stops
-  gradientStart?: string
-  gradientMid?: string
-  gradientEnd?: string
-  // Button color system
-  btnGradientFrom?: string
-  btnGradientTo?: string
-  btnText?: string
-  // Domain accent colors
-  domainAccents?: DomainAccents
-  tokens: DesignTokens
-}
-
-export type DesignPersonality =
-  | 'minimalist'
-  | 'corporate'
-  | 'creative'
-  | 'futuristic'
-  | 'playful'
-  | 'elegant'
-  | 'brutalist'
-
-export interface WebEffect {
-  id: string
-  name: string
-  enabled: boolean
-  intensity: number
-}
-
-export interface PersonalityConfig {
-  active: DesignPersonality
-  effects: WebEffect[]
-  designGuide: string
-}
-
-// ─── Visual Effects (Design Lab) ──────────────────────────────────────────────
-
-export interface VisualEffectToggle {
-  enabled: boolean
-  intensity: number   // 0–1 normalized
-}
-
-export interface ShaderPreset {
-  id: string
-  name: string
-  colors: string[]    // CSS color array for the gradient
-  speed: number       // animation duration in seconds
-  angle: number       // gradient angle in degrees
-}
-
-export interface BgGridConfig {
-  enabled: boolean
-  color: string     // hex line color e.g. '#557ca2'
-  opacity: number   // 0–1 overall opacity
-  size: number      // cell size in px (20–200)
-  mask: boolean     // radial mask that fades grid toward edges
-}
-
-export interface VisualEffectsConfig {
-  meteors:        VisualEffectToggle & { count: number }
-  borderBeam:     VisualEffectToggle & { speed: number }
-  spotlight:      VisualEffectToggle & { radius: number }
-  aurora:         VisualEffectToggle
-  smoothScroll:   VisualEffectToggle & { duration: number }
-  noiseOverlay:   VisualEffectToggle
-  scanlines:      VisualEffectToggle
-  parallax:       VisualEffectToggle
-  glitchText:     VisualEffectToggle
-  customCursor:   VisualEffectToggle
-  activeShaderPreset: string   // id of active ShaderPreset
-  shaderPresets:  ShaderPreset[]
-  bgGrid:         BgGridConfig
-  bgGradientOpacity: number    // 0–1 multiplier for body radial blobs
-}
-
-// ─── Hero Scene (3D Globe) ────────────────────────────────────────────────────
-
-export interface HeroSceneConfig {
-  enabled: boolean
-  tierOverride: 'auto' | 'low' | 'balanced' | 'high'
-  particleCount: number       // 100–2500
-  lineCount: number           // 5–80
-  sphereRadius: number        // 0.8–3.0
-  backgroundOpacity: number   // 0–0.6
-  parallaxStrength: number    // 0–0.5
-  rotationSpeed: number       // 0–0.2
-  colorA: string              // primary holo color hex
-  colorB: string              // secondary holo color hex
-  postFxBloom: boolean
-  postFxVignette: boolean
-  animated: boolean
-}
-
-// ─── Per-Page Effects Map ─────────────────────────────────────────────────────
-
-export interface PageEffectSlot {
-  scene3d: boolean
-  particles: boolean
-  parallax: boolean
-  grain: boolean
-}
-
-export type PageEffectsMap = Record<string, PageEffectSlot>
 
 // ─── Intelligence Feeds ───────────────────────────────────────────────────────
 

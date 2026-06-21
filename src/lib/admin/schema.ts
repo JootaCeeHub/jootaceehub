@@ -106,6 +106,8 @@ export const SiteConfigSchema = z.object({
   enableAnalytics: z.boolean(),
   enableTelemetry: z.boolean(),
   maintenanceMode: z.boolean(),
+  contentApiUrl: z.string().optional().default(''),
+  contentApiEnabled: z.boolean().optional().default(false),
 })
 
 export const SeoConfigSchema = z.object({

@@ -19,8 +19,15 @@ export const VPS_TOKEN_KEY = 'jootacee-vps-token'
 // URL resolver
 // ---------------------------------------------------------------------------
 
+/** Runtime override set from admin state when NEXT_PUBLIC_CONTENT_API_URL is absent */
+let _urlOverride: string | null = null
+
+export function setApiUrlOverride(url: string | null): void {
+  _urlOverride = url || null
+}
+
 export function getApiUrl(): string | null {
-  return process.env['NEXT_PUBLIC_CONTENT_API_URL'] ?? null
+  return process.env['NEXT_PUBLIC_CONTENT_API_URL'] ?? _urlOverride ?? null
 }
 
 export function isApiConfigured(): boolean {

@@ -14,7 +14,7 @@ import { useVPSWrite, type VPSContentType } from '@/hooks/useVPSWrite'
 import { apiGitLog, apiGitStatus, apiGitCommit } from '@/lib/api/git'
 import { apiBuildHistory, apiBuildTrigger } from '@/lib/api/build'
 import { apiReadAudit } from '@/lib/api/audit'
-import { isApiConfigured } from '@/lib/api/client'
+import { isApiConfigured, setApiUrlOverride } from '@/lib/api/client'
 import type { GitLogEntry, GitStatus, BuildJob, AuditEntry } from '@/lib/api/types'
 
 // ─── Section wrapper ──────────────────────────────────────────────────────────
@@ -67,6 +67,15 @@ export default function VPSPanel() {
   const [buildHistory, setBuildHistory] = useState<BuildJob[]>([])
   const [auditLog, setAuditLog] = useState<AuditEntry[]>([])
   const [loading, setLoading] = useState(false)
+
+  // Sync admin-configured URL override → API client (fills in when env var is absent)
+  useEffect(() => {
+    if (!process.env['NEXT_PUBLIC_CONTENT_API_URL'] && state.site.contentApiEnabled) {
+      setApiUrlOverride(state.site.contentApiUrl || null)
+    } else {
+      setApiUrlOverride(null)
+    }
+  }, [state.site.contentApiUrl, state.site.contentApiEnabled])
 
   const configured = isApiConfigured()
 

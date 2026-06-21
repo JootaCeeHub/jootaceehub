@@ -109,6 +109,8 @@ export const createInitialState = (): AdminState => ({
     enableAnalytics: true,
     enableTelemetry: true,
     maintenanceMode: false,
+    contentApiUrl: '',
+    contentApiEnabled: false,
   },
   seo: {
     titleTemplate: '%s | JootaCee',
