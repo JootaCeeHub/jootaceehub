@@ -10,6 +10,10 @@ export type Tab =
   | 'errors'
   | 'history'
   | 'insights'
+  | 'global'
+  | 'audit'
+  // Legacy phase tabs — kept for backward compat but hidden in UI
+  | 'phase1'
   | 'phase2'
   | 'phase3'
   | 'phase4'
@@ -19,7 +23,9 @@ export type Tab =
   | 'phase3cms'
   | 'phase3vps'
   | 'phase4admin'
+  | 'phase4perf'
   | 'phase5supabase'
+  | 'phase5launch'
 
 export type CWVStatus = 'good' | 'needs-improvement' | 'poor'
 

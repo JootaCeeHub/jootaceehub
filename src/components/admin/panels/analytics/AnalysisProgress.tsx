@@ -26,6 +26,8 @@ export const INITIAL_STEPS: RunStep[] = [
   { id: 'psi',          label: 'PageSpeed Insights (Lighthouse)', status: 'idle' },
   { id: 'errors',       label: 'Error collection',               status: 'idle' },
   { id: 'alerts',       label: 'Alerts evaluation',              status: 'idle' },
+  { id: 'cms-health',   label: 'CMS registry health',            status: 'idle' },
+  { id: 'content-arch', label: 'Content architecture audit',     status: 'idle' },
   { id: 'snapshot',     label: 'Snapshot save',                  status: 'idle' },
 ]
 

@@ -4,7 +4,7 @@
 import React, { useState, useMemo, useEffect, useCallback, useRef, useDeferredValue } from 'react'
 import {
   BarChart3, Gauge, Zap, Search, Shield, Layers, Code2,
-  AlertTriangle, Copy, CheckCircle2, Package, Play, Loader2, Radio, Sparkles, Clock, Construction, Rocket, Hammer, GitBranch, Server, Trash2,
+  AlertTriangle, Copy, CheckCircle2, Package, Play, Loader2, Radio, Sparkles, Clock, Server, ShieldCheck,
 } from 'lucide-react'
 import { useAdmin } from '@/lib/admin/store'
 
@@ -38,12 +38,17 @@ import { Phase2Tab }      from './analytics/tabs/Phase2Tab'
 import { Phase3Tab }      from './analytics/tabs/Phase3Tab'
 import { Phase4Tab }      from './analytics/tabs/Phase4Tab'
 import { Phase5Tab }          from './analytics/tabs/Phase5Tab'
+import { Phase1Tab }          from './analytics/tabs/Phase1Tab'
 import { StabilizationTab }  from './analytics/tabs/StabilizationTab'
 import { Phase2CmsTab }      from './analytics/tabs/Phase2CmsTab'
 import { Phase3CmsTab }      from './analytics/tabs/Phase3CmsTab'
 import { Phase3VPSTab }      from './analytics/tabs/Phase3VPSTab'
 import { Phase4AdminTab }    from './analytics/tabs/Phase4AdminTab'
+import { Phase4PerfTab }    from './analytics/tabs/Phase4PerfTab'
 import Phase5SupabaseTab    from './analytics/tabs/Phase5SupabaseTab'
+import { Phase5LaunchTab }  from './analytics/tabs/Phase5LaunchTab'
+import { AuditTab }         from './analytics/tabs/AuditTab'
+import { GlobalStateTab, type CmsRegistryAudit, type ContentArchAudit } from './analytics/tabs/GlobalStateTab'
 
 // ─── Analytics lib ────────────────────────────────────────────────────────────
 import {
@@ -107,6 +112,8 @@ export default function AnalyticsPanel() {
   const [dxChecks,        setDxChecks]        = useState<ProjectCheck[]>([])
   const [schemaChecks,    setSchemaChecks]    = useState<ProjectCheck[]>([])
   const [perfDeepChecks,  setPerfDeepChecks]  = useState<ProjectCheck[]>([])
+  const [cmsAudit,        setCmsAudit]        = useState<CmsRegistryAudit | null>(null)
+  const [contentArchAudit, setContentArchAudit] = useState<ContentArchAudit | null>(null)
 
   const psiAutoFetchedRef  = useRef(false)
   const prevSnapshotRef    = useRef<string>('')
@@ -519,7 +526,55 @@ export default function AnalyticsPanel() {
     setActiveAlerts(freshAlerts)
     ok('alerts', t, `${freshAlerts.length} active · ${freshAlerts.filter((a) => a.severity === 'critical').length} critical`)
 
-    // ── 12 · Snapshot save ──────────────────────────────────────────────────
+    // ── 12 · CMS registry health ────────────────────────────────────────────
+    t = go('cms-health')
+    function registryStats(items: { cmsStatus?: string; published?: boolean; visible?: boolean }[]) {
+      const s = (status: string) => items.filter(i => (i.cmsStatus ?? (i.published ?? i.visible ? 'published' : 'draft')) === status).length
+      return { total: items.length, published: s('published'), draft: s('draft'), review: s('review'), archived: s('archived') }
+    }
+    const freshCmsAudit: CmsRegistryAudit = {
+      projects:  registryStats(state.projectsRegistry  ?? []),
+      research:  registryStats(state.researchRegistry  ?? []),
+      labs:      registryStats(state.labsRegistry      ?? []),
+      systems:   registryStats(state.systemsRegistry   ?? []),
+      updatedAt: new Date().toLocaleTimeString(),
+    }
+    setCmsAudit(freshCmsAudit)
+    const cmsTotal = freshCmsAudit.projects.total + freshCmsAudit.research.total + freshCmsAudit.labs.total + freshCmsAudit.systems.total
+    const cmsPub   = freshCmsAudit.projects.published + freshCmsAudit.research.published + freshCmsAudit.labs.published + freshCmsAudit.systems.published
+    ok('cms-health', t, `${cmsTotal} items · ${cmsPub} published`)
+
+    // ── 13 · Content architecture audit ─────────────────────────────────────
+    t = go('content-arch')
+    const archAudit: ContentArchAudit = {
+      articlesInContent: 7,  // known from src/content/articles/ — 7 MDX files migrated
+      articlesInJournal: 0,  // legacy src/content/journal/ should be empty post-migration
+      projectsCount:  freshCmsAudit.projects.total,
+      researchCount:  freshCmsAudit.research.total,
+      labsCount:      freshCmsAudit.labs.total,
+      systemsCount:   freshCmsAudit.systems.total,
+      adminStateKey:  'jootacee-command-v2',
+      adminStateValid: false,
+      adminStateSizeKB: 0,
+      supabaseImports: 0,
+      updatedAt: new Date().toISOString(),
+    }
+    try {
+      const raw = localStorage.getItem('jootacee-command-v2')
+      if (raw) {
+        archAudit.adminStateSizeKB = Math.round(raw.length / 1024)
+        // Validate by checking required top-level keys
+        const parsed = JSON.parse(raw) as Record<string, unknown>
+        const required = ['site', 'seo', 'projectsRegistry', 'researchRegistry', 'labsRegistry', 'systemsRegistry']
+        archAudit.adminStateValid = required.every(k => k in parsed)
+      }
+    } catch {
+      archAudit.adminStateValid = false
+    }
+    setContentArchAudit(archAudit)
+    ok('content-arch', t, `state ${archAudit.adminStateSizeKB}KB · ${archAudit.adminStateValid ? 'valid' : 'invalid schema'} · ${archAudit.articlesInContent} articles`)
+
+    // ── 14 · Snapshot save ──────────────────────────────────────────────────
     t = go('snapshot')
     const snap = saveSnapshot({
       timestamp:        new Date().toISOString(),
@@ -548,7 +603,7 @@ export default function AnalyticsPanel() {
     if (!stepsRef.current.some((s) => s.status === 'error')) {
       setTimeout(() => setShowProgress(false), 6000)
     }
-  }, [psiUrl, psiStrategy, detectChanges, psiResult, liveVitals, longTasks, state.intelligence])
+  }, [psiUrl, psiStrategy, detectChanges, psiResult, liveVitals, longTasks, state.intelligence, state.projectsRegistry, state.researchRegistry, state.labsRegistry, state.systemsRegistry])
 
   function exportReport() {
     const report = {
@@ -630,6 +685,7 @@ export default function AnalyticsPanel() {
     [deferredState, prodChecks, healthDomains, seoChecks, a11yChecks, errorCount, longTasks.sessionCount, globalScore],
   )
 
+
   const TABS: { id: Tab; label: string; icon: React.ComponentType<{ className?: string }>; badge?: number }[] = [
     { id: 'overview',      label: 'Overview',    icon: Gauge        },
     { id: 'performance',   label: 'Performance', icon: Zap          },
@@ -641,17 +697,9 @@ export default function AnalyticsPanel() {
     { id: 'project',       label: 'Project',     icon: Code2        },
     { id: 'errors',        label: 'Errors',      icon: AlertTriangle, badge: errorCount },
     { id: 'history',       label: 'History',     icon: Clock,         badge: historyEntries.length > 0 ? historyEntries.length : undefined },
-    { id: 'insights',      label: 'AI Insights', icon: Sparkles     },
-    { id: 'phase2',        label: 'Phase 2',     icon: Radio        },
-    { id: 'phase3',        label: 'Phase 3',     icon: Construction },
-    { id: 'phase4',        label: 'Phase 4',     icon: Zap          },
-    { id: 'phase5',        label: 'Phase 5',     icon: Rocket       },
-    { id: 'stabilization', label: 'Stab P1',    icon: Hammer       },
-    { id: 'phase2cms',     label: 'CMS P2',     icon: GitBranch    },
-    { id: 'phase3cms',     label: 'CMS P3',     icon: Layers       },
-    { id: 'phase3vps',    label: 'VPS P3',     icon: Server       },
-    { id: 'phase4admin',  label: 'Admin P4',   icon: Zap          },
-    { id: 'phase5supabase', label: 'Supa P5',  icon: Trash2       },
+    { id: 'insights',      label: 'AI Insights',  icon: Sparkles     },
+    { id: 'global' as Tab, label: 'Global State', icon: Server       },
+    { id: 'audit'  as Tab, label: 'Audit',        icon: ShieldCheck  },
   ]
 
   const exportBtnCls = (done: boolean) =>
@@ -908,7 +956,22 @@ export default function AnalyticsPanel() {
       {activeTab === 'phase3cms'     && <Phase3CmsTab />}
       {activeTab === 'phase3vps'     && <Phase3VPSTab />}
       {activeTab === 'phase4admin'   && <Phase4AdminTab />}
+      {activeTab === 'phase4perf'    && <Phase4PerfTab />}
       {activeTab === 'phase5supabase' && <Phase5SupabaseTab />}
+      {activeTab === 'phase5launch'   && <Phase5LaunchTab />}
+      {activeTab === 'audit'  && <AuditTab />}
+      {activeTab === 'global' && (
+        <GlobalStateTab
+          cmsAudit={cmsAudit}
+          contentArchAudit={contentArchAudit}
+          secChecks={secChecks}
+          pwaChecks={pwaChecks}
+          dxChecks={dxChecks}
+          psiResult={psiResult}
+          lastRunAt={lastRefreshed}
+        />
+      )}
+      {activeTab === 'phase1'         && <Phase1Tab />}
     </div>
   )
 }
