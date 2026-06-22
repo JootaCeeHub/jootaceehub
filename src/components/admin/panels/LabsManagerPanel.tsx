@@ -327,7 +327,7 @@ export default function LabsManagerPanel() {
           </div>
         )}
         {filtered.map((lab) => {
-          const sm = STATUS_META[lab.status]
+          const sm = STATUS_META[lab.status] ?? STATUS_META['roadmap']
           const isOpen = expanded === lab.key
           return (
             <div
