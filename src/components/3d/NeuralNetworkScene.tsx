@@ -366,8 +366,8 @@ export default function NeuralNetworkScene({ initialTier }: { initialTier?: Devi
       <Canvas
         frameloop={frameloop}
         camera={{ position: [0, 0, 6], fov: 58 }}
-        gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
-        dpr={[1, 1.5]}
+        gl={{ antialias: config.tier === 'high', alpha: true, powerPreference: config.tier === 'low' ? 'default' : 'high-performance' }}
+        dpr={config.tier === 'high' ? [1, 2] : [1, 1]}
         performance={{ min: 0.5 }}
       >
         <fog attach="fog" args={['#04060b', 6, 22]} />

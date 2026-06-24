@@ -35,6 +35,7 @@ import { SignalBar }            from './command/SignalBar'
 import { AlertsSection }        from './command/AlertsSection'
 import { PendingBoard }         from './command/PendingBoard'
 import { PanelStatusMap }       from './command/PanelStatusMap'
+import { SiteHealthSummary }   from './command/SiteHealthSummary'
 
 // Pure utils
 import {
@@ -385,14 +386,16 @@ export default function CommandPanel() {
 
         <div className={s.quickRow} style={{ marginTop: '10px' }}>
           {([
-            { label: 'Projects',     panel: 'projects'     as const, color: '#a78bfa' },
-            { label: 'Research',     panel: 'research'     as const, color: '#34d399' },
-            { label: 'GitHub',       panel: 'github'       as const, color: '#e2e8f0' },
-            { label: 'SEO',          panel: 'seo'          as const, color: '#60a5fa' },
-            { label: 'Design',       panel: 'design'       as const, color: '#818cf8' },
-            { label: 'Integrations', panel: 'integrations' as const, color: '#fb923c' },
-            { label: 'Analytics',    panel: 'analytics'    as const, color: '#f43f5e' },
-            { label: 'AI',           panel: 'ai'           as const, color: '#c084fc' },
+            { label: 'Proyectos',      panel: 'projects'     as const, color: '#a78bfa' },
+            { label: 'Research',       panel: 'research'     as const, color: '#34d399' },
+            { label: 'GitHub',         panel: 'github'       as const, color: '#e2e8f0' },
+            { label: 'SEO',            panel: 'seo'          as const, color: '#60a5fa' },
+            { label: 'Diseño',         panel: 'design'       as const, color: '#818cf8' },
+            { label: 'Integraciones',  panel: 'integrations' as const, color: '#fb923c' },
+            { label: 'Analytics',      panel: 'analytics'    as const, color: '#f43f5e' },
+            { label: 'AI',             panel: 'ai'           as const, color: '#c084fc' },
+            { label: 'Site Content',   panel: 'content'      as const, color: '#22d3ee' },
+            { label: 'Labs',           panel: 'labs'         as const, color: '#f59e0b' },
           ]).map(({ label, panel, color }) => (
             <button key={label} onClick={() => dispatch({ type: 'SET_PANEL', payload: panel })} className={s.quickBtn(color)}>
               <span className={s.quickBtnDot} style={{ background: color }} />
@@ -416,6 +419,9 @@ export default function CommandPanel() {
           dispatch({ type: 'SET_PANEL', payload: 'pages' })
         }} />
       </div>
+
+      {/* ── Site Health Summary ────────────────────────────────────────────── */}
+      <SiteHealthSummary />
 
       {/* ── Live Signal Bar (extracted) ────────────────────────────────────── */}
       <SignalBar
@@ -477,28 +483,51 @@ export default function CommandPanel() {
 
       {/* ── Activity Feed + Quick Nav ──────────────────────────────────────── */}
       <div className={s.twoCol}>
+        {/* Activity timeline */}
         <div className={s.card}>
           <div className={s.cardHeader}>
             <span className={s.cardTitle}>Activity Feed</span>
-            <span className={s.cardBadge}>{activity.length} events</span>
+            <span className={s.cardBadge}>{activity.length} eventos</span>
           </div>
-          <div className={s.activityList}>
-            {activity.map((item, i) => {
-              const Icon = item.icon
-              return (
-                <div key={i} className={s.activityItem}>
-                  <div className={s.activityIcon(item.severity)}><Icon className="h-3 w-3" /></div>
-                  <div className={s.activityMeta}>
-                    <div className={s.activityMsg}>{item.msg}</div>
-                    {item.sub && <div className={s.activitySub}>{item.sub}</div>}
-                  </div>
-                  {item.time && <span className={s.activityTime}>{item.time}</span>}
+          <div className="relative px-4 py-2">
+            {/* Timeline line */}
+            <div className="absolute left-[27px] top-0 bottom-0 w-px bg-white/6" />
+            <div className="space-y-0.5">
+              {activity.length === 0 && (
+                <div className="flex items-center gap-2 py-3 font-mono text-[9px] text-white/20">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                  Sesión limpia — sin eventos
                 </div>
-              )
-            })}
+              )}
+              {activity.map((item, i) => {
+                const Icon = item.icon
+                const severityMap: Record<string, { ring: string; bg: string; text: string }> = {
+                  success: { ring: 'border-emerald-400/25', bg: 'bg-emerald-400/10', text: 'text-emerald-400' },
+                  info:    { ring: 'border-sky-400/25',     bg: 'bg-sky-400/10',     text: 'text-sky-400'    },
+                  warning: { ring: 'border-amber-400/25',   bg: 'bg-amber-400/10',   text: 'text-amber-400'  },
+                  error:   { ring: 'border-red-400/25',     bg: 'bg-red-400/10',     text: 'text-red-400'    },
+                }
+                const sty = severityMap[item.severity] ?? severityMap.info
+                return (
+                  <div key={i} className="flex items-start gap-3 py-1.5 group">
+                    <div className={`relative z-10 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${sty.ring} ${sty.bg} mt-0.5`}>
+                      <Icon className={`h-2.5 w-2.5 ${sty.text}`} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-mono text-[10px] text-white/65 leading-snug group-hover:text-white/80 transition-colors">{item.msg}</div>
+                      {item.sub && <div className="font-mono text-[8.5px] text-white/22 mt-0.5 truncate">{item.sub}</div>}
+                    </div>
+                    {item.time && (
+                      <span className="shrink-0 font-mono text-[8px] text-white/18 mt-0.5">{item.time}</span>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
           </div>
         </div>
 
+        {/* Panel navigator */}
         <div className={s.card}>
           <div className={s.cardHeader}>
             <span className={s.cardTitle}>Gestionar paneles</span>

@@ -1,4 +1,4 @@
-import { getAllMeta, getFeaturedArticle } from '@/lib/journal/articles'
+import { getAllMeta, getFeaturedArticle } from '@/lib/content/loaders'
 import ResearchPageClient from './ResearchPageClient'
 
 export default function ResearchPage() {

@@ -2,7 +2,7 @@ import { DomainLayout } from '@/components/layout/DomainLayout'
 import { JournalHeader } from '@/components/journal/JournalHeader'
 import { ArticleCard } from '@/components/journal/ArticleCard'
 import { StaggerReveal } from '@/components/shared/ScrollReveal'
-import { getAllMeta } from '@/lib/journal/articles'
+import { getAllMeta } from '@/lib/content/loaders'
 export default function EssaysPage() {
   const meta = getAllMeta().filter((a) => a.category === 'essays')
 

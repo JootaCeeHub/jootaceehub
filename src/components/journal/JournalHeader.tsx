@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useLocale, useTranslations } from '@/lib/i18n/context'
 import { DomainBreadcrumb } from '@/components/layout/DomainBreadcrumb'
-import type { ArticleCategory } from '@/lib/journal/types'
+import type { ArticleCategory } from '@/lib/content/loaders'
 
 const CATEGORY_KEYS: ArticleCategory[] = ['opinion', 'research', 'essays', 'news']
 

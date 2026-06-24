@@ -6,7 +6,7 @@ import { Card, ScoreRing, AuditRow } from '../shared-components'
 import { RECOMMENDATIONS, STATIC_LIGHTHOUSE } from '../constants'
 import { isPSIOnCooldown, staleLabel } from '../psi-cache'
 import type { PSIResult } from '@/lib/analytics/pagespeed'
-import type { AuditCheck } from '@/lib/analytics/scoring'
+import type { AuditCheck, AIAnalysisResult } from '@/lib/analytics/scoring'
 import type { HealthDomain } from '@/lib/analytics/scoring'
 import type { Tab } from '../types'
 
@@ -38,6 +38,7 @@ interface Props {
   setActiveTab: (tab: Tab) => void
   psiCountdown: number
   onBuildDataLoaded?: (result: PSIResult, cachedAt: string) => void
+  aiAnalysis?: AIAnalysisResult | null
 }
 
 const psiInlineScoreCls = (score: number) =>
@@ -70,7 +71,7 @@ export function OverviewTab({
   healthDomains, globalScore, prodScore, programScore,
   totalHealthPasses, totalHealthItems,
   setPsiExpanded, setPsiUrl, setPsiStrategy, fetchPSI, setActiveTab,
-  psiCountdown, onBuildDataLoaded,
+  psiCountdown, onBuildDataLoaded, aiAnalysis,
 }: Props) {
   const is429        = !!(psiResult?.error?.includes('429'))
   const hasRealScore = lighthouseScores.length > 0
@@ -406,21 +407,56 @@ export function OverviewTab({
         </div>
       )}
 
-      <Card dot="#f59e0b" title="Top recommendations · critical">
-        <div className="space-y-2">
-          {RECOMMENDATIONS.filter((r) => r.priority === 'high').map((r) => (
-            <div key={r.title} className={recItemCls(r.priority)}>
-              <div className={recDotCls(r.priority)} />
-              <div>
-                <div className="text-[11px] font-medium text-white/70">{r.title}</div>
-                <div className="mt-0.5 font-mono text-[9px] text-white/30 leading-relaxed">{r.desc}</div>
-                {r.code && <pre className="mt-1.5 overflow-x-auto rounded-md border border-white/6 bg-black/40 px-2.5 py-2 font-mono text-[8.5px] text-emerald-400/70 leading-relaxed whitespace-pre">{r.code}</pre>}
+      {aiAnalysis && aiAnalysis.priorityQueue.length > 0 ? (
+        <Card dot="#f59e0b" title={`Top recommendations · ${aiAnalysis.priorityQueue.filter(i => i.impact === 'critical' || i.impact === 'high').length} critical · from AI analysis`}>
+          <div className="space-y-2">
+            {aiAnalysis.priorityQueue
+              .filter((item) => item.impact === 'critical' || item.impact === 'high')
+              .slice(0, 5)
+              .map((item) => {
+                const p = item.impact === 'critical' ? 'high' : item.impact === 'high' ? 'medium' : 'low'
+                return (
+                  <div key={item.title} className={recItemCls(p)}>
+                    <div className={recDotCls(p)} />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <div className="text-[11px] font-medium text-white/70">{item.title}</div>
+                        <span className="shrink-0 rounded border border-white/10 bg-white/4 px-1.5 py-0.5 font-mono text-[7.5px] uppercase tracking-wider text-white/35">{item.domain}</span>
+                      </div>
+                      <div className="mt-0.5 font-mono text-[9px] text-white/30 leading-relaxed">{item.context}</div>
+                      <div className="mt-1 flex items-center gap-2">
+                        <span className="font-mono text-[7.5px] uppercase tracking-wider text-white/25">Effort:</span>
+                        <span className={`font-mono text-[7.5px] uppercase tracking-wider ${item.effort === 'low' ? 'text-emerald-400/60' : item.effort === 'medium' ? 'text-amber-400/60' : 'text-rose-400/60'}`}>{item.effort}</span>
+                        <span className="font-mono text-[7.5px] text-white/20">· rank #{item.rank}</span>
+                      </div>
+                    </div>
+                    <span className={recPriorityCls(p)}>{item.impact}</span>
+                  </div>
+                )
+              })}
+          </div>
+          <button onClick={() => setActiveTab('insights')} className="mt-2 block w-full pt-1 text-center font-mono text-[9px] text-white/25 hover:text-rose-400 transition-colors">
+            Full AI analysis in Insights tab →
+          </button>
+        </Card>
+      ) : (
+        <Card dot="#f59e0b" title="Top recommendations · critical">
+          <div className="space-y-2">
+            {RECOMMENDATIONS.filter((r) => r.priority === 'high').map((r) => (
+              <div key={r.title} className={recItemCls(r.priority)}>
+                <div className={recDotCls(r.priority)} />
+                <div>
+                  <div className="text-[11px] font-medium text-white/70">{r.title}</div>
+                  <div className="mt-0.5 font-mono text-[9px] text-white/30 leading-relaxed">{r.desc}</div>
+                  {r.code && <pre className="mt-1.5 overflow-x-auto rounded-md border border-white/6 bg-black/40 px-2.5 py-2 font-mono text-[8.5px] text-emerald-400/70 leading-relaxed whitespace-pre">{r.code}</pre>}
+                </div>
+                <span className={recPriorityCls(r.priority)}>{r.priority}</span>
               </div>
-              <span className={recPriorityCls(r.priority)}>{r.priority}</span>
-            </div>
-          ))}
-        </div>
-      </Card>
+            ))}
+          </div>
+          <p className="mt-2 font-mono text-[8.5px] text-white/20">Run Analysis to generate AI-powered recommendations from live audit data.</p>
+        </Card>
+      )}
     </div>
   )
 }

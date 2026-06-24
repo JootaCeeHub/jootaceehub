@@ -3,6 +3,7 @@
 import React from 'react'
 import { ErrorFallback } from './ErrorFallback'
 import { reportError } from '@/lib/error'
+import { captureException, addBreadcrumb } from '@/lib/monitoring/sentry'
 
 interface SectionErrorBoundaryProps {
   children: React.ReactNode
@@ -25,10 +26,15 @@ export class SectionErrorBoundary extends React.Component<SectionErrorBoundaryPr
   }
 
   override componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    reportError(error, {
+    const ctx = {
       section: this.props.sectionName,
       componentStack: errorInfo.componentStack,
-    })
+    }
+    // 1. Internal error taxonomy (logs + reportError routing)
+    reportError(error, ctx)
+    // 2. Sentry — adds section + component stack to the event
+    addBreadcrumb(`Section crashed: ${this.props.sectionName}`, 'ui.error')
+    captureException(error, ctx)
   }
 
   render() {

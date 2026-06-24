@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { useTranslations, useLocale } from '@/lib/i18n/context'
 import { ScrollReveal } from '@/components/shared/ScrollReveal'
-import type { ArticleMeta } from '@/lib/journal/types'
+import type { ArticleMeta } from '@/lib/content/loaders'
 
 const MAX_READ_MINUTES = 10
 

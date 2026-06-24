@@ -36,17 +36,16 @@ const STATIC_ROUTES = [
   { path: '/intelligence',   changefreq: 'daily',   priority: '0.7' },
 ]
 
-// ── Read article slugs from src/content/journal/ MDX files ──────────────────
-// ADR-008: canonical content lives in src/content/journal/ (legacy path,
-// Phase 3 migration target is articles/ — when migration is complete, update dir below)
+// ── Read article slugs from src/content/articles/ MDX files ─────────────────
+// ADR-008 + Phase 2 migration: canonical content lives in src/content/articles/
 function readArticleSlugs() {
-  const journalDir = join(root, 'src', 'content', 'journal')
+  const articlesDir = join(root, 'src', 'content', 'articles')
   try {
-    return readdirSync(journalDir)
+    return readdirSync(articlesDir)
       .filter(f => extname(f) === '.mdx')
       .map(f => basename(f, '.mdx'))
   } catch {
-    console.warn('[sitemap] src/content/journal/ not found — skipping journal routes')
+    console.warn('[sitemap] src/content/articles/ not found — skipping journal routes')
     return []
   }
 }

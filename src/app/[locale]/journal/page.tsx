@@ -2,7 +2,7 @@ import { DomainLayout } from '@/components/layout/DomainLayout'
 import { JournalHeader } from '@/components/journal/JournalHeader'
 import { ArticleCard } from '@/components/journal/ArticleCard'
 import { StaggerReveal } from '@/components/shared/ScrollReveal'
-import { getAllMeta, getFeaturedArticle } from '@/lib/journal/articles'
+import { getAllMeta, getFeaturedArticle } from '@/lib/content/loaders'
 export default function JournalPage() {
   const featured = getFeaturedArticle()
   const all = getAllMeta()

@@ -9,7 +9,7 @@
  * features during `next build`.
  */
 
-import { getAllMeta } from '@/lib/journal/articles'
+import { getAllMeta } from '@/lib/content/loaders'
 import { articleToContentItem } from '@/lib/content/types'
 import { applyContentFilter } from '@/lib/content/repository'
 import type { ContentItem, ContentLocale } from '@/lib/content/types'
@@ -17,7 +17,7 @@ import type { ContentFilter, ContentRepository } from '@/lib/content/repository'
 
 /**
  * Create an in-memory ContentRepository<ContentItem> backed by all MDX articles
- * in src/content/journal/.
+ * in src/content/articles/.
  *
  * Call once at module level (or inside generateStaticParams) — loading is
  * synchronous and cached by the module system.

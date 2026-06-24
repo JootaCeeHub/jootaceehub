@@ -31,6 +31,7 @@ export async function generateMetadata({
     alternates: {
       canonical: `/${locale}/`,
       languages: {
+        'x-default': '/en/',
         en: '/en/',
         es: '/es/',
       },
@@ -68,6 +69,7 @@ export async function generateMetadata({
     openGraph: {
       type: 'website',
       locale: locale === 'es' ? 'es_ES' : 'en_US',
+      alternateLocale: locale === 'es' ? ['en_US'] : ['es_ES'],
       url: `${defaultMeta.canonicalBase}/${locale}/`,
       siteName: 'JootaCee',
       title: meta?.title || defaultMeta.title,
@@ -138,6 +140,19 @@ export default async function LocaleLayout({
   const { locale } = await params
   const messages = messagesMap[locale] || messagesEn
 
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: `${defaultMeta.canonicalBase}/${locale}/`,
+      },
+    ],
+  }
+
   return (
     <>
       {/* JSON-LD structured data — must live outside Client Components to render in React 19 */}
@@ -148,6 +163,10 @@ export default async function LocaleLayout({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
       <I18nProvider key={locale} locale={locale} messages={messages}>
         <DocumentLang locale={locale} />

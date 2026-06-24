@@ -39,8 +39,16 @@ describe('ALL_CATEGORIES', () => {
 })
 
 describe('ALL_SERIES', () => {
-  it('is an empty array (Phase 3 placeholder)', () => {
-    expect(ALL_SERIES).toEqual([])
+  it('loads series from canonical JSON', () => {
+    expect(Array.isArray(ALL_SERIES)).toBe(true)
+  })
+
+  it('every series has slug, label, and items', () => {
+    for (const s of ALL_SERIES) {
+      expect(s.slug).toBeTruthy()
+      expect(s.label).toBeTruthy()
+      expect(Array.isArray(s.items)).toBe(true)
+    }
   })
 })
 

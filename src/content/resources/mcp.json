@@ -63,6 +63,13 @@
     "toolCount": 1
   },
   {
+    "id": "mcp-everything",
+    "name": "everything",
+    "cat": "official",
+    "install": "npx @modelcontextprotocol/server-everything",
+    "toolCount": 8
+  },
+  {
     "id": "mcp-mysql",
     "name": "mysql",
     "cat": "database",
@@ -91,6 +98,13 @@
     "toolCount": 3
   },
   {
+    "id": "mcp-prisma",
+    "name": "prisma",
+    "cat": "database",
+    "install": "npx @prisma/mcp-server",
+    "toolCount": 5
+  },
+  {
     "id": "mcp-google-drive",
     "name": "google-drive",
     "cat": "productivity",
@@ -109,6 +123,34 @@
     "name": "linear",
     "cat": "productivity",
     "install": "npx @linear/mcp-server",
+    "toolCount": 4
+  },
+  {
+    "id": "mcp-airtable",
+    "name": "airtable",
+    "cat": "productivity",
+    "install": "npx mcp-server-airtable",
+    "toolCount": 5
+  },
+  {
+    "id": "mcp-jira",
+    "name": "jira",
+    "cat": "productivity",
+    "install": "npx @atlassian/mcp-server-jira",
+    "toolCount": 6
+  },
+  {
+    "id": "mcp-confluence",
+    "name": "confluence",
+    "cat": "productivity",
+    "install": "npx @atlassian/mcp-server-confluence",
+    "toolCount": 4
+  },
+  {
+    "id": "mcp-google-calendar",
+    "name": "google-calendar",
+    "cat": "productivity",
+    "install": "npx mcp-server-google-calendar",
     "toolCount": 4
   },
   {
@@ -147,6 +189,27 @@
     "toolCount": 5
   },
   {
+    "id": "mcp-vercel",
+    "name": "vercel",
+    "cat": "devops",
+    "install": "npx @vercel/mcp-server",
+    "toolCount": 7
+  },
+  {
+    "id": "mcp-terraform",
+    "name": "terraform",
+    "cat": "devops",
+    "install": "npx mcp-server-terraform",
+    "toolCount": 5
+  },
+  {
+    "id": "mcp-aws",
+    "name": "aws-kb-retrieval",
+    "cat": "devops",
+    "install": "npx @aws/mcp-server-aws-kb-retrieval",
+    "toolCount": 3
+  },
+  {
     "id": "mcp-tavily",
     "name": "tavily",
     "cat": "ai",
@@ -161,6 +224,55 @@
     "toolCount": 4
   },
   {
+    "id": "mcp-firecrawl",
+    "name": "firecrawl",
+    "cat": "ai",
+    "install": "npx firecrawl-mcp",
+    "toolCount": 5
+  },
+  {
+    "id": "mcp-exa",
+    "name": "exa",
+    "cat": "ai",
+    "install": "npx exa-mcp-server",
+    "toolCount": 3
+  },
+  {
+    "id": "mcp-perplexity",
+    "name": "perplexity",
+    "cat": "ai",
+    "install": "npx mcp-server-perplexity",
+    "toolCount": 2
+  },
+  {
+    "id": "mcp-e2b",
+    "name": "e2b-code-interpreter",
+    "cat": "ai",
+    "install": "npx @e2b/mcp-server",
+    "toolCount": 3
+  },
+  {
+    "id": "mcp-anthropic",
+    "name": "claude-code",
+    "cat": "ai",
+    "install": "npx @anthropic-ai/mcp-server",
+    "toolCount": 4
+  },
+  {
+    "id": "mcp-openai",
+    "name": "openai",
+    "cat": "ai",
+    "install": "npx mcp-server-openai",
+    "toolCount": 4
+  },
+  {
+    "id": "mcp-huggingface",
+    "name": "huggingface",
+    "cat": "ai",
+    "install": "npx mcp-server-huggingface",
+    "toolCount": 5
+  },
+  {
     "id": "mcp-slack",
     "name": "slack",
     "cat": "communication",
@@ -173,5 +285,320 @@
     "cat": "communication",
     "install": "npx mcp-server-gmail",
     "toolCount": 5
+  },
+  {
+    "id": "mcp-discord",
+    "name": "discord",
+    "cat": "communication",
+    "install": "npx mcp-server-discord",
+    "toolCount": 4
+  },
+  {
+    "id": "mcp-telegram",
+    "name": "telegram",
+    "cat": "communication",
+    "install": "npx mcp-server-telegram",
+    "toolCount": 3
+  },
+  {
+    "id": "mcp-twitter",
+    "name": "twitter",
+    "cat": "communication",
+    "install": "npx mcp-server-twitter",
+    "toolCount": 4
+  },
+  {
+    "id": "mcp-figma",
+    "name": "figma",
+    "cat": "design",
+    "install": "npx mcp-server-figma",
+    "toolCount": 6
+  },
+  {
+    "id": "mcp-google-maps",
+    "name": "google-maps",
+    "cat": "web",
+    "install": "npx @modelcontextprotocol/server-google-maps",
+    "toolCount": 3
+  },
+  {
+    "id": "mcp-youtube",
+    "name": "youtube",
+    "cat": "web",
+    "install": "npx mcp-server-youtube",
+    "toolCount": 3
+  },
+  {
+    "id": "mcp-playwright",
+    "name": "playwright",
+    "cat": "web",
+    "install": "npx mcp-server-playwright",
+    "toolCount": 8
+  },
+  {
+    "id": "mcp-graphql",
+    "name": "graphql",
+    "cat": "web",
+    "install": "npx mcp-server-graphql",
+    "toolCount": 4
+  },
+  {
+    "id": "mcp-obsidian",
+    "name": "obsidian",
+    "cat": "knowledge",
+    "install": "npx mcp-obsidian",
+    "toolCount": 5
+  },
+  {
+    "id": "mcp-chrome-devtools",
+    "name": "chrome-devtools",
+    "cat": "web",
+    "install": "npx @anthropic-ai/mcp-server-chrome-devtools",
+    "toolCount": 22
+  },
+  {
+    "id": "mcp-airtable-ai",
+    "name": "airtable-ai",
+    "cat": "productivity",
+    "install": "npx @claude_ai/mcp-airtable",
+    "toolCount": 18
+  },
+  {
+    "id": "mcp-canva",
+    "name": "canva",
+    "cat": "design",
+    "install": "npx @claude_ai/mcp-canva",
+    "toolCount": 25
+  },
+  {
+    "id": "mcp-hubspot",
+    "name": "hubspot",
+    "cat": "marketing",
+    "install": "npx @claude_ai/mcp-hubspot",
+    "toolCount": 16
+  },
+  {
+    "id": "mcp-gamma",
+    "name": "gamma",
+    "cat": "design",
+    "install": "npx @claude_ai/mcp-gamma",
+    "toolCount": 12
+  },
+  {
+    "id": "mcp-mermaid",
+    "name": "mermaid-chart",
+    "cat": "design",
+    "install": "npx @mermaid-js/mcp-server",
+    "toolCount": 2
+  },
+  {
+    "id": "mcp-postman",
+    "name": "postman",
+    "cat": "devops",
+    "install": "npx @postman/mcp-server",
+    "toolCount": 30
+  },
+  {
+    "id": "mcp-apollo-io",
+    "name": "apollo-io",
+    "cat": "marketing",
+    "install": "npx @apollo_io/mcp-server",
+    "toolCount": 18
+  },
+  {
+    "id": "mcp-graphos",
+    "name": "graphos",
+    "cat": "devops",
+    "install": "npx @apollo/graphos-mcp-server",
+    "toolCount": 3
+  },
+  {
+    "id": "mcp-microsoft-learn",
+    "name": "microsoft-learn",
+    "cat": "knowledge",
+    "install": "npx @microsoft/mcp-server-learn",
+    "toolCount": 3
+  },
+  {
+    "id": "mcp-crypto",
+    "name": "crypto-com",
+    "cat": "finance",
+    "install": "npx @crypto_com/mcp-server",
+    "toolCount": 8
+  },
+  {
+    "id": "mcp-resend",
+    "name": "resend",
+    "cat": "communication",
+    "install": "npx resend-mcp",
+    "toolCount": 4
+  },
+  {
+    "id": "mcp-langchain",
+    "name": "langchain",
+    "cat": "ai",
+    "install": "npx @langchain/mcp-server",
+    "toolCount": 6
+  },
+  {
+    "id": "mcp-browserbase",
+    "name": "browserbase",
+    "cat": "web",
+    "install": "npx @browserbase/mcp-server",
+    "toolCount": 8
+  },
+  {
+    "id": "mcp-neon",
+    "name": "neon",
+    "cat": "database",
+    "install": "npx @neondatabase/mcp-server-neon",
+    "toolCount": 8
+  },
+  {
+    "id": "mcp-turso",
+    "name": "turso",
+    "cat": "database",
+    "install": "npx @turso/mcp-server",
+    "toolCount": 5
+  },
+  {
+    "id": "mcp-planetscale",
+    "name": "planetscale",
+    "cat": "database",
+    "install": "npx @planetscale/mcp-server",
+    "toolCount": 4
+  },
+  {
+    "id": "mcp-zendesk",
+    "name": "zendesk",
+    "cat": "communication",
+    "install": "npx mcp-server-zendesk",
+    "toolCount": 6
+  },
+  {
+    "id": "mcp-datadog",
+    "name": "datadog",
+    "cat": "devops",
+    "install": "npx mcp-server-datadog",
+    "toolCount": 7
+  },
+  {
+    "id": "mcp-pagerduty",
+    "name": "pagerduty",
+    "cat": "devops",
+    "install": "npx mcp-server-pagerduty",
+    "toolCount": 5
+  },
+  {
+    "id": "mcp-grafana",
+    "name": "grafana",
+    "cat": "devops",
+    "install": "npx mcp-server-grafana",
+    "toolCount": 6
+  },
+  {
+    "id": "mcp-github-actions",
+    "name": "github-actions",
+    "cat": "devops",
+    "install": "npx mcp-github-actions",
+    "toolCount": 4
+  },
+  {
+    "id": "mcp-nx",
+    "name": "nx",
+    "cat": "devops",
+    "install": "npx @nx/mcp-server",
+    "toolCount": 5
+  },
+  {
+    "id": "mcp-shadcn",
+    "name": "shadcn-ui",
+    "cat": "design",
+    "install": "npx mcp-server-shadcn",
+    "toolCount": 3
+  },
+  {
+    "id": "mcp-storybook",
+    "name": "storybook",
+    "cat": "design",
+    "install": "npx @storybook/mcp-server",
+    "toolCount": 4
+  },
+  {
+    "id": "mcp-vercel-ai",
+    "name": "vercel-ai-sdk",
+    "cat": "ai",
+    "install": "npx @ai-sdk/mcp-server",
+    "toolCount": 4
+  },
+  {
+    "id": "mcp-cohere",
+    "name": "cohere",
+    "cat": "ai",
+    "install": "npx mcp-server-cohere",
+    "toolCount": 3
+  },
+  {
+    "id": "mcp-replicate",
+    "name": "replicate",
+    "cat": "ai",
+    "install": "npx mcp-server-replicate",
+    "toolCount": 4
+  },
+  {
+    "id": "mcp-fal",
+    "name": "fal-ai",
+    "cat": "ai",
+    "install": "npx @fal-ai/mcp-server",
+    "toolCount": 5
+  },
+  {
+    "id": "mcp-elevenlabs",
+    "name": "elevenlabs",
+    "cat": "ai",
+    "install": "npx @elevenlabs/mcp-server",
+    "toolCount": 6
+  },
+  {
+    "id": "mcp-pinecone",
+    "name": "pinecone",
+    "cat": "ai",
+    "install": "npx mcp-server-pinecone",
+    "toolCount": 4
+  },
+  {
+    "id": "mcp-weaviate",
+    "name": "weaviate",
+    "cat": "ai",
+    "install": "npx mcp-server-weaviate",
+    "toolCount": 5
+  },
+  {
+    "id": "mcp-upstash",
+    "name": "upstash",
+    "cat": "database",
+    "install": "npx @upstash/mcp-server",
+    "toolCount": 6
+  },
+  {
+    "id": "mcp-expo",
+    "name": "expo",
+    "cat": "devops",
+    "install": "npx @expo/mcp-server",
+    "toolCount": 4
+  },
+  {
+    "id": "mcp-raycast",
+    "name": "raycast",
+    "cat": "productivity",
+    "install": "npx @raycast/mcp-server",
+    "toolCount": 5
+  },
+  {
+    "id": "mcp-linear-ai",
+    "name": "linear-ai",
+    "cat": "productivity",
+    "install": "npx mcp-linear-advanced",
+    "toolCount": 8
   }
 ]

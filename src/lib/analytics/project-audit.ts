@@ -169,7 +169,9 @@ export function runPerformanceDeepAudit(): ProjectCheck[] {
 
   // Check for render-blocking resources
   const renderBlockingLinks  = document.querySelectorAll('link[rel="stylesheet"]:not([media="print"])').length
-  const syncScripts          = document.querySelectorAll('script:not([async]):not([defer]):not([type="module"]):not([type="application/ld+json"])').length
+  // Count only external scripts with src= that are neither async/defer/module — inline scripts
+  // (Next.js hydration, JSON-LD, theme init) are excluded since they are framework-managed.
+  const syncScripts          = document.querySelectorAll('script[src]:not([async]):not([defer]):not([type="module"])').length
 
   // Check for image optimization signals
   const imgWithSizes = document.querySelectorAll('img[srcset]').length
@@ -200,7 +202,7 @@ export function runPerformanceDeepAudit(): ProjectCheck[] {
     { label: 'LCP image preload hint',    value: hasPreloadLCP ? 'Present' : 'Not set',               pass: hasPreloadLCP,     hint: '<link rel="preload" as="image"> for hero images cuts LCP by 30–50%', category: 'LCP' },
     { label: 'Preconnect hints',          value: hasPreconnect > 0 ? `${hasPreconnect} origins` : 'None', pass: hasPreconnect > 0, hint: 'Reduce DNS+TLS handshake latency for external resources',         category: 'Network' },
     { label: 'No render-blocking CSS',    value: renderBlockingLinks === 0 ? 'Clean' : `${renderBlockingLinks} sheets`, pass: renderBlockingLinks <= 1, hint: 'Synchronous stylesheets block rendering — use media queries or async', category: 'Render' },
-    { label: 'No sync scripts in <head>', value: syncScripts === 0 ? 'Clean' : `${syncScripts} found`, pass: syncScripts === 0, hint: 'Synchronous scripts block HTML parsing and delay FCP',              category: 'Render' },
+    { label: 'No external sync scripts', value: syncScripts === 0 ? 'Clean' : `${syncScripts} found`, pass: syncScripts === 0, hint: 'External scripts without async/defer block HTML parsing and delay FCP', category: 'Render' },
     { label: 'Responsive images',         value: imgTotal === 0 ? 'No images' : imgResponsive ? 'All srcset ✓' : `${imgTotal - imgWithSizes}/${imgTotal} missing`, pass: imgResponsive, hint: 'srcset + sizes ensures correct image per viewport — reduces LCP image size', category: 'Images' },
     { label: 'PerformanceObserver API',   value: hasWebVitalsObs ? 'Available' : 'Not available',     pass: hasWebVitalsObs,   hint: 'Required for Web Vitals (LCP/FID/CLS) measurement in the browser',  category: 'Observability' },
     { label: 'FCP (this page)',           value: fcpMs != null ? `${fcpMs}ms` : 'Not measured yet',   pass: fcpMs == null || fcpMs < 1800, hint: 'First Contentful Paint — good < 1800ms. This is admin page, not landing.', category: 'Vitals' },

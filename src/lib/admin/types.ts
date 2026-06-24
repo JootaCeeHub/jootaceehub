@@ -108,6 +108,10 @@ export interface StudioPanelConfig {
   order: number
   customLabel?: string
   customDesc?: string
+  // Per-panel design overrides
+  cardStyle?:      'filled' | 'glass' | 'outlined' | 'flat'
+  accentOverride?: string
+  widthOverride?:  'auto' | 'sm' | 'md' | 'lg' | 'full'
 }
 
 export interface StudioConfig {
@@ -170,6 +174,21 @@ export interface StudioConfig {
     showReset:   boolean
     showSearch:  boolean
   }
+  // Global content card design
+  panelCardStyle:           'filled' | 'glass' | 'outlined' | 'flat'
+  panelCardBgOpacity:       number   // 0–100
+  panelCardBorderIntensity: number   // 0–100
+  panelCardGlow:            boolean
+  // Content section overrides (home sections + domain pages)
+  contentSectionOverrides: ContentSectionOverride[]
+}
+
+export interface ContentSectionOverride {
+  id:          string
+  enabled?:    boolean
+  order?:      number
+  customLabel?: string
+  customDesc?:  string
 }
 
 // ─── About Config ─────────────────────────────────────────────────────────────
@@ -1366,6 +1385,14 @@ export type AdminAction =
   | { type: 'AI_SET_ACTIVE_PROFILE'; payload: string }
   | { type: 'AI_REMOVE_PROFILE'; payload: string }
   | { type: 'AI_TOGGLE_CONTEXT'; payload: boolean }
+  | { type: 'AI_UPDATE_PROFILE_STATUS'; payload: { id: string; status: import('@/lib/ai/types').LLMConnectionStatus; error?: string } }
+  | { type: 'AI_UPDATE_PROFILE_STATS'; payload: { id: string; tokensIn: number; tokensOut: number; latencyMs: number; error?: string } }
+  // Agent Profiles
+  | { type: 'AGENT_PROFILE_ADD'; payload: import('@/lib/ai/types').AgentProfile }
+  | { type: 'AGENT_PROFILE_UPDATE'; payload: { id: string; data: Partial<import('@/lib/ai/types').AgentProfile> } }
+  | { type: 'AGENT_PROFILE_REMOVE'; payload: string }
+  | { type: 'AGENT_PROFILE_SET_ACTIVE'; payload: string | null }
+  | { type: 'AGENT_PROFILE_INCREMENT_USE'; payload: string }
   // Integrations
   | { type: 'INTEGRATIONS_SET_GITHUB'; payload: Partial<GitHubIntegration> }
   | { type: 'INTEGRATIONS_DISCONNECT_GITHUB' }
@@ -1400,7 +1427,10 @@ export type AdminAction =
   | { type: 'STUDIO_SET_NAV_GROUP'; payload: { key: string; data: Partial<StudioNavGroupConfig> } }
   | { type: 'STUDIO_REORDER_GROUP'; payload: { key: string; direction: 'up' | 'down' } }
   | { type: 'STUDIO_SET_PANEL_OVERRIDE'; payload: { id: AdminPanel; data: Partial<StudioPanelConfig> } }
+  | { type: 'STUDIO_REORDER_PANEL'; payload: { id: AdminPanel; groupPanels: AdminPanel[]; direction: 'up' | 'down' } }
   | { type: 'STUDIO_TOGGLE_PIN'; payload: AdminPanel }
+  | { type: 'SET_CONTENT_SECTION'; payload: { id: string; data: Partial<Omit<ContentSectionOverride, 'id'>> } }
+  | { type: 'RESET_CONTENT_SECTIONS' }
   | { type: 'STUDIO_SAVE_PRESET'; payload: StudioCustomPreset }
   | { type: 'STUDIO_DELETE_PRESET'; payload: string }
   | { type: 'STUDIO_SAVE_WORKSPACE_PROFILE'; payload: StudioWorkspaceProfile }

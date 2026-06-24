@@ -28,6 +28,8 @@ export const INITIAL_STEPS: RunStep[] = [
   { id: 'alerts',       label: 'Alerts evaluation',              status: 'idle' },
   { id: 'cms-health',   label: 'CMS registry health',            status: 'idle' },
   { id: 'content-arch', label: 'Content architecture audit',     status: 'idle' },
+  { id: 'sw-check',     label: 'Service Worker health',          status: 'idle' },
+  { id: 'tech-stack',   label: 'Tech stack detection',           status: 'idle' },
   { id: 'snapshot',     label: 'Snapshot save',                  status: 'idle' },
 ]
 

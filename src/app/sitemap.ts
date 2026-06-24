@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next'
 
 export const dynamic = 'force-static'
-import { getAllSlugs } from '@/lib/journal/articles'
+import { getAllSlugs } from '@/lib/content/loaders'
 import { ALL_LABS } from '@/lib/labs/registry'
 
 const BASE = 'https://jootacee.com'

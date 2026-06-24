@@ -138,37 +138,82 @@ export function TrackingTab({ gaId, providerConnected, sessionMetrics, setSiteFi
         <div className="mt-2 rounded-lg border border-white/6 bg-white/[0.02] px-3 py-2 font-mono text-[9px] text-white/25">Events fire to all connected analytics providers simultaneously.</div>
       </Card>
 
-      <Card dot="#f43f5e" title="Conversion funnel · session to contact">
-        <div className="space-y-1.5">
-          {([
-            { stage: 'Page Views',      value: 438, color: '#38bdf8' },
-            { stage: 'Unique Visitors', value: 312, color: '#a78bfa' },
-            { stage: 'Engaged (>30s)',  value: 194, color: '#34d399' },
-            { stage: 'Contact clicks',  value: 27,  color: '#f59e0b' },
-            { stage: 'Sent message',    value: 11,  color: '#f43f5e' },
-          ] as const).map((row, i, arr) => {
-            const top     = arr[0].value
-            const pct     = Math.round((row.value / top) * 100)
-            const prevPct = i > 0 ? Math.round((row.value / arr[i - 1].value) * 100) : 100
+      {sessionMetrics ? (
+        <Card dot="#f43f5e" title="Engagement funnel · current session · live">
+          {(() => {
+            const { pageLoads, focusedMs, durationMs, scrollDepthPct, interactions, clicks } = sessionMetrics
+            const engagementRatio = durationMs > 0 ? Math.min(1, focusedMs / durationMs) : 0
+            const funnelRows = [
+              { stage: 'Page loads',        value: pageLoads,                                          color: '#38bdf8', unit: '' },
+              { stage: 'Time on page',       value: Math.round(durationMs / 1000),                     color: '#a78bfa', unit: 's' },
+              { stage: 'Focused time',       value: Math.round(focusedMs / 1000),                      color: '#34d399', unit: 's' },
+              { stage: 'Scroll depth',       value: scrollDepthPct,                                    color: '#f59e0b', unit: '%' },
+              { stage: 'Interactions',       value: interactions,                                       color: '#fb923c', unit: '' },
+              { stage: 'Clicks',             value: clicks,                                             color: '#f43f5e', unit: '' },
+            ]
+            const maxVal = Math.max(...funnelRows.map(r => r.value), 1)
             return (
-              <React.Fragment key={row.stage}>
-                <div className="flex items-center gap-3">
-                  <span className="w-36 shrink-0 font-mono text-[9.5px] text-white/50 truncate">{row.stage}</span>
-                  <div className="flex-1 h-5 overflow-hidden rounded-sm bg-white/5">
-                    <div className="h-full rounded-sm transition-all" style={{ width: `${pct}%`, background: row.color + '55' }} />
+              <div className="space-y-1.5">
+                {funnelRows.map((row) => {
+                  const pct = Math.round((row.value / maxVal) * 100)
+                  return (
+                    <React.Fragment key={row.stage}>
+                      <div className="flex items-center gap-3">
+                        <span className="w-32 shrink-0 font-mono text-[9.5px] text-white/50 truncate">{row.stage}</span>
+                        <div className="flex-1 h-4 overflow-hidden rounded-sm bg-white/5">
+                          <div className="h-full rounded-sm transition-all" style={{ width: `${Math.max(pct, 2)}%`, background: row.color + '55' }} />
+                        </div>
+                        <span className="w-14 shrink-0 font-mono text-[10px] font-semibold text-white/65 tabular-nums text-right">{row.value}{row.unit}</span>
+                      </div>
+                    </React.Fragment>
+                  )
+                })}
+                <div className="mt-2 flex items-center gap-3">
+                  <div className="flex-1 h-1 overflow-hidden rounded-full bg-white/6">
+                    <div className="h-full rounded-full bg-emerald-400/50 transition-all" style={{ width: `${Math.round(engagementRatio * 100)}%` }} />
                   </div>
-                  <span className="w-12 shrink-0 font-mono text-[10px] font-semibold text-white/65 tabular-nums text-right">{row.value}</span>
-                  <span className="w-10 shrink-0 font-mono text-[8.5px] text-white/30 tabular-nums">{i === 0 ? '100%' : `${prevPct}%`}</span>
+                  <span className="font-mono text-[8.5px] text-white/30">{Math.round(engagementRatio * 100)}% focus ratio</span>
                 </div>
-                {i < arr.length - 1 && <div className="my-1 h-px bg-white/5" />}
-              </React.Fragment>
+                <div className="mt-1 rounded-lg border border-white/6 bg-white/[0.02] px-3 py-2 font-mono text-[9px] text-white/25">
+                  Real-time data from current admin session · resets on page reload · connect GA4 for aggregate funnel analytics
+                </div>
+              </div>
             )
-          })}
-        </div>
-        <div className="mt-2 rounded-lg border border-white/6 bg-white/[0.02] px-3 py-2 font-mono text-[9px] text-white/25">
-          Demo data. Connect GA4 or PostHog to populate with real funnel analytics.
-        </div>
-      </Card>
+          })()}
+        </Card>
+      ) : (
+        <Card dot="#f43f5e" title="Conversion funnel · demo data">
+          <div className="space-y-1.5">
+            {([
+              { stage: 'Page Views',      value: 438, color: '#38bdf8' },
+              { stage: 'Unique Visitors', value: 312, color: '#a78bfa' },
+              { stage: 'Engaged (>30s)',  value: 194, color: '#34d399' },
+              { stage: 'Contact clicks',  value: 27,  color: '#f59e0b' },
+              { stage: 'Sent message',    value: 11,  color: '#f43f5e' },
+            ] as const).map((row, i, arr) => {
+              const top     = arr[0].value
+              const pct     = Math.round((row.value / top) * 100)
+              const prevPct = i > 0 ? Math.round((row.value / arr[i - 1].value) * 100) : 100
+              return (
+                <React.Fragment key={row.stage}>
+                  <div className="flex items-center gap-3">
+                    <span className="w-36 shrink-0 font-mono text-[9.5px] text-white/50 truncate">{row.stage}</span>
+                    <div className="flex-1 h-5 overflow-hidden rounded-sm bg-white/5">
+                      <div className="h-full rounded-sm transition-all" style={{ width: `${pct}%`, background: row.color + '55' }} />
+                    </div>
+                    <span className="w-12 shrink-0 font-mono text-[10px] font-semibold text-white/65 tabular-nums text-right">{row.value}</span>
+                    <span className="w-10 shrink-0 font-mono text-[8.5px] text-white/30 tabular-nums">{i === 0 ? '100%' : `${prevPct}%`}</span>
+                  </div>
+                  {i < arr.length - 1 && <div className="my-1 h-px bg-white/5" />}
+                </React.Fragment>
+              )
+            })}
+          </div>
+          <div className="mt-2 rounded-lg border border-white/6 bg-white/[0.02] px-3 py-2 font-mono text-[9px] text-white/25">
+            Demo data · session tracking loading… · connect GA4 or PostHog for real funnel analytics.
+          </div>
+        </Card>
+      )}
     </div>
   )
 }

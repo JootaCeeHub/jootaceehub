@@ -1,7 +1,7 @@
 'use client'
 /* eslint-disable react-hooks/set-state-in-effect */
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import dynamic from 'next/dynamic'
 import { Navigation, Footer } from '@/components/layout'
 import { StatusBar, SectionErrorBoundary } from '@/components/shared'
@@ -12,7 +12,47 @@ import { useTranslations } from '@/lib/i18n'
 import { installConsoleFilter } from '@/lib/logger'
 import { usePerfTier } from '@/hooks/usePerfTier'
 import { useReaderMode } from '@/hooks/useReaderMode'
-import type { ArticleMeta } from '@/lib/journal/types'
+import { useRUM } from '@/hooks/useRUM'
+import { recordSectionRender, recordSectionVisible } from '@/lib/performance/section-tracker'
+import type { ArticleMeta } from '@/lib/content/loaders'
+
+// ─── Section performance wrapper ──────────────────────────────────────────────
+// Wraps each landing section to record render + visibility timing.
+// Data is persisted to localStorage so the Admin > Analytics > Performance tab
+// can display per-section metrics even across page navigations.
+
+function SectionPerfWrapper({ name, children }: { name: string; children: React.ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const recorded = useRef(false)
+
+  useEffect(() => {
+    if (recorded.current) return
+    recorded.current = true
+    recordSectionRender(name, performance.now())
+
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          recordSectionVisible(name, performance.now())
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.1 },
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  // name is stable (constant literal at call site)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  return (
+    <div ref={ref} data-section={name}>
+      {children}
+    </div>
+  )
+}
 
 // Overlays — defer off critical path
 const Preloader = dynamic(
@@ -51,6 +91,7 @@ export function HomeClient({ featured, recent }: HomeClientProps) {
   const t = useTranslations('accessibility')
   const { tier, ready } = usePerfTier()
   useReaderMode() // installs Alt+R shortcut + restores sessionStorage state
+  useRUM()        // Real User Monitoring — collects CWV + reports to Plausible
 
   useEffect(() => {
     installConsoleFilter()
@@ -77,39 +118,51 @@ export function HomeClient({ featured, recent }: HomeClientProps) {
         <Navigation />
         <main id="main-content">
           {/* Hero is above-fold — never lazy */}
-          <SectionErrorBoundary sectionName="Hero">
-            <HeroSection />
-          </SectionErrorBoundary>
+          <SectionPerfWrapper name="hero">
+            <SectionErrorBoundary sectionName="Hero">
+              <HeroSection />
+            </SectionErrorBoundary>
+          </SectionPerfWrapper>
 
           {/* Below-fold: chunks download only when section nears viewport */}
           <LazySection minHeight="600px">
-            <SectionErrorBoundary sectionName="Systems">
-              <SystemsPreview />
-            </SectionErrorBoundary>
+            <SectionPerfWrapper name="systems">
+              <SectionErrorBoundary sectionName="Systems">
+                <SystemsPreview />
+              </SectionErrorBoundary>
+            </SectionPerfWrapper>
           </LazySection>
 
           <LazySection minHeight="600px">
-            <SectionErrorBoundary sectionName="Labs">
-              <LabsPreview />
-            </SectionErrorBoundary>
+            <SectionPerfWrapper name="labs">
+              <SectionErrorBoundary sectionName="Labs">
+                <LabsPreview />
+              </SectionErrorBoundary>
+            </SectionPerfWrapper>
           </LazySection>
 
           <LazySection minHeight="600px">
-            <SectionErrorBoundary sectionName="Infrastructure">
-              <InfraPreview />
-            </SectionErrorBoundary>
+            <SectionPerfWrapper name="infrastructure">
+              <SectionErrorBoundary sectionName="Infrastructure">
+                <InfraPreview />
+              </SectionErrorBoundary>
+            </SectionPerfWrapper>
           </LazySection>
 
           <LazySection minHeight="600px">
-            <SectionErrorBoundary sectionName="Journal">
-              <JournalPreview featured={featured} recent={recent} />
-            </SectionErrorBoundary>
+            <SectionPerfWrapper name="journal">
+              <SectionErrorBoundary sectionName="Journal">
+                <JournalPreview featured={featured} recent={recent} />
+              </SectionErrorBoundary>
+            </SectionPerfWrapper>
           </LazySection>
 
           <LazySection minHeight="300px">
-            <SectionErrorBoundary sectionName="Collaborate">
-              <CollaborationCTA />
-            </SectionErrorBoundary>
+            <SectionPerfWrapper name="collaborate">
+              <SectionErrorBoundary sectionName="Collaborate">
+                <CollaborationCTA />
+              </SectionErrorBoundary>
+            </SectionPerfWrapper>
           </LazySection>
         </main>
         <Footer />

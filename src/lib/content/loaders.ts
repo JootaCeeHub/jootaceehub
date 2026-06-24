@@ -26,6 +26,11 @@ export type {
 } from '@/lib/journal/types'
 
 export {
+  CATEGORY_DISPLAY,
+  DEPTH_DISPLAY,
+} from '@/lib/journal/types'
+
+export {
   articleToContentItem,
   projectToContentItem,
   researchToContentItem,
@@ -39,6 +44,12 @@ export { ContentItemSchema, ArticleMetaSchema } from './schema'
 // ── Repository interface + filter helper ──────────────────────────────────────
 export type { ContentFilter, ContentRepository } from './repository'
 export { applyContentFilter } from './repository'
+
+// ── Adapters ──────────────────────────────────────────────────────────────────
+export { createMdxContentAdapter } from './adapters/mdx'
+export { createRegistryAdapter } from './adapters/admin-state'
+export type { RegistrySnapshot } from './adapters/admin-state'
+export { createApiContentAdapter, getApiContentAdapter } from './adapters/api-client'
 
 // ── Canonical ID scheme ───────────────────────────────────────────────────────
 export { makeCanonicalId, parseCanonicalId, isCanonicalId, slugify, checkSlugUniqueness } from './canonical-id'

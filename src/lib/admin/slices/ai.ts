@@ -85,6 +85,101 @@ export function aiHandler(state: AdminState, action: AdminAction): AdminState | 
     case 'AI_TOGGLE_CONTEXT':
       return { ...state, aiConfig: { ...state.aiConfig, siteContextEnabled: action.payload }, unsaved: true }
 
+    case 'AI_UPDATE_PROFILE_STATUS':
+      return {
+        ...state,
+        aiConfig: {
+          ...state.aiConfig,
+          profiles: state.aiConfig.profiles.map(p =>
+            p.id !== action.payload.id ? p : {
+              ...p,
+              status: action.payload.status,
+              stats: {
+                ...p.stats,
+                lastError: action.payload.error ?? p.stats?.lastError ?? null,
+              },
+            }
+          ),
+        },
+        unsaved: true,
+      }
+
+    case 'AI_UPDATE_PROFILE_STATS': {
+      const now = new Date().toISOString()
+      return {
+        ...state,
+        aiConfig: {
+          ...state.aiConfig,
+          profiles: state.aiConfig.profiles.map(p => {
+            if (p.id !== action.payload.id) return p
+            const s = p.stats ?? { lastUsed: null, lastError: null, totalRequests: 0, totalTokensIn: 0, totalTokensOut: 0, avgLatencyMs: 0, errorCount: 0 }
+            const reqs    = s.totalRequests + 1
+            const isError = !!action.payload.error
+            const avgLat  = Math.round((s.avgLatencyMs * s.totalRequests + action.payload.latencyMs) / reqs)
+            return {
+              ...p,
+              status: isError ? 'error' as const : 'connected' as const,
+              stats: {
+                lastUsed:        now,
+                lastError:       isError ? (action.payload.error ?? null) : s.lastError,
+                totalRequests:   reqs,
+                totalTokensIn:   s.totalTokensIn  + action.payload.tokensIn,
+                totalTokensOut:  s.totalTokensOut + action.payload.tokensOut,
+                avgLatencyMs:    avgLat,
+                errorCount:      s.errorCount + (isError ? 1 : 0),
+              },
+            }
+          }),
+        },
+        unsaved: true,
+      }
+    }
+
+    // Agent Profiles
+    case 'AGENT_PROFILE_ADD':
+      return {
+        ...state,
+        aiConfig: { ...state.aiConfig, agentProfiles: [...(state.aiConfig.agentProfiles ?? []), action.payload] },
+        unsaved: true,
+      }
+    case 'AGENT_PROFILE_UPDATE':
+      return {
+        ...state,
+        aiConfig: {
+          ...state.aiConfig,
+          agentProfiles: (state.aiConfig.agentProfiles ?? []).map(p =>
+            p.id === action.payload.id ? { ...p, ...action.payload.data } : p
+          ),
+        },
+        unsaved: true,
+      }
+    case 'AGENT_PROFILE_REMOVE':
+      return {
+        ...state,
+        aiConfig: {
+          ...state.aiConfig,
+          agentProfiles: (state.aiConfig.agentProfiles ?? []).filter(p => p.id !== action.payload),
+          activeAgentProfileId:
+            state.aiConfig.activeAgentProfileId === action.payload ? null : state.aiConfig.activeAgentProfileId,
+        },
+        unsaved: true,
+      }
+    case 'AGENT_PROFILE_SET_ACTIVE':
+      return { ...state, aiConfig: { ...state.aiConfig, activeAgentProfileId: action.payload }, unsaved: true }
+    case 'AGENT_PROFILE_INCREMENT_USE': {
+      const now = new Date().toISOString()
+      return {
+        ...state,
+        aiConfig: {
+          ...state.aiConfig,
+          agentProfiles: (state.aiConfig.agentProfiles ?? []).map(p =>
+            p.id !== action.payload ? p : { ...p, useCount: p.useCount + 1, lastUsed: now }
+          ),
+        },
+        unsaved: true,
+      }
+    }
+
     // Intelligence feeds
     case 'INTELLIGENCE_TOGGLE_FEED':
       return {

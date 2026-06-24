@@ -2,7 +2,19 @@
   {
     "id": "skill-ultrareview",
     "command": "/ultrareview",
-    "title": "Ultra Review",
+    "title": "Ultra Review (multi-agent)",
+    "builtin": true
+  },
+  {
+    "id": "skill-code-review",
+    "command": "/code-review",
+    "title": "Code Review",
+    "builtin": true
+  },
+  {
+    "id": "skill-code-review-ultra",
+    "command": "/code-review ultra",
+    "title": "Code Review Ultra",
     "builtin": true
   },
   {
@@ -14,7 +26,61 @@
   {
     "id": "skill-fast",
     "command": "/fast",
-    "title": "Fast Mode",
+    "title": "Fast Mode (Opus)",
+    "builtin": true
+  },
+  {
+    "id": "skill-clear",
+    "command": "/clear",
+    "title": "Clear Context",
+    "builtin": true
+  },
+  {
+    "id": "skill-memory",
+    "command": "/memory",
+    "title": "Memory Manager",
+    "builtin": true
+  },
+  {
+    "id": "skill-schedule",
+    "command": "/schedule",
+    "title": "Task Scheduler",
+    "builtin": true
+  },
+  {
+    "id": "skill-loop",
+    "command": "/loop",
+    "title": "Autonomous Loop",
+    "builtin": true
+  },
+  {
+    "id": "skill-mcp",
+    "command": "/mcp",
+    "title": "MCP Server Manager",
+    "builtin": true
+  },
+  {
+    "id": "skill-init",
+    "command": "/init",
+    "title": "Project Initializer",
+    "builtin": true
+  },
+  {
+    "id": "skill-compact",
+    "command": "/compact",
+    "title": "Context Compactor",
+    "builtin": true
+  },
+  {
+    "id": "skill-resume",
+    "command": "/resume",
+    "title": "Session Resumption",
+    "builtin": true
+  },
+  {
+    "id": "skill-help",
+    "command": "/help",
+    "title": "Help & Reference",
     "builtin": true
   },
   {
@@ -26,7 +92,7 @@
   {
     "id": "skill-bundle",
     "command": "/bundle",
-    "title": "Analyze Bundle",
+    "title": "Bundle Analyzer",
     "builtin": false
   },
   {
@@ -57,6 +123,108 @@
     "id": "skill-types",
     "command": "/types",
     "title": "Type Generation",
+    "builtin": false
+  },
+  {
+    "id": "skill-seo",
+    "command": "/seo <url>",
+    "title": "SEO Auditor",
+    "builtin": false
+  },
+  {
+    "id": "skill-lighthouse",
+    "command": "/lighthouse",
+    "title": "Lighthouse CI",
+    "builtin": false
+  },
+  {
+    "id": "skill-a11y",
+    "command": "/a11y",
+    "title": "Accessibility Audit",
+    "builtin": false
+  },
+  {
+    "id": "skill-showcase",
+    "command": "/showcase <repo>",
+    "title": "Showcase Generator",
+    "builtin": false
+  },
+  {
+    "id": "skill-docs",
+    "command": "/docs <component>",
+    "title": "Docs Writer",
+    "builtin": false
+  },
+  {
+    "id": "skill-test",
+    "command": "/test <file>",
+    "title": "Test Generator",
+    "builtin": false
+  },
+  {
+    "id": "skill-refactor",
+    "command": "/refactor <file>",
+    "title": "Refactor Assistant",
+    "builtin": false
+  },
+  {
+    "id": "skill-git-summary",
+    "command": "/git-summary",
+    "title": "Git Activity Summary",
+    "builtin": false
+  },
+  {
+    "id": "skill-content-qa",
+    "command": "/content-qa",
+    "title": "Content QA",
+    "builtin": false
+  },
+  {
+    "id": "skill-image-gen",
+    "command": "/imagine <prompt>",
+    "title": "Image Generator",
+    "builtin": false
+  },
+  {
+    "id": "skill-translate",
+    "command": "/translate <locale>",
+    "title": "Content Translator",
+    "builtin": false
+  },
+  {
+    "id": "skill-security",
+    "command": "/security",
+    "title": "Security Audit",
+    "builtin": false
+  },
+  {
+    "id": "skill-deps",
+    "command": "/deps",
+    "title": "Dependency Audit",
+    "builtin": false
+  },
+  {
+    "id": "skill-changelog",
+    "command": "/changelog",
+    "title": "Changelog Generator",
+    "builtin": false
+  },
+  {
+    "id": "skill-pr",
+    "command": "/pr",
+    "title": "PR Description Writer",
+    "builtin": false
+  },
+  {
+    "id": "skill-diagram",
+    "command": "/diagram <type>",
+    "title": "Architecture Diagram",
+    "builtin": false
+  },
+  {
+    "id": "skill-env",
+    "command": "/env-check",
+    "title": "Env Var Validator",
     "builtin": false
   }
 ]

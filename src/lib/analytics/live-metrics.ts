@@ -235,3 +235,77 @@ export function sampleHeap(): { used: number; total: number } | null {
     total: Math.round(mem.totalJSHeapSize / 1048576),
   }
 }
+
+// ─── Composite performance score ─────────────────────────────────────────────
+
+export interface PerformanceScore {
+  total:      number
+  grade:      'A' | 'B' | 'C' | 'D' | 'F'
+  cwv:        number | null   // 0-100 from CWV ratings
+  threading:  number          // 0-100 from long tasks
+  navigation: number | null   // 0-100 from TTFB
+  resources:  number | null   // 0-100 from cache ratio + slow count
+  memory:     number | null   // 0-100 from heap pressure
+  hasData:    boolean
+}
+
+export function computePerformanceScore(
+  liveVitals:      Record<string, number>,
+  longTasks:       LongTaskSummary,
+  navMetrics:      NavigationMetrics | null,
+  resourceSummary: { slowCount: number; cacheRatio: number; entries: unknown[] } | null,
+): PerformanceScore {
+  // CWV (40%): rate each vital good=100 / needs-improvement=50 / poor=0
+  const vitalScores: number[] = []
+  for (const [name, raw] of Object.entries(liveVitals)) {
+    const rating = rateVital(name, raw)
+    vitalScores.push(rating === 'good' ? 100 : rating === 'needs-improvement' ? 50 : 0)
+  }
+  const cwv = vitalScores.length > 0
+    ? Math.round(vitalScores.reduce((a, b) => a + b, 0) / vitalScores.length)
+    : null
+
+  // Threading (20%): totalMs=0→100, every 10ms costs 1 point, floor at 0
+  const threading = Math.max(0, Math.round(100 - longTasks.totalMs / 10))
+
+  // Navigation TTFB (15%): 0ms→100, 1800ms→0
+  const navigation = navMetrics?.ttfb != null
+    ? Math.max(0, Math.min(100, Math.round(100 - (navMetrics.ttfb / 1800) * 100)))
+    : null
+
+  // Resources (15%): cache ratio contributes 50pts, slow count takes 5pts each up to 50
+  const resources = resourceSummary != null
+    ? Math.min(100, Math.round(
+        resourceSummary.cacheRatio * 50 +
+        Math.max(0, 50 - resourceSummary.slowCount * 5),
+      ))
+    : null
+
+  // Memory (10%): heap used/total → lower ratio = better
+  let memory: number | null = null
+  if (navMetrics?.jsHeapUsed != null && navMetrics.jsHeapTotal != null && navMetrics.jsHeapTotal > 0) {
+    const ratio = navMetrics.jsHeapUsed / navMetrics.jsHeapTotal
+    memory = Math.max(0, Math.round((1 - ratio) * 100))
+  }
+
+  // Weighted composite — if a dimension has no data, redistribute weight
+  const dims: Array<{ score: number | null; weight: number }> = [
+    { score: cwv,        weight: 0.40 },
+    { score: threading,  weight: 0.20 },
+    { score: navigation, weight: 0.15 },
+    { score: resources,  weight: 0.15 },
+    { score: memory,     weight: 0.10 },
+  ]
+  const available   = dims.filter(d => d.score !== null)
+  const totalWeight = available.reduce((a, d) => a + d.weight, 0)
+  const hasData     = available.length > 0
+
+  const total = hasData && totalWeight > 0
+    ? Math.round(available.reduce((a, d) => a + d.score! * d.weight, 0) / totalWeight)
+    : 0
+
+  const grade: PerformanceScore['grade'] =
+    total >= 90 ? 'A' : total >= 75 ? 'B' : total >= 60 ? 'C' : total >= 40 ? 'D' : 'F'
+
+  return { total, grade, cwv, threading, resources, navigation, memory, hasData }
+}

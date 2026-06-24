@@ -45,11 +45,11 @@ export const logger = {
   },
   warn: (message: unknown, ...rest: unknown[]) => {
     if (!shouldLog('warn') || isSilenced(message)) return
-    console.warn('[warn]', message, ...rest)
+    console.warn('[warn]', message, ...rest) // ok — logger infrastructure
   },
   error: (message: unknown, ...rest: unknown[]) => {
     if (!shouldLog('error')) return
-    console.error('[error]', message, ...rest)
+    console.error('[error]', message, ...rest) // ok — logger infrastructure
   },
 }
 

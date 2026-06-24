@@ -102,7 +102,10 @@ export function computeAIAnalysis(
   errorCount: number,
   longTaskCount: number,
   lighthouseAvg: number,
+  livePerformanceScore?: number,
 ): AIAnalysisResult {
+  // Use live browser score as fallback when PSI hasn't run yet (lighthouseAvg === 0)
+  const effectivePerfScore = lighthouseAvg > 0 ? lighthouseAvg : (livePerformanceScore ?? 0)
   // ── Pass rates ──────────────────────────────────────────────────────────────
   const prodPassRate  = prodChecks.length > 0 ? Math.round(prodChecks.filter(c => c.pass).length / prodChecks.length * 100) : 0
   const seoPassRate   = seoChecks.length  > 0 ? Math.round(seoChecks.filter(c => c.pass).length  / seoChecks.length  * 100) : 0
@@ -112,12 +115,12 @@ export function computeAIAnalysis(
 
   // ── Overall score (weighted composite) ─────────────────────────────────────
   const overallScore = Math.round(
-    prodPassRate  * WEIGHTS.prodPassRate  +
-    codeScore     * WEIGHTS.codeScore     +
-    seoPassRate   * WEIGHTS.seoPassRate   +
-    lighthouseAvg * WEIGHTS.lighthouseAvg +
-    contentScore  * WEIGHTS.contentScore  +
-    a11yPassRate  * WEIGHTS.a11yPassRate
+    prodPassRate       * WEIGHTS.prodPassRate  +
+    codeScore          * WEIGHTS.codeScore     +
+    seoPassRate        * WEIGHTS.seoPassRate   +
+    effectivePerfScore * WEIGHTS.lighthouseAvg +
+    contentScore       * WEIGHTS.contentScore  +
+    a11yPassRate       * WEIGHTS.a11yPassRate
   )
 
   // ── Verdict ─────────────────────────────────────────────────────────────────
@@ -138,7 +141,7 @@ export function computeAIAnalysis(
     { label: 'Technical Quality', score: codeScore,     icon: '⚙',  assessment: codeScore >= 98     ? 'TS strict · 0 errores'        : 'Sólido' },
     { label: 'SEO & Visibility',  score: seoPassRate,   icon: '◎',  assessment: seoPassRate >= 90   ? 'Optimizado'                   : 'Señales clave faltantes' },
     { label: 'Accessibility',     score: a11yPassRate,  icon: '⬡',  assessment: a11yPassRate >= 95  ? 'WCAG 2.1 AA'                  : 'Casi completo — 1 item' },
-    { label: 'Performance',       score: lighthouseAvg, icon: '⚡', assessment: lighthouseAvg >= 70 ? 'Óptimo'                       : 'TBT alto — R3F main thread' },
+    { label: 'Performance',       score: effectivePerfScore, icon: '⚡', assessment: effectivePerfScore >= 70 ? 'Óptimo' : effectivePerfScore > 0 ? 'TBT alto — R3F main thread' : 'Sin datos — run PSI o navega public pages' },
     { label: 'Production Ready',  score: prodPassRate,  icon: '↑',  assessment: prodPassRate >= 90  ? 'Listo para lanzar'           : `${prodChecks.filter(c => !c.pass).length} bloqueadores` },
   ]
 
@@ -184,7 +187,7 @@ export function computeAIAnalysis(
   const risks: AIRisk[] = [
     ...(!hasOG ? [{ risk: 'OG image ausente — previews sociales rotos en todos los canales', impact: 'critical' as const, probability: 'high' as const, mitigation: 'Crear og.png 1200×630px + configurar en SEO panel — 15 min' }] : []),
     ...(!hasAnalytics ? [{ risk: 'Analytics no configurado — zero datos de uso post-lanzamiento', impact: 'high' as const, probability: 'high' as const, mitigation: 'GA4 Measurement ID en Branding panel > Tracking ID — 5 min' }] : []),
-    ...(lighthouseAvg > 0 && lighthouseAvg < 55 ? [{ risk: `Performance Lighthouse ${lighthouseAvg} — señal negativa en Google CrUX y Core Web Vitals`, impact: 'high' as const, probability: 'medium' as const, mitigation: 'Auditar chunks >200KB con bundle analyzer y revisar long tasks en tab Performance' }] : []),
+    ...(effectivePerfScore > 0 && effectivePerfScore < 55 ? [{ risk: `Performance score ${effectivePerfScore} — señal negativa en Google CrUX y Core Web Vitals`, impact: 'high' as const, probability: 'medium' as const, mitigation: 'Auditar chunks >200KB con bundle analyzer y revisar long tasks en tab Performance' }] : []),
     ...(longTaskCount > 3 ? [{ risk: `${longTaskCount} long tasks activos — main thread bloqueado >50ms en cada tarea`, impact: 'high' as const, probability: 'high' as const, mitigation: 'Revisar tab Performance → Long Tasks para identificar la fuente exacta' }] : []),
     ...(errorCount > 0 ? [{ risk: `${errorCount} runtime errors activos — posible degradación silenciosa en producción`, impact: 'medium' as const, probability: 'medium' as const, mitigation: 'Revisar tab Errors — distinguir noise de Three.js de errores reales de aplicación' }] : []),
     { risk: 'Sin schema markup JSON-LD — rich snippets y knowledge panel inactivos', impact: 'medium', probability: 'high', mitigation: 'Implementar Person + WebSite en layout.tsx — una tarde de trabajo, impacto SEO duradero' },
@@ -216,14 +219,22 @@ export function computeAIAnalysis(
       phase: 'Fase 2 · 60 días',
       focus: 'Performance & Structured Data',
       color: '#f59e0b',
-      // R3F dynamic import ✓ + skip nav ✓ = 2/5 items done = 40%
-      completion: longTaskCount === 0 ? 50 : 40,
+      completion: (() => {
+        const checks = [
+          true,                // dynamic import R3F/heavy sections ✓ (confirmed in code)
+          true,                // skip navigation link WCAG 2.4.1 ✓ (confirmed in code)
+          longTaskCount === 0, // no long-running JS tasks blocking main thread
+          false,               // PWA icons PNG → WebP/AVIF — pending
+          hasAnalytics,        // analytics layer configured (GA4 / Plausible)
+        ]
+        return Math.round(checks.filter(Boolean).length / checks.length * 100)
+      })(),
       items: [
         'Dynamic import NeuralNetworkScene + LazySection ✓',
         'Skip navigation link (WCAG 2.4.1) ✓',
-        'JSON-LD Schema — Person + WebSite + SoftwareApplication',
+        `Long tasks eliminados — main thread libre${longTaskCount === 0 ? ' ✓' : ` (${longTaskCount} activos)`}`,
         'Convertir PWA icons PNG → WebP/AVIF',
-        'PostHog o Plausible como segunda capa analytics',
+        `Analytics layer configurada${hasAnalytics ? ' ✓' : ' — GA4 o Plausible'}`,
       ],
     },
     {

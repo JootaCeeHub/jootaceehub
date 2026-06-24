@@ -61,3 +61,22 @@
 # Pagefind search index — cache for 1 hour (rebuilt on each deploy)
 /_pagefind/*
   Cache-Control: public, max-age=3600
+
+# RSS feed — 1 hour cache (regenerated on every deploy)
+/rss.xml
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+  Content-Type: application/rss+xml; charset=utf-8
+
+# Sitemap — 24h cache (stable between deploys)
+/sitemap.xml
+  Cache-Control: public, max-age=86400, stale-while-revalidate=3600
+  Content-Type: application/xml; charset=utf-8
+
+# robots.txt — 1 day cache
+/robots.txt
+  Cache-Control: public, max-age=86400
+
+# WebManifest — 24h cache
+/site.webmanifest
+  Cache-Control: public, max-age=86400
+  Content-Type: application/manifest+json

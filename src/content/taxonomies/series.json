@@ -1,4 +1,17 @@
 {
-  "_note": "Series taxonomy — Phase 3: populate when multi-part article series are published. Each entry links an ordered list of article slugs under a named series.",
-  "series": []
+  "_note": "Series taxonomy — each entry links an ordered list of article slugs under a named series.",
+  "series": [
+    {
+      "slug": "Infrastructure Intelligence",
+      "label": "Infrastructure Intelligence",
+      "description": "Deep dives into autonomous infrastructure, observability systems, and self-healing architectures.",
+      "items": ["autonomous-infrastructure-observability"]
+    },
+    {
+      "slug": "Agent Architecture Essays",
+      "label": "Agent Architecture Essays",
+      "description": "Essays on the principles and patterns behind durable, composable AI agent systems.",
+      "items": ["context-window-as-operating-environment", "on-building-systems-that-last"]
+    }
+  ]
 }

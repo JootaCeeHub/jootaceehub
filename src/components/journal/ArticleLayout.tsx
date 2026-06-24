@@ -2,11 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Clock, BookOpen, Layers } from 'lucide-react'
+import { ArrowLeft, Clock, BookOpen, Layers, EyeOff, Eye } from 'lucide-react'
 import { useLocale } from '@/lib/i18n/context'
+import { useReaderMode } from '@/hooks/useReaderMode'
 import type { Article, ArticleMeta } from '@/lib/journal/types'
 import { CATEGORY_DISPLAY, DEPTH_DISPLAY } from '@/lib/journal/types'
 import { ArticleCard } from './ArticleCard'
+
+const LONG_READ_MINUTES = 8
 
 interface ArticleLayoutProps {
   article: Article
@@ -32,6 +35,11 @@ function formatDate(iso: string, locale: string): string {
 export function ArticleLayout({ article, backHref = 'research', related = [] }: ArticleLayoutProps) {
   const locale = useLocale()
   const [progress, setProgress] = useState(0)
+  const [bannerDismissed, setBannerDismissed] = useState(false)
+  const { readerMode, toggleReaderMode } = useReaderMode()
+
+  const isLongRead = article.readTime >= LONG_READ_MINUTES
+  const showSuggestion = isLongRead && !readerMode && !bannerDismissed
 
   useEffect(() => {
     const handleScroll = () => {
@@ -53,6 +61,41 @@ export function ArticleLayout({ article, backHref = 'research', related = [] }: 
       <div className="fixed top-0 left-0 z-[60] h-0.5 w-full bg-white/5" aria-hidden data-pagefind-ignore="all">
         <div className="h-full bg-gradient-to-r from-emerald-500 to-sky-500 transition-none" style={{ width: `${progress}%` }} />
       </div>
+
+      {/* Long-read reader mode suggestion banner */}
+      {showSuggestion && (
+        <div
+          data-pagefind-ignore="all"
+          className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 flex items-center gap-3 rounded-full border border-emerald-400/20 bg-black/80 px-4 py-2 shadow-2xl backdrop-blur-md"
+        >
+          <BookOpen size={13} className="text-emerald-400/70 shrink-0" />
+          <span className="font-mono text-[10px] text-white/50 hidden sm:block">Long read ({article.readTime} min)</span>
+          <button
+            onClick={() => { toggleReaderMode(); setBannerDismissed(true) }}
+            className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 font-mono text-[10px] text-emerald-300 hover:bg-emerald-400/20 transition-colors"
+          >
+            Reader mode
+          </button>
+          <button
+            onClick={() => setBannerDismissed(true)}
+            aria-label="Dismiss"
+            className="text-white/20 hover:text-white/50 font-mono text-[11px] leading-none ml-1"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
+      {/* Floating reader mode toggle (always visible in article) */}
+      <button
+        data-pagefind-ignore="all"
+        onClick={toggleReaderMode}
+        title={readerMode ? 'Exit reader mode (Alt+R)' : 'Reader mode (Alt+R)'}
+        className="fixed bottom-6 right-6 z-50 flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-black/60 text-white/30 shadow-lg backdrop-blur-sm hover:border-emerald-400/30 hover:text-emerald-400 transition-all"
+        aria-label="Toggle reader mode"
+      >
+        {readerMode ? <Eye size={14} /> : <EyeOff size={14} />}
+      </button>
 
       <article className="mx-auto max-w-2xl">
         {/* Back nav */}

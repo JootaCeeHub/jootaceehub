@@ -9,8 +9,8 @@
  *   />
  */
 
-import type { Article, ArticleCategory } from '@/lib/journal/types'
-import { CATEGORY_DISPLAY } from '@/lib/journal/types'
+import type { Article, ArticleCategory } from '@/lib/content/loaders'
+import { CATEGORY_DISPLAY } from '@/lib/content/loaders'
 import { defaultMeta } from '@/lib/config/brand'
 
 // ── Constants ────────────────────────────────────────────────────────────────

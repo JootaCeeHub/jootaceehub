@@ -198,6 +198,40 @@ export function runDOMA11yAudit(): DOMCheck[] {
   // ARIA roles coverage
   const roleCount = document.querySelectorAll('[role]').length
 
+  // Form inputs labeling
+  const allInputs    = Array.from(document.querySelectorAll<HTMLElement>('input:not([type="hidden"]):not([type="submit"]):not([type="button"]), textarea, select'))
+  const unlabeledInputs = allInputs.filter((el) => {
+    const id     = el.getAttribute('id')
+    const ariaL  = el.getAttribute('aria-label') ?? ''
+    const ariaLB = el.getAttribute('aria-labelledby') ?? ''
+    const hasLabel = id ? document.querySelector(`label[for="${id}"]`) != null : false
+    return !hasLabel && !ariaL.trim() && !ariaLB.trim()
+  }).length
+
+  // Positive tabindex (breaks natural tab order)
+  const positiveTabindex = Array.from(document.querySelectorAll<HTMLElement>('[tabindex]'))
+    .filter((el) => parseInt(el.getAttribute('tabindex') ?? '0', 10) > 0).length
+
+  // Empty headings
+  const emptyHeadings = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6'))
+    .filter((h) => !(h.textContent?.trim())).length
+
+  // Duplicate IDs
+  const allIds = Array.from(document.querySelectorAll('[id]')).map((el) => el.id)
+  const duplicateIds = allIds.length - new Set(allIds).size
+
+  // ARIA live regions
+  const liveRegions = document.querySelectorAll('[aria-live], [role="alert"], [role="status"], [role="log"]').length
+
+  // Table header cells
+  const tables  = document.querySelectorAll('table').length
+  const thCells = document.querySelectorAll('th').length
+  const tableOk = tables === 0 || thCells > 0
+
+  // Autoplay media
+  const autoplayMedia = Array.from(document.querySelectorAll<HTMLMediaElement>('video[autoplay], audio[autoplay]'))
+    .filter((m) => !m.muted).length
+
   return [
     { label: 'HTML lang attribute',     value: langAttr || 'Missing',                                       pass: langAttr.length > 0,       hint: 'Required for screen readers and SEO' },
     { label: 'Skip navigation link',    value: skipLink ? 'Present (#main-content)' : 'Missing',            pass: skipLink,                  hint: 'Add <a href="#main-content"> for keyboard users' },
@@ -205,10 +239,17 @@ export function runDOMA11yAudit(): DOMCheck[] {
     { label: '<nav> landmark',          value: navEl ? 'Present' : 'Missing',                               pass: navEl,                     hint: 'Navigation landmark for assistive tech' },
     { label: '<footer> landmark',       value: footerEl ? 'Present' : isAdmin ? 'Admin shell (no public footer)' : 'Missing', pass: footerEl || isAdmin, hint: 'Footer landmark improves page navigation' },
     { label: 'Heading order',           value: headingOrderOk ? 'Sequential' : 'Skipped levels found',      pass: headingOrderOk,            hint: 'Headings must not skip levels (h1→h3 invalid)' },
+    { label: 'Empty headings',          value: emptyHeadings === 0 ? 'None' : `${emptyHeadings} empty`,     pass: emptyHeadings === 0,       hint: 'Heading elements must have visible text content' },
     { label: 'Images alt text',         value: imgsMissing === 0 ? 'All covered' : `${imgsMissing} missing`, pass: imgsMissing === 0,         hint: 'All visible images require alt attributes' },
+    { label: 'Form input labels',       value: allInputs.length === 0 ? 'No inputs' : unlabeledInputs === 0 ? 'All labeled' : `${unlabeledInputs}/${allInputs.length} unlabeled`, pass: unlabeledInputs === 0, hint: 'Every input must have a label or aria-label' },
     { label: 'Unlabeled controls',      value: unlabeled === 0 ? 'All labeled' : `${unlabeled} found`,      pass: unlabeled === 0,           hint: 'Buttons/links need accessible names' },
+    { label: 'Positive tabindex',       value: positiveTabindex === 0 ? 'None' : `${positiveTabindex} found`, pass: positiveTabindex === 0,  hint: 'tabindex > 0 breaks natural keyboard order (WCAG 2.4.3)' },
+    { label: 'Duplicate IDs',          value: duplicateIds === 0 ? 'None' : `${duplicateIds} duplicates`,   pass: duplicateIds === 0,        hint: 'Duplicate IDs break ARIA label associations' },
     { label: 'Focusable elements',      value: `${focusableCount} elements`,                                 pass: focusableCount >= 3,       hint: 'Page must have keyboard-reachable elements' },
     { label: 'ARIA roles',              value: `${roleCount} elements with [role]`,                          pass: roleCount >= 2,            hint: 'ARIA roles supplement semantic HTML' },
+    { label: 'ARIA live regions',       value: liveRegions > 0 ? `${liveRegions} region${liveRegions > 1 ? 's' : ''}` : 'None found', pass: true, hint: 'Live regions announce dynamic content changes to screen readers' },
+    { label: 'Table headers',          value: tables === 0 ? 'No tables' : tableOk ? `${thCells} th cells` : 'Tables missing <th>', pass: tableOk, hint: 'Data tables must have header cells with scope attribute' },
+    { label: 'Autoplay media',         value: autoplayMedia === 0 ? 'None' : `${autoplayMedia} unmuted`,    pass: autoplayMedia === 0,       hint: 'Autoplay with sound violates WCAG 1.4.2 (Audio Control)' },
     { label: ':focus-visible styles',   value: 'Configured via globals.css',                                 pass: true,                      hint: 'Focus indicator set in globals.css' },
     { label: 'prefers-reduced-motion',  value: 'Configured via globals.css',                                 pass: true,                      hint: 'Respects user motion preferences via media query' },
     { label: 'CSS design tokens',       value: hasCssVars ? 'Custom props present' : 'Standard approach',   pass: true,                      hint: 'Color/spacing tokens enable theming and consistency' },

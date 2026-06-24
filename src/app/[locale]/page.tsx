@@ -1,4 +1,4 @@
-import { getFeaturedArticle, getAllMeta } from '@/lib/journal/articles'
+import { getFeaturedArticle, getAllMeta } from '@/lib/content/loaders'
 import { HomeWrapper } from './HomeWrapper'
 
 // Server Component: reads article data from the filesystem (node:fs safe).

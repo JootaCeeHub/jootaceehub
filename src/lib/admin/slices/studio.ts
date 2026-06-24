@@ -47,6 +47,49 @@ export function studioHandler(state: AdminState, action: AdminAction): AdminStat
       }
     }
 
+    case 'STUDIO_REORDER_PANEL': {
+      const { id, groupPanels, direction } = action.payload
+      const overrides = state.studioConfig.panelOverrides
+      const withOrder = groupPanels.map((panelId, idx) => {
+        const ov = overrides.find((o) => o.id === panelId)
+        return { id: panelId, order: ov?.order ?? idx * 10 }
+      }).sort((a, b) => a.order - b.order)
+      const idx  = withOrder.findIndex((p) => p.id === id)
+      const swap = direction === 'up' ? idx - 1 : idx + 1
+      if (swap < 0 || swap >= withOrder.length) return state
+      const aId = withOrder[idx].id  as typeof id
+      const bId = withOrder[swap].id as typeof id
+      const aNewOrder = withOrder[swap].order
+      const bNewOrder = withOrder[idx].order
+      const newOverrides = [...overrides]
+      const upsert = (pid: typeof id, order: number) => {
+        const ei = newOverrides.findIndex((o) => o.id === pid)
+        if (ei >= 0) { newOverrides[ei] = { ...newOverrides[ei], order } }
+        else { newOverrides.push({ id: pid, visible: true, order }) }
+      }
+      upsert(aId, aNewOrder)
+      upsert(bId, bNewOrder)
+      return { ...state, studioConfig: { ...state.studioConfig, panelOverrides: newOverrides }, unsaved: true }
+    }
+
+    case 'SET_CONTENT_SECTION': {
+      const overrides = state.studioConfig.contentSectionOverrides ?? []
+      const exists = overrides.some((o) => o.id === action.payload.id)
+      return {
+        ...state,
+        studioConfig: {
+          ...state.studioConfig,
+          contentSectionOverrides: exists
+            ? overrides.map((o) => o.id === action.payload.id ? { ...o, ...action.payload.data } : o)
+            : [...overrides, { id: action.payload.id, ...action.payload.data }],
+        },
+        unsaved: true,
+      }
+    }
+
+    case 'RESET_CONTENT_SECTIONS':
+      return { ...state, studioConfig: { ...state.studioConfig, contentSectionOverrides: [] }, unsaved: true }
+
     case 'STUDIO_TOGGLE_PIN': {
       const pinned = state.studioConfig.pinnedPanels
       const isPinned = pinned.includes(action.payload)

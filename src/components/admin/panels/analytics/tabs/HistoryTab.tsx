@@ -68,6 +68,82 @@ export function HistoryTab({
             </div>
           )}
 
+          {historyEntries.length >= 2 && (() => {
+            const curr = historyEntries[0]
+            const prev = historyEntries[1]
+            const perfOf = (e: AnalysisSnapshot) =>
+              e.lighthouseScores?.find(s => s.label === 'Performance')?.score ?? null
+            const deltas: Array<{ label: string; curr: number | null; prev: number | null; lower: boolean }> = [
+              { label: 'TTFB (ms)',   curr: curr.navTTFB ?? null,       prev: prev.navTTFB ?? null,       lower: true  },
+              { label: 'Errors',      curr: curr.errorCount,            prev: prev.errorCount,            lower: true  },
+              { label: 'Resources',   curr: curr.resourceCount ?? null, prev: prev.resourceCount ?? null, lower: true  },
+              { label: 'Perf score',  curr: perfOf(curr),              prev: perfOf(prev),              lower: false },
+            ].filter(d => d.curr !== null && d.prev !== null)
+            if (deltas.length === 0) return null
+            return (
+              <Card dot="#f43f5e" title={`Run delta · vs previous · ${curr.timestamp.split('T')[1]?.slice(0,5) ?? ''} ← ${prev.timestamp.split('T')[1]?.slice(0,5) ?? ''}`}>
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                  {deltas.map(({ label, curr: c, prev: p, lower }) => {
+                    const diff = (c ?? 0) - (p ?? 0)
+                    const improved = lower ? diff < 0 : diff > 0
+                    const neutral  = diff === 0
+                    const sign     = diff > 0 ? '+' : ''
+                    const col      = neutral ? 'text-white/30' : improved ? 'text-emerald-400' : 'text-rose-400'
+                    const arrow    = neutral ? '→' : improved ? '↓' : '↑'
+                    return (
+                      <div key={label} className="flex flex-col gap-1 rounded-xl border border-white/8 bg-black/20 p-3">
+                        <div className="flex items-baseline gap-1.5">
+                          <span className={`font-mono text-[16px] font-bold tabular-nums leading-none ${col}`}>{sign}{diff}</span>
+                          <span className={`font-mono text-[10px] ${col}`}>{arrow}</span>
+                        </div>
+                        <div className="font-mono text-[7.5px] uppercase tracking-wider text-white/30">{label}</div>
+                        <div className="font-mono text-[8px] text-white/20 tabular-nums">{p} → {c}</div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </Card>
+            )
+          })()}
+
+          {historyEntries.length >= 2 && (() => {
+            const ordered = [...historyEntries].reverse()
+            const trends = [
+              { label: 'TTFB (ms)',      data: ordered.map(e => e.navTTFB ?? 0),     good: (v: number) => v < 800 && v > 0 },
+              { label: 'Error count',    data: ordered.map(e => e.errorCount),        good: (v: number) => v === 0          },
+              { label: 'Resource count', data: ordered.map(e => e.resourceCount ?? 0), good: (v: number) => v < 120        },
+            ].filter(({ data }) => data.some(v => v > 0))
+            if (trends.length === 0) return null
+            return (
+              <Card dot="#818cf8" title="Per-metric trends · TTFB · errors · resource count over runs">
+                <div className="grid gap-3 sm:grid-cols-3">
+                  {trends.map(({ label, data, good }) => {
+                    const path = buildSparklinePath(data)
+                    const last = data[data.length - 1]
+                    const isGood = last != null && good(last)
+                    return (
+                      <div key={label} className="overflow-hidden rounded-xl border border-white/8 bg-black/20">
+                        <div className="px-3 py-2 h-10">
+                          {path ? (
+                            <svg className="w-full h-full overflow-visible" viewBox="0 0 80 24" fill="none">
+                              <path d={path} className={sparkPathCls(isGood)} />
+                            </svg>
+                          ) : (
+                            <div className="flex h-full items-center justify-center font-mono text-[8px] text-white/20">no data</div>
+                          )}
+                        </div>
+                        <div className="flex items-center justify-between px-3 pb-2">
+                          <span className="font-mono text-[7.5px] uppercase tracking-wider text-white/30">{label}</span>
+                          <span className={`font-mono text-[12px] font-bold tabular-nums ${isGood ? 'text-emerald-400' : 'text-amber-400'}`}>{last ?? '—'}</span>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </Card>
+            )
+          })()}
+
           <Card dot="#38bdf8" title="Lighthouse score trends · last 10 PSI runs">
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {(['Performance', 'Accessibility', 'SEO', 'Best Practices'] as const).map((label) => {

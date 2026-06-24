@@ -12,7 +12,7 @@ import rehypeHighlight from 'rehype-highlight'
 import rehypeStringify from 'rehype-stringify'
 import type { Article, ArticleCategory, ArticleMeta } from './types'
 
-const CONTENT_DIR = path.join(process.cwd(), 'src/content/journal')
+const CONTENT_DIR = path.join(process.cwd(), 'src/content/articles')
 
 // Built once — reused for every article. Synchronous pipeline: no async plugins.
 const processor = unified()

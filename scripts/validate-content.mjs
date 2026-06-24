@@ -97,7 +97,7 @@ function collectMdx(dir) {
 const dirArgIdx = process.argv.indexOf('--dir')
 const contentDir = dirArgIdx !== -1 && process.argv[dirArgIdx + 1]
   ? join(ROOT, process.argv[dirArgIdx + 1])
-  : join(ROOT, 'src', 'content', 'journal')
+  : join(ROOT, 'src', 'content', 'articles')
 
 // ── Main ───────────────────────────────────────────────────────────────────
 

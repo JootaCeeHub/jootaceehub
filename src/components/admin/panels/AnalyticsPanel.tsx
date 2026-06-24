@@ -34,25 +34,12 @@ import { ErrorsTab }       from './analytics/tabs/ErrorsTab'
 import { HistoryTab }      from './analytics/tabs/HistoryTab'
 import { InsightsTab }     from './analytics/tabs/InsightsTab'
 import { ProjectTab }      from './analytics/tabs/ProjectTab'
-import { Phase2Tab }      from './analytics/tabs/Phase2Tab'
-import { Phase3Tab }      from './analytics/tabs/Phase3Tab'
-import { Phase4Tab }      from './analytics/tabs/Phase4Tab'
-import { Phase5Tab }          from './analytics/tabs/Phase5Tab'
-import { Phase1Tab }          from './analytics/tabs/Phase1Tab'
-import { StabilizationTab }  from './analytics/tabs/StabilizationTab'
-import { Phase2CmsTab }      from './analytics/tabs/Phase2CmsTab'
-import { Phase3CmsTab }      from './analytics/tabs/Phase3CmsTab'
-import { Phase3VPSTab }      from './analytics/tabs/Phase3VPSTab'
-import { Phase4AdminTab }    from './analytics/tabs/Phase4AdminTab'
-import { Phase4PerfTab }    from './analytics/tabs/Phase4PerfTab'
-import Phase5SupabaseTab    from './analytics/tabs/Phase5SupabaseTab'
-import { Phase5LaunchTab }  from './analytics/tabs/Phase5LaunchTab'
 import { AuditTab }         from './analytics/tabs/AuditTab'
 import { GlobalStateTab, type CmsRegistryAudit, type ContentArchAudit } from './analytics/tabs/GlobalStateTab'
 
 // ─── Analytics lib ────────────────────────────────────────────────────────────
 import {
-  collectNavigationMetrics, observeWebVitals, observeLongTasks, sampleHeap,
+  collectNavigationMetrics, observeWebVitals, observeLongTasks, sampleHeap, computePerformanceScore,
   type NavigationMetrics, type LongTaskSummary,
 } from '@/lib/analytics/live-metrics'
 import { fetchPageSpeedInsights, type PSIResult } from '@/lib/analytics/pagespeed'
@@ -574,7 +561,51 @@ export default function AnalyticsPanel() {
     setContentArchAudit(archAudit)
     ok('content-arch', t, `state ${archAudit.adminStateSizeKB}KB · ${archAudit.adminStateValid ? 'valid' : 'invalid schema'} · ${archAudit.articlesInContent} articles`)
 
-    // ── 14 · Snapshot save ──────────────────────────────────────────────────
+    // ── 14 · Service Worker health ─────────────────────────────────────────
+    t = go('sw-check')
+    try {
+      if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+        const reg = await navigator.serviceWorker.getRegistration('/')
+        if (reg) {
+          const state = reg.active?.state ?? 'none'
+          const scriptUrl = reg.active?.scriptURL?.split('/').pop() ?? 'unknown'
+          ok('sw-check', t, `active · ${scriptUrl} · ${state}`)
+        } else {
+          ok('sw-check', t, 'not registered — check public/sw.js')
+        }
+      } else {
+        skip('sw-check', 'serviceWorker API not available in this browser')
+      }
+    } catch {
+      fail('sw-check', 'registration check failed')
+    }
+
+    // ── 15 · Tech stack detection ──────────────────────────────────────────
+    t = go('tech-stack')
+    try {
+      const detected: string[] = []
+      if (typeof window !== 'undefined') {
+        const w = window as Window & { __THREE?: unknown; THREE?: unknown; __NEXT_DATA__?: { buildId?: string } }
+        if (w.__THREE || w.THREE) detected.push('Three.js')
+        if (w.__NEXT_DATA__) detected.push('Next.js (static export)')
+        const resEntries = performance.getEntriesByType('resource') as PerformanceResourceTiming[]
+        const resNames = resEntries.map((r) => r.name)
+        if (resNames.some((n) => /framer.motion|framer\/motion/i.test(n))) detected.push('Framer Motion')
+        if (resNames.some((n) => /react-three|@react-three/i.test(n))) detected.push('React Three Fiber')
+        if (resNames.some((n) => /\bgsap\b/i.test(n))) detected.push('GSAP')
+        if (resNames.some((n) => /lucide/i.test(n))) detected.push('Lucide')
+        if (resNames.some((n) => n.includes('/_next/'))) detected.push('Next.js chunks')
+        if (resNames.some((n) => /tailwind/i.test(n))) detected.push('Tailwind CSS')
+        if (document.querySelector('[data-reactroot]')) detected.push('React hydrated')
+        ok('tech-stack', t, detected.length > 0 ? detected.slice(0, 6).join(' · ') : 'static export · no globals detected')
+      } else {
+        skip('tech-stack', 'window not available')
+      }
+    } catch {
+      fail('tech-stack', 'detection error')
+    }
+
+    // ── 16 · Snapshot save ──────────────────────────────────────────────────
     t = go('snapshot')
     const snap = saveSnapshot({
       timestamp:        new Date().toISOString(),
@@ -680,9 +711,14 @@ export default function AnalyticsPanel() {
 
   // Deferred so heavy AI scoring doesn't block interactions in the panel
   const deferredState = useDeferredValue(state)
+  const livePerformanceScore = useMemo(() => {
+    const s = computePerformanceScore(liveVitals, longTasks, navMetrics, resourceSummary)
+    return s.hasData ? s.total : 0
+  }, [liveVitals, longTasks, navMetrics, resourceSummary])
+
   const aiAnalysis = useMemo(
-    () => computeAIAnalysis(deferredState, prodChecks, healthDomains, seoChecks, a11yChecks, errorCount, longTasks.sessionCount, globalScore),
-    [deferredState, prodChecks, healthDomains, seoChecks, a11yChecks, errorCount, longTasks.sessionCount, globalScore],
+    () => computeAIAnalysis(deferredState, prodChecks, healthDomains, seoChecks, a11yChecks, errorCount, longTasks.sessionCount, globalScore, livePerformanceScore),
+    [deferredState, prodChecks, healthDomains, seoChecks, a11yChecks, errorCount, longTasks.sessionCount, globalScore, livePerformanceScore],
   )
 
 
@@ -862,7 +898,8 @@ export default function AnalyticsPanel() {
           { label: 'Warnings',   value: warnCount,   variant: warnCount > 0 ? 'warning' : 'success' },
           { label: 'SEO checks', value: `${configSeoChecks.filter(c => c.pass).length}/${configSeoChecks.length}`, variant: configSeoChecks.filter(c => c.pass).length === configSeoChecks.length ? 'success' : 'warning' },
           { label: 'A11y',       value: `${a11yPassing}/${activeA11yChecks.length}`, variant: a11yPassing >= activeA11yChecks.length - 1 ? 'success' : 'warning' },
-          { label: 'Lighthouse', value: lighthouseScores ? globalScore : '—', variant: !lighthouseScores ? 'neutral' : globalScore >= 80 ? 'success' : 'warning' },
+          { label: 'Lighthouse', value: lighthouseScores ? globalScore : (livePerformanceScore > 0 ? `~${livePerformanceScore}` : '—'), variant: !lighthouseScores && livePerformanceScore === 0 ? 'neutral' : (lighthouseScores ? globalScore : livePerformanceScore) >= 80 ? 'success' : 'warning' },
+          { label: 'AI Score',   value: aiAnalysis?.overallScore ?? '—', variant: !aiAnalysis ? 'neutral' : aiAnalysis.overallScore >= 80 ? 'success' : aiAnalysis.overallScore >= 60 ? 'warning' : 'error' },
           { label: 'Providers',  value: `${connectedCount}/4`, variant: connectedCount > 0 ? 'info' : 'neutral' },
           { label: 'Program',    value: `${totalHealthPasses}/${totalHealthItems}`, variant: programScore >= 80 ? 'success' : programScore >= 60 ? 'warning' : 'error' },
           { label: 'Errors',     value: errorCount,  variant: errorCount === 0 ? 'success' : 'error' },
@@ -900,6 +937,7 @@ export default function AnalyticsPanel() {
           setPsiExpanded={setPsiExpanded} setPsiUrl={setPsiUrl} setPsiStrategy={setPsiStrategy}
           fetchPSI={fetchPSI} setActiveTab={setActiveTab}
           psiCountdown={psiCountdown}
+          aiAnalysis={aiAnalysis}
           onBuildDataLoaded={(result, cachedAt) => {
             setPsiResult(result)
             setPsiCachedAt(cachedAt)
@@ -915,7 +953,7 @@ export default function AnalyticsPanel() {
           performanceHints={perfHints}
         />
       )}
-      {activeTab === 'seo'           && <SEOTab configSeoChecks={configSeoChecks} domSeoChecks={domSeoChecks} securityChecks={securityChecks} dispatch={dispatch} />}
+      {activeTab === 'seo'           && <SEOTab configSeoChecks={configSeoChecks} domSeoChecks={domSeoChecks} securityChecks={securityChecks} dispatch={dispatch} seoConfig={{ title: state.seo.defaultTitle, description: state.seo.defaultDescription, ogImage: state.seo.ogImage, twitterHandle: state.seo.twitterHandle, canonicalBase: state.seo.canonicalBase }} />}
       {activeTab === 'accessibility' && <AccessibilityTab domA11yChecks={domA11yChecks} a11yChecks={a11yChecks} activeA11yChecks={activeA11yChecks} />}
       {activeTab === 'bundle'        && <BundleTab bundleSummary={bundleSummary} liveBundles={liveBundles} lastRefreshed={lastRefreshed} />}
       {activeTab === 'tracking'      && (
@@ -947,18 +985,6 @@ export default function AnalyticsPanel() {
         />
       )}
       {activeTab === 'insights' && <InsightsTab aiAnalysis={aiAnalysis} prodChecks={prodChecks} healthDomains={healthDomains} />}
-      {activeTab === 'phase2'   && <Phase2Tab />}
-      {activeTab === 'phase3'   && <Phase3Tab />}
-      {activeTab === 'phase4'   && <Phase4Tab />}
-      {activeTab === 'phase5'        && <Phase5Tab />}
-      {activeTab === 'stabilization' && <StabilizationTab />}
-      {activeTab === 'phase2cms'     && <Phase2CmsTab />}
-      {activeTab === 'phase3cms'     && <Phase3CmsTab />}
-      {activeTab === 'phase3vps'     && <Phase3VPSTab />}
-      {activeTab === 'phase4admin'   && <Phase4AdminTab />}
-      {activeTab === 'phase4perf'    && <Phase4PerfTab />}
-      {activeTab === 'phase5supabase' && <Phase5SupabaseTab />}
-      {activeTab === 'phase5launch'   && <Phase5LaunchTab />}
       {activeTab === 'audit'  && <AuditTab />}
       {activeTab === 'global' && (
         <GlobalStateTab
@@ -967,11 +993,22 @@ export default function AnalyticsPanel() {
           secChecks={secChecks}
           pwaChecks={pwaChecks}
           dxChecks={dxChecks}
+          htmlChecks={htmlChecks}
+          schemaChecks={schemaChecks}
           psiResult={psiResult}
           lastRunAt={lastRefreshed}
+          healthDomains={healthDomains}
+          prodChecks={prodChecks}
+          programScore={programScore}
+          totalHealthPasses={totalHealthPasses}
+          totalHealthItems={totalHealthItems}
+          seoChecks={configSeoChecks}
+          errorCount={errorCount}
+          longTaskCount={longTasks.sessionCount}
+          navMetrics={navMetrics}
+          bundleSummary={bundleSummary}
         />
       )}
-      {activeTab === 'phase1'         && <Phase1Tab />}
     </div>
   )
 }

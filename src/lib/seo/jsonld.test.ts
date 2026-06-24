@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { buildArticleJsonLd, buildBreadcrumbJsonLd } from './jsonld'
-import type { Article } from '@/lib/journal/types'
+import type { Article } from '@/lib/content/loaders'
 
 const BASE_ARTICLE: Article = {
   slug:     'test-article',

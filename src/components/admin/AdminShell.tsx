@@ -37,6 +37,7 @@ import {
   X,
   Tag,
   Link2,
+  Workflow,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAdmin } from '@/lib/admin/store'
@@ -95,6 +96,7 @@ const PANEL_GROUPS: PanelGroup[] = [
       { id: 'labs',           label: 'Labs',           icon: FlaskConical,  accent: '#f59e0b', desc: 'Experiments & demos'         },
       { id: 'taxonomy',       label: 'Taxonomy',       icon: Tag,           accent: '#34d399', desc: 'Tags, categories & media'    },
       { id: 'cms-relations',  label: 'CMS Relations',  icon: Link2,         accent: '#a78bfa', desc: 'Locale, content & scheduler' },
+      { id: 'cms-workflow',   label: 'CMS Workflow',   icon: Workflow,      accent: '#34d399', desc: 'Publish, jobs & audit log'   },
     ],
   },
   {
@@ -501,47 +503,65 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                       transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
                       style={{ overflow: 'hidden' }}
                     >
-                      {group.panels.map((panel) => {
-                        const Icon = panel.icon
-                        const active = mounted && state.panel === panel.id
-                        return (
-                          <button
-                            key={panel.id}
-                            onClick={() => { dispatch({ type: 'SET_PANEL', payload: panel.id }); setMobileOpen(false) }}
-                            title={collapsed ? panel.label : undefined}
-                            className={cn(
-                              'group relative flex w-full items-center gap-2 rounded-md px-2 py-[5px] text-left transition-all duration-150',
-                              active ? 'bg-white/[0.055]' : cn('hover:bg-white/[0.035] hover:text-white/65', textOpacity),
-                              collapsed && 'justify-center'
-                            )}
-                          >
-                            <div
-                              className="absolute left-0 top-1.5 bottom-1.5 w-[2.5px] rounded-full"
-                              style={{ background: accentClr ?? panel.accent, opacity: active ? 1 : 0, transform: `scaleY(${active ? 1 : 0.4})`, transition: 'opacity 180ms ease, transform 180ms ease' }}
-                              suppressHydrationWarning
-                            />
-                            <span className="shrink-0 transition-colors duration-150" style={{ color: active ? (accentClr ?? panel.accent) : undefined }} suppressHydrationWarning>
-                              <Icon className="h-3.5 w-3.5" />
-                            </span>
-                            {!collapsed && (
-                              <div className="min-w-0 flex-1">
-                                <div
-                                  className={cn('text-[10.5px] font-medium tracking-[0.08em] transition-colors leading-none', active ? 'text-white' : '')}
-                                  style={{ color: active ? (accentClr ?? panel.accent) : undefined }}
-                                >
-                                  {panel.label}
+                      {(() => {
+                        const panelOvs = mounted ? (studio.panelOverrides ?? []) : []
+                        const sorted = [...group.panels]
+                          .filter(p => {
+                            const ov = panelOvs.find(o => o.id === p.id)
+                            return ov?.visible !== false
+                          })
+                          .sort((a, b) => {
+                            const ao = panelOvs.find(o => o.id === a.id)?.order
+                            const bo = panelOvs.find(o => o.id === b.id)?.order
+                            if (ao == null && bo == null) return 0
+                            return (ao ?? group.panels.indexOf(a) * 10) - (bo ?? group.panels.indexOf(b) * 10)
+                          })
+                        return sorted.map((panel) => {
+                          const Icon = panel.icon
+                          const active = mounted && state.panel === panel.id
+                          const ov = panelOvs.find(o => o.id === panel.id)
+                          const label = ov?.customLabel ?? panel.label
+                          const desc  = ov?.customDesc  ?? panel.desc
+                          const accent = (mounted && ov?.accentOverride) ? ov.accentOverride : panel.accent
+                          return (
+                            <button
+                              key={panel.id}
+                              onClick={() => { dispatch({ type: 'SET_PANEL', payload: panel.id }); setMobileOpen(false) }}
+                              title={collapsed ? label : undefined}
+                              className={cn(
+                                'group relative flex w-full items-center gap-2 rounded-md px-2 py-[5px] text-left transition-all duration-150',
+                                active ? 'bg-white/[0.055]' : cn('hover:bg-white/[0.035] hover:text-white/65', textOpacity),
+                                collapsed && 'justify-center'
+                              )}
+                            >
+                              <div
+                                className="absolute left-0 top-1.5 bottom-1.5 w-[2.5px] rounded-full"
+                                style={{ background: accentClr ?? accent, opacity: active ? 1 : 0, transform: `scaleY(${active ? 1 : 0.4})`, transition: 'opacity 180ms ease, transform 180ms ease' }}
+                                suppressHydrationWarning
+                              />
+                              <span className="shrink-0 transition-colors duration-150" style={{ color: active ? (accentClr ?? accent) : undefined }} suppressHydrationWarning>
+                                <Icon className="h-3.5 w-3.5" />
+                              </span>
+                              {!collapsed && (
+                                <div className="min-w-0 flex-1">
+                                  <div
+                                    className={cn('text-[10.5px] font-medium tracking-[0.08em] transition-colors leading-none', active ? 'text-white' : '')}
+                                    style={{ color: active ? (accentClr ?? accent) : undefined }}
+                                  >
+                                    {label}
+                                  </div>
+                                  {studio.showDescriptions && (
+                                    <div className="mt-0.5 text-[8.5px] tracking-[0.08em] text-white/22 leading-none">{desc}</div>
+                                  )}
                                 </div>
-                                {studio.showDescriptions && (
-                                  <div className="mt-0.5 text-[8.5px] tracking-[0.08em] text-white/22 leading-none">{panel.desc}</div>
-                                )}
-                              </div>
-                            )}
-                            {active && !collapsed && (
-                              <div className="h-1.5 w-1.5 rounded-full animate-pulse shrink-0" style={{ background: accentClr ?? panel.accent }} />
-                            )}
-                          </button>
-                        )
-                      })}
+                              )}
+                              {active && !collapsed && (
+                                <div className="h-1.5 w-1.5 rounded-full animate-pulse shrink-0" style={{ background: accentClr ?? accent }} />
+                              )}
+                            </button>
+                          )
+                        })
+                      })()}
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -719,7 +739,16 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         </header>
 
         {/* Content */}
-        <main className="flex-1 overflow-auto" style={{ padding: mainPad, scrollbarWidth: scrollbarW as 'none' | 'thin' | 'auto' }}>
+        <main
+          className="flex-1 overflow-auto"
+          data-card-style={mounted ? (studio.panelCardStyle ?? 'filled') : 'filled'}
+          style={{
+            padding: mainPad,
+            scrollbarWidth: scrollbarW as 'none' | 'thin' | 'auto',
+            '--card-bg-opacity':     String((studio.panelCardBgOpacity       ?? 20) / 100),
+            '--card-border-opacity': String((studio.panelCardBorderIntensity  ?? 50) / 100 * 0.15),
+          } as React.CSSProperties}
+        >
           <AnimatePresence mode="sync">
             <motion.div key={state.panel} {...motionProps}>
               {children}

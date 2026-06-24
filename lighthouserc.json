@@ -2,8 +2,64 @@
   "ci": {
     "collect": {
       "staticDistDir": "./dist",
-      "url": ["http://localhost/en/index.html", "http://localhost/es/index.html"],
-      "budgets": [{ "path": "/*", "resourceSizes": [{ "resourceType": "script", "budget": 900 }, { "resourceType": "total", "budget": 2000 }] }],
+      "url": [
+        "http://localhost/en/index.html",
+        "http://localhost/es/index.html",
+        "http://localhost/en/systems/index.html",
+        "http://localhost/en/intelligence/index.html"
+      ],
+      "budgets": [
+        {
+          "path": "/en/",
+          "resourceSizes": [
+            { "resourceType": "script",     "budget": 700 },
+            { "resourceType": "stylesheet", "budget": 50  },
+            { "resourceType": "image",      "budget": 300 },
+            { "resourceType": "font",       "budget": 100 },
+            { "resourceType": "total",      "budget": 1200 }
+          ],
+          "timings": [
+            { "metric": "first-contentful-paint",   "budget": 2000 },
+            { "metric": "largest-contentful-paint", "budget": 3500 },
+            { "metric": "total-blocking-time",      "budget": 600  },
+            { "metric": "interactive",              "budget": 5000 }
+          ]
+        },
+        {
+          "path": "/es/",
+          "resourceSizes": [
+            { "resourceType": "script", "budget": 700 },
+            { "resourceType": "total",  "budget": 1200 }
+          ],
+          "timings": [
+            { "metric": "first-contentful-paint",   "budget": 2000 },
+            { "metric": "largest-contentful-paint", "budget": 3500 },
+            { "metric": "total-blocking-time",      "budget": 600  }
+          ]
+        },
+        {
+          "path": "/en/systems/",
+          "resourceSizes": [
+            { "resourceType": "script", "budget": 900 },
+            { "resourceType": "total",  "budget": 1500 }
+          ],
+          "timings": [
+            { "metric": "largest-contentful-paint", "budget": 4000 },
+            { "metric": "total-blocking-time",      "budget": 800  }
+          ]
+        },
+        {
+          "path": "/en/intelligence/",
+          "resourceSizes": [
+            { "resourceType": "script", "budget": 900 },
+            { "resourceType": "total",  "budget": 1500 }
+          ],
+          "timings": [
+            { "metric": "largest-contentful-paint", "budget": 4000 },
+            { "metric": "total-blocking-time",      "budget": 800  }
+          ]
+        }
+      ],
       "numberOfRuns": 3,
       "settings": {
         "preset": "desktop",

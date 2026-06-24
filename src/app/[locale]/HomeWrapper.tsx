@@ -8,7 +8,7 @@
 // Dark Reader hydration warnings are suppressed at the body/html level.
 // Below-fold sections inside HomeClient keep their own `ssr: false` + LazySection.
 import { HomeClient } from './HomeClient'
-import type { ArticleMeta } from '@/lib/journal/types'
+import type { ArticleMeta } from '@/lib/content/loaders'
 
 interface HomeWrapperProps {
   featured: ArticleMeta | undefined

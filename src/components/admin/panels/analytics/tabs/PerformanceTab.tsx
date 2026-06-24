@@ -1,14 +1,394 @@
 'use client'
 
-import { Radio, CheckCircle2 } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Radio, CheckCircle2, Wifi } from 'lucide-react'
 import { Card, AuditRow } from '../shared-components'
 import { CWV_STATIC, RECOMMENDATIONS } from '../constants'
-import { rateVital, formatVital, vitalUnit } from '@/lib/analytics/live-metrics'
-import type { NavigationMetrics, LongTaskSummary } from '@/lib/analytics/live-metrics'
+import { rateVital, formatVital, vitalUnit, computePerformanceScore } from '@/lib/analytics/live-metrics'
+import type { NavigationMetrics, LongTaskSummary, PerformanceScore } from '@/lib/analytics/live-metrics'
 import type { ResourceSummary } from '@/lib/analytics/resource-timing'
 import type { PSIResult } from '@/lib/analytics/pagespeed'
 import type { DOMCheck } from '@/lib/analytics/dom-audit'
 import type { CWVStatus } from '../types'
+import { getRUMSamples } from '@/lib/performance/rum'
+import type { RUMSample } from '@/lib/performance/rum'
+import { getSectionPerfEntries, clearSectionPerf } from '@/lib/performance/section-tracker'
+import type { SectionPerfEntry } from '@/lib/performance/section-tracker'
+import { cn } from '@/lib/utils'
+
+// ─── RUM live card ────────────────────────────────────────────────────────────
+
+const RUM_RATING_CLS: Record<RUMSample['rating'], string> = {
+  'good':              'text-emerald-400',
+  'needs-improvement': 'text-amber-400',
+  'poor':              'text-rose-400',
+}
+
+function RUMLiveCard() {
+  const [samples, setSamples] = useState<RUMSample[]>([])
+
+  useEffect(() => {
+    const refresh = () => setSamples([...getRUMSamples()])
+    refresh()
+    const id = setInterval(refresh, 3000)
+    return () => clearInterval(id)
+  }, [])
+
+  const latestByName = (['LCP', 'FCP', 'CLS', 'INP', 'TTFB'] as const).map(name => {
+    const all = samples.filter(s => s.name === name)
+    return { name, sample: all[all.length - 1] ?? null }
+  })
+
+  const hasData = samples.length > 0
+
+  return (
+    <Card dot="#f43f5e" title={`RUM — Real User Monitoring · ${hasData ? `${samples.length} samples` : 'waiting for data…'}`}>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+        {latestByName.map(({ name, sample }) => {
+          const rating = sample?.rating ?? 'pending'
+          const displayVal = sample
+            ? name === 'CLS'
+              ? (sample.value / 1000).toFixed(3)
+              : name === 'TTFB' || name === 'INP'
+              ? `${Math.round(sample.value)}`
+              : (sample.value / 1000).toFixed(1)
+            : '—'
+          const unit = name === 'CLS' ? '' : name === 'TTFB' || name === 'INP' ? 'ms' : 's'
+
+          return (
+            <div key={name} className={cn('flex flex-col items-center gap-1 rounded-xl border px-3 py-3',
+              rating === 'good' ? 'border-emerald-400/20 bg-emerald-400/4'
+              : rating === 'needs-improvement' ? 'border-amber-400/20 bg-amber-400/4'
+              : rating === 'poor' ? 'border-rose-400/20 bg-rose-400/4'
+              : 'border-white/8 bg-white/[0.02]',
+            )}>
+              <div className="font-mono text-[8px] uppercase tracking-wider text-white/30">{name} <span className="text-rose-400/50">RUM</span></div>
+              <div className={cn('font-mono text-[20px] font-bold tabular-nums leading-none', sample ? RUM_RATING_CLS[rating] : 'text-white/15')}>
+                {displayVal}
+              </div>
+              {unit && <div className="font-mono text-[8px] text-white/20">{unit}</div>}
+              {sample && (
+                <span className={cn('rounded-full border px-2 py-0.5 font-mono text-[7px] uppercase tracking-wider',
+                  rating === 'good' ? 'border-emerald-400/20 text-emerald-400'
+                  : rating === 'needs-improvement' ? 'border-amber-400/20 text-amber-400'
+                  : 'border-rose-400/20 text-rose-400',
+                )}>
+                  {rating === 'good' ? 'good' : rating === 'needs-improvement' ? 'improve' : 'poor'}
+                </span>
+              )}
+            </div>
+          )
+        })}
+      </div>
+      {!hasData && (
+        <div className="flex items-center gap-3 mt-2 rounded-xl border border-white/6 bg-white/[0.015] px-4 py-4 text-[10px] text-white/25">
+          <Wifi className="h-3.5 w-3.5 shrink-0 text-rose-400/40" />
+          Navigate public pages to collect RUM vitals. Plausible &quot;Web Vital&quot; events fire automatically when NEXT_PUBLIC_PLAUSIBLE_DOMAIN is set.
+        </div>
+      )}
+    </Card>
+  )
+}
+
+// ─── Performance Score card ───────────────────────────────────────────────────
+
+const GRADE_COLOR: Record<PerformanceScore['grade'], string> = {
+  A: '#34d399', B: '#86efac', C: '#fbbf24', D: '#fb923c', F: '#f43f5e',
+}
+
+function PerformanceScoreCard({ score }: { score: PerformanceScore }) {
+  if (!score.hasData) return null
+  const color    = GRADE_COLOR[score.grade]
+  const circumf  = 2 * Math.PI * 38  // r=38
+  const dash     = (score.total / 100) * circumf
+  const dims: Array<{ label: string; score: number | null; weight: string }> = [
+    { label: 'Core Web Vitals', score: score.cwv,        weight: '40%' },
+    { label: 'Threading',       score: score.threading,  weight: '20%' },
+    { label: 'Navigation TTFB', score: score.navigation, weight: '15%' },
+    { label: 'Resources',       score: score.resources,  weight: '15%' },
+    { label: 'Memory',          score: score.memory,     weight: '10%' },
+  ]
+  return (
+    <Card dot={color} title="Performance Score · composite live measurement">
+      <div className="flex items-center gap-6">
+        {/* Ring gauge */}
+        <div className="relative shrink-0 flex items-center justify-center" style={{ width: 96, height: 96 }}>
+          <svg width={96} height={96} viewBox="0 0 96 96" style={{ transform: 'rotate(-90deg)' }}>
+            <circle cx={48} cy={48} r={38} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={8} />
+            <circle
+              cx={48} cy={48} r={38} fill="none"
+              stroke={color} strokeWidth={8}
+              strokeLinecap="round"
+              strokeDasharray={`${dash} ${circumf}`}
+              style={{ transition: 'stroke-dasharray 0.8s ease' }}
+            />
+          </svg>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className="font-mono text-[26px] font-bold leading-none tabular-nums" style={{ color }}>{score.total}</span>
+            <span className="font-mono text-[10px] font-bold mt-0.5" style={{ color }}>{score.grade}</span>
+          </div>
+        </div>
+        {/* Dimension bars */}
+        <div className="flex-1 space-y-2">
+          {dims.map(({ label, score: dimScore, weight }) => {
+            if (dimScore === null) return null
+            const pct  = dimScore
+            const fill = pct >= 75 ? '#34d399' : pct >= 50 ? '#fbbf24' : '#f43f5e'
+            return (
+              <div key={label} className="flex items-center gap-2.5">
+                <span className="w-32 shrink-0 font-mono text-[8.5px] text-white/45 truncate">{label}</span>
+                <div className="flex-1 h-2 overflow-hidden rounded-full bg-white/6">
+                  <div className="h-full rounded-full transition-all duration-700" style={{ width: `${pct}%`, background: fill }} />
+                </div>
+                <span className="w-8 shrink-0 font-mono text-[8.5px] tabular-nums text-right" style={{ color: fill }}>{pct}</span>
+                <span className="w-7 shrink-0 font-mono text-[7.5px] text-white/18 text-right">{weight}</span>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+      <div className="mt-3 font-mono text-[7.5px] text-white/20 text-right">
+        live browser data · no PSI required · updates on Run Analysis
+      </div>
+    </Card>
+  )
+}
+
+// ─── Frame rate card ──────────────────────────────────────────────────────────
+
+function FrameRateCard() {
+  const [fps, setFps]           = useState<number | null>(null)
+  const [jankFrames, setJank]   = useState(0)
+  const [history, setHistory]   = useState<number[]>([])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    let frameCount = 0
+    let jankCount  = 0
+    let start      = performance.now()
+    let lastFrame  = performance.now()
+    let rafId: number
+
+    const tick = (now: number) => {
+      const delta = now - lastFrame
+      lastFrame   = now
+      frameCount++
+      if (delta > 33.3) jankCount++           // >33ms gap = below 30fps
+
+      if (now - start >= 1000) {
+        const cur = Math.min(Math.round((frameCount * 1000) / (now - start)), 120)
+        setFps(cur)
+        setJank(jankCount)
+        setHistory(prev => [...prev, cur].slice(-20))
+        frameCount = 0
+        jankCount  = 0
+        start      = now
+      }
+
+      rafId = requestAnimationFrame(tick)
+    }
+
+    rafId = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(rafId)
+  }, [])
+
+  if (fps === null) return null
+
+  const smooth   = fps >= 55
+  const moderate = fps >= 30 && fps < 55
+  const color    = smooth ? '#34d399' : moderate ? '#f59e0b' : '#f43f5e'
+  const label    = smooth ? 'smooth' : moderate ? 'moderate' : 'janky'
+  const circumf  = 2 * Math.PI * 32
+  const dash     = (Math.min(fps, 60) / 60) * circumf
+  const maxH     = Math.max(...history, 1)
+
+  return (
+    <Card dot={color} title={`Animation frame rate · live RAF monitor · ${label} · ${fps} fps`}>
+      <div className="flex items-start gap-6">
+        {/* Ring gauge */}
+        <div className="relative shrink-0 flex items-center justify-center" style={{ width: 80, height: 80 }}>
+          <svg width={80} height={80} viewBox="0 0 80 80" style={{ transform: 'rotate(-90deg)' }}>
+            <circle cx={40} cy={40} r={32} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={6} />
+            <circle cx={40} cy={40} r={32} fill="none" stroke={color} strokeWidth={6}
+              strokeLinecap="round" strokeDasharray={`${dash} ${circumf}`}
+              style={{ transition: 'stroke-dasharray 0.8s ease' }} />
+          </svg>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className="font-mono text-[17px] font-bold tabular-nums leading-none" style={{ color }}>{fps}</span>
+            <span className="font-mono text-[7px] uppercase mt-0.5 text-white/25">fps</span>
+          </div>
+        </div>
+        {/* Info + bar history */}
+        <div className="flex-1 space-y-2">
+          <div className="grid grid-cols-3 gap-2">
+            {([
+              { label: 'Current',      value: `${fps} fps`,       col: color },
+              { label: 'Jank frames',  value: String(jankFrames), col: jankFrames === 0 ? '#34d399' : '#f43f5e' },
+              { label: 'Target',       value: '60 fps',           col: 'rgba(255,255,255,0.25)' },
+            ] as Array<{ label: string; value: string; col: string }>).map(({ label: l, value, col }) => (
+              <div key={l}>
+                <div className="font-mono text-[11px] font-bold tabular-nums" style={{ color: col }}>{value}</div>
+                <div className="font-mono text-[7.5px] uppercase tracking-wider text-white/30">{l}</div>
+              </div>
+            ))}
+          </div>
+          {history.length >= 3 && (
+            <div className="flex items-end gap-px overflow-hidden rounded-lg bg-white/[0.03] p-2" style={{ height: 32 }}>
+              {history.map((f, i) => {
+                const h  = Math.max(2, (f / maxH) * 100)
+                const fc = f >= 55 ? '#34d399' : f >= 30 ? '#f59e0b' : '#f43f5e'
+                return <div key={i} className="flex-1 rounded-t-sm transition-all duration-300" style={{ height: `${h}%`, background: fc, opacity: 0.7 }} />
+              })}
+            </div>
+          )}
+          {jankFrames > 2 && (
+            <div className="flex items-center gap-2 rounded-lg border border-rose-400/20 bg-rose-400/4 px-3 py-1.5">
+              <span className="font-mono text-[9px] text-rose-400">{jankFrames} jank frames — long tasks or heavy animations blocking render thread</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </Card>
+  )
+}
+
+// ─── Network quality card ─────────────────────────────────────────────────────
+
+interface NetworkInfo {
+  effectiveType: string
+  downlink: number
+  rtt: number
+  saveData: boolean
+}
+
+function NetworkQualityCard() {
+  const [net, setNet] = useState<NetworkInfo | null>(null)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const conn = (navigator as unknown as { connection?: NetworkInformation }).connection
+    if (!conn) return
+
+    interface NetworkInformation extends EventTarget {
+      effectiveType?: string
+      downlink?: number
+      rtt?: number
+      saveData?: boolean
+    }
+
+    const read = () => setNet({
+      effectiveType: conn.effectiveType ?? 'unknown',
+      downlink:      conn.downlink      ?? 0,
+      rtt:           conn.rtt           ?? 0,
+      saveData:      conn.saveData      ?? false,
+    })
+    read()
+    conn.addEventListener('change', read)
+    return () => conn.removeEventListener('change', read)
+  }, [])
+
+  if (!net) return null
+
+  const qualityColor =
+    net.effectiveType === '4g' ? '#34d399' :
+    net.effectiveType === '3g' ? '#fbbf24' : '#f43f5e'
+
+  return (
+    <Card dot={qualityColor} title="Network quality · navigator.connection (live)">
+      <div className="grid grid-cols-4 gap-2">
+        {[
+          { label: 'Type',      value: net.effectiveType.toUpperCase(), color: qualityColor },
+          { label: 'Downlink',  value: `${net.downlink} Mbps`,          color: 'white'      },
+          { label: 'RTT',       value: `${net.rtt}ms`,                  color: net.rtt > 100 ? '#fbbf24' : '#34d399' },
+          { label: 'Data Saver',value: net.saveData ? 'ON' : 'OFF',     color: net.saveData ? '#f43f5e' : '#34d399'  },
+        ].map(({ label, value, color }) => (
+          <div key={label} className="flex flex-col gap-1 rounded-xl border border-white/8 bg-black/20 p-3">
+            <div className="font-mono text-[13px] font-bold tabular-nums leading-none" style={{ color: color === 'white' ? 'rgba(255,255,255,0.75)' : color }}>{value}</div>
+            <div className="font-mono text-[7.5px] uppercase tracking-wider text-white/30">{label}</div>
+          </div>
+        ))}
+      </div>
+      {net.saveData && (
+        <div className="mt-2 rounded-lg border border-rose-400/15 bg-rose-400/4 px-3 py-2 font-mono text-[9px] text-rose-400/70">
+          Data Saver active — defer non-critical assets and compress aggressively
+        </div>
+      )}
+    </Card>
+  )
+}
+
+// ─── Memory Pressure card ─────────────────────────────────────────────────────
+
+interface HeapInfo { used: number; total: number; limit: number }
+
+function MemoryPressureCard() {
+  const [heap, setHeap] = useState<HeapInfo | null>(null)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const mem = (performance as unknown as { memory?: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number } }).memory
+    if (!mem) return
+    const refresh = () => setHeap({
+      used:  Math.round(mem.usedJSHeapSize  / 1048576),
+      total: Math.round(mem.totalJSHeapSize / 1048576),
+      limit: Math.round(mem.jsHeapSizeLimit / 1048576),
+    })
+    refresh()
+    const id = setInterval(refresh, 5000)
+    return () => clearInterval(id)
+  }, [])
+
+  if (!heap) return null
+
+  const usedPct  = Math.round((heap.used  / heap.limit) * 100)
+  const totalPct = Math.round((heap.total / heap.limit) * 100)
+  const pressure: 'low' | 'medium' | 'high' = usedPct < 50 ? 'low' : usedPct < 75 ? 'medium' : 'high'
+  const pressureColor = pressure === 'low' ? '#34d399' : pressure === 'medium' ? '#f59e0b' : '#f43f5e'
+  const circumf = 2 * Math.PI * 32
+  const dash    = (usedPct / 100) * circumf
+
+  return (
+    <Card dot={pressureColor} title={`JS Heap · memory pressure · ${pressure} · updates every 5s`}>
+      <div className="flex items-center gap-6">
+        <div className="relative shrink-0 flex items-center justify-center" style={{ width: 80, height: 80 }}>
+          <svg width={80} height={80} viewBox="0 0 80 80" style={{ transform: 'rotate(-90deg)' }}>
+            <circle cx={40} cy={40} r={32} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={6} />
+            <circle cx={40} cy={40} r={32} fill="none" stroke={pressureColor} strokeWidth={6}
+              strokeLinecap="round" strokeDasharray={`${dash} ${circumf}`}
+              style={{ transition: 'stroke-dasharray 1s ease' }} />
+          </svg>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className="font-mono text-[17px] font-bold tabular-nums leading-none" style={{ color: pressureColor }}>{usedPct}%</span>
+            <span className="font-mono text-[7px] uppercase mt-0.5 text-white/25">used</span>
+          </div>
+        </div>
+        <div className="flex-1 space-y-2.5">
+          {[
+            { label: 'Used heap',    mb: heap.used,  pct: usedPct,  color: pressureColor },
+            { label: 'Allocated',   mb: heap.total, pct: totalPct, color: '#818cf8' },
+          ].map(({ label, mb, pct, color }) => (
+            <div key={label} className="flex items-center gap-2.5">
+              <span className="w-24 shrink-0 font-mono text-[8.5px] text-white/40">{label}</span>
+              <div className="flex-1 h-2 overflow-hidden rounded-full bg-white/6">
+                <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${pct}%`, background: color + '80' }} />
+              </div>
+              <span className="w-12 shrink-0 font-mono text-[8.5px] text-right tabular-nums" style={{ color }}>{mb} MB</span>
+              <span className="w-10 shrink-0 font-mono text-[7.5px] text-right text-white/22">{pct}%</span>
+            </div>
+          ))}
+          <div className="font-mono text-[7.5px] text-white/20">
+            Limit {heap.limit} MB · Chrome only (performance.memory) · refreshes every 5s
+          </div>
+        </div>
+      </div>
+      {pressure === 'high' && (
+        <div className="mt-2 rounded-lg border border-red-400/20 bg-red-400/6 px-3 py-2 font-mono text-[8.5px] text-red-400/70">
+          High memory pressure ({heap.used} / {heap.limit} MB) — check for event listener leaks or large retained object trees
+        </div>
+      )}
+    </Card>
+  )
+}
 
 const VITAL_NAMES = ['LCP', 'FCP', 'CLS', 'INP', 'TTFB'] as const
 
@@ -67,14 +447,211 @@ const recPriorityCls = (priority: string) => {
   return `ml-auto shrink-0 font-mono text-[8px] uppercase tracking-wider ${m[priority] ?? 'text-white/30'}`
 }
 
+// ─── Section Profiler Card ─────────────────────────────────────────────────────
+// Reads localStorage data written by SectionPerfWrapper on the public landing page.
+// Sections are: hero, systems, labs, infrastructure, journal, collaborate.
+
+const STATUS_COLOR: Record<SectionPerfEntry['status'], string> = {
+  'good':              'text-emerald-400',
+  'needs-improvement': 'text-amber-400',
+  'poor':              'text-rose-400',
+}
+const STATUS_BAR_COLOR: Record<SectionPerfEntry['status'], string> = {
+  'good':              '#34d399aa',
+  'needs-improvement': '#f59e0baa',
+  'poor':              '#f43f5eaa',
+}
+const STATUS_BADGE: Record<SectionPerfEntry['status'], string> = {
+  'good':              'border-emerald-400/20 text-emerald-400 bg-emerald-400/5',
+  'needs-improvement': 'border-amber-400/20 text-amber-400 bg-amber-400/5',
+  'poor':              'border-rose-400/20 text-rose-400 bg-rose-400/5',
+}
+
+function SectionProfilerCard() {
+  const [entries, setEntries]   = useState<SectionPerfEntry[]>([])
+  const [cleared, setCleared]   = useState(false)
+
+  useEffect(() => {
+    const refresh = () => setEntries(getSectionPerfEntries())
+    refresh()
+    const id = setInterval(refresh, 3000)
+    return () => clearInterval(id)
+  }, [])
+
+  const maxMs      = entries.length ? Math.max(...entries.map(e => e.visibleMs ?? e.renderMs)) : 5000
+  const capturedAt = entries[0]?.capturedAt
+    ? new Date(entries[0].capturedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    : null
+  const url = entries[0]?.url ?? null
+  const good = entries.filter(e => e.status === 'good').length
+  const poor = entries.filter(e => e.status === 'poor').length
+
+  function handleClear() {
+    clearSectionPerf()
+    setEntries([])
+    setCleared(true)
+    setTimeout(() => setCleared(false), 2000)
+  }
+
+  if (entries.length === 0) {
+    return (
+      <Card dot="#818cf8" title="Section Profiler · per-panel render timeline · no data yet">
+        <div className="flex flex-col items-center gap-3 py-6 text-center">
+          <div className="text-[9px] font-mono text-white/30 leading-relaxed max-w-xs">
+            Navigate to{' '}
+            <code className="rounded border border-white/10 bg-black/30 px-1.5 py-0.5 text-indigo-300/70">/en/</code>
+            {' '}or{' '}
+            <code className="rounded border border-white/10 bg-black/30 px-1.5 py-0.5 text-indigo-300/70">/es/</code>
+            {' '}and scroll through each section. Metrics are recorded per-section and shown here automatically.
+          </div>
+          {cleared && (
+            <span className="font-mono text-[9px] text-emerald-400">Data cleared</span>
+          )}
+        </div>
+      </Card>
+    )
+  }
+
+  return (
+    <Card
+      dot="#818cf8"
+      title={`Section Profiler · ${entries.length} sections · ${good} good${poor > 0 ? ` · ${poor} poor` : ''}`}
+    >
+      {/* Source info */}
+      <div className="flex items-center gap-2 mb-3 pb-3 border-b border-white/5">
+        <div className="flex items-center gap-1.5 text-[8.5px] font-mono text-white/30">
+          <span>Captured from</span>
+          <code className="rounded border border-white/8 bg-black/20 px-1.5 py-0.5 text-indigo-300/60">{url}</code>
+          {capturedAt && <><span>at</span><span className="text-white/40">{capturedAt}</span></>}
+        </div>
+        <button
+          onClick={handleClear}
+          className="ml-auto font-mono text-[8px] text-white/20 hover:text-rose-400/60 transition-colors px-2 py-1 rounded border border-white/5 hover:border-rose-400/20"
+        >
+          {cleared ? 'cleared' : 'clear'}
+        </button>
+      </div>
+
+      {/* Flame chart */}
+      <div className="space-y-2.5 mb-4">
+        {entries.map((e) => {
+          const ms       = e.visibleMs ?? e.renderMs
+          const barPct   = Math.min(Math.round((ms / maxMs) * 100), 100)
+          const renderPct = Math.min(Math.round((e.renderMs / maxMs) * 100), 100)
+          const label    = ms >= 1000 ? `${(ms / 1000).toFixed(2)}s` : `${ms}ms`
+          return (
+            <div key={e.name} className="group flex items-center gap-3">
+              {/* Section name */}
+              <span className="w-24 shrink-0 font-mono text-[9px] font-semibold capitalize text-white/55 group-hover:text-white/80 transition-colors">
+                {e.name}
+              </span>
+
+              {/* Timeline bar */}
+              <div className="relative flex-1 h-5 overflow-hidden rounded bg-white/[0.03] border border-white/5">
+                {/* render time marker */}
+                <div
+                  className="absolute top-0 h-full opacity-30 rounded"
+                  style={{ width: `${renderPct}%`, background: STATUS_BAR_COLOR[e.status] }}
+                />
+                {/* visible time fill */}
+                {e.visibleMs != null && (
+                  <div
+                    className="absolute top-0 h-full opacity-70 rounded"
+                    style={{ width: `${barPct}%`, background: STATUS_BAR_COLOR[e.status] }}
+                  />
+                )}
+                {/* label inside bar */}
+                <span className="absolute right-2 top-1/2 -translate-y-1/2 font-mono text-[8px] text-white/50 tabular-nums">
+                  {e.visibleMs != null ? (
+                    <>{label} <span className="text-white/25">vis</span></>
+                  ) : (
+                    <>{label} <span className="text-white/25">rend</span></>
+                  )}
+                </span>
+              </div>
+
+              {/* Status badge */}
+              <span className={cn(
+                'shrink-0 rounded-full border px-2 py-0.5 font-mono text-[7.5px] uppercase tracking-wider',
+                STATUS_BADGE[e.status],
+              )}>
+                {e.status === 'needs-improvement' ? 'improve' : e.status}
+              </span>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Detail table */}
+      <div className="rounded-lg border border-white/5 bg-black/20 overflow-hidden">
+        <table className="w-full text-[8.5px] font-mono">
+          <thead>
+            <tr className="border-b border-white/5 text-white/25 uppercase tracking-wider text-left">
+              <th className="px-3 py-2">Section</th>
+              <th className="px-3 py-2 text-right">Render</th>
+              <th className="px-3 py-2 text-right">Visible</th>
+              <th className="px-3 py-2 text-right">Budget</th>
+              <th className="px-3 py-2 text-right">FCP</th>
+              <th className="px-3 py-2 text-right">Status</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-white/[0.03]">
+            {entries.map((e) => (
+              <tr key={e.name} className="hover:bg-white/[0.015] transition-colors">
+                <td className="px-3 py-1.5 font-semibold capitalize text-white/60">{e.name}</td>
+                <td className="px-3 py-1.5 text-right tabular-nums text-white/40">
+                  {e.renderMs >= 1000 ? `${(e.renderMs / 1000).toFixed(2)}s` : `${e.renderMs}ms`}
+                </td>
+                <td className={cn('px-3 py-1.5 text-right tabular-nums', e.visibleMs != null ? STATUS_COLOR[e.status] : 'text-white/20')}>
+                  {e.visibleMs != null
+                    ? e.visibleMs >= 1000 ? `${(e.visibleMs / 1000).toFixed(2)}s` : `${e.visibleMs}ms`
+                    : '—'}
+                </td>
+                <td className="px-3 py-1.5 text-right tabular-nums text-white/25">
+                  {e.budget >= 1000 ? `${(e.budget / 1000).toFixed(1)}s` : `${e.budget}ms`}
+                </td>
+                <td className="px-3 py-1.5 text-right tabular-nums text-white/30">
+                  {e.fcp != null ? `${e.fcp}ms` : '—'}
+                </td>
+                <td className={cn('px-3 py-1.5 text-right font-semibold', STATUS_COLOR[e.status])}>
+                  {e.status === 'good' ? '✓' : e.status === 'poor' ? '✗' : '~'}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="mt-3 font-mono text-[8px] text-white/20 leading-relaxed">
+        <span className="text-white/30">Render</span> = ms since nav start when component mounted.{' '}
+        <span className="text-white/30">Visible</span> = ms when 10% of section crossed viewport.{' '}
+        Budget thresholds: hero 2.5s · systems 3.5s · labs 4s · infra 4.5s · journal 5s.
+      </div>
+    </Card>
+  )
+}
+
 export function PerformanceTab({
   liveVitals, cwvLive, navMetrics, longTasks,
   resourceSummary, networkFails, bundleSummary,
   psiResult, psiCachedAt, isLighthouseLive,
   performanceHints,
 }: Props) {
+  const perfScore = computePerformanceScore(liveVitals, longTasks, navMetrics, resourceSummary)
+
   return (
     <div className="space-y-4">
+      {/* Composite live performance score */}
+      <PerformanceScoreCard score={perfScore} />
+      {/* JS heap memory pressure — Chrome only */}
+      <MemoryPressureCard />
+      {/* Animation frame rate — RAF-based jank detection */}
+      <FrameRateCard />
+      {/* Network quality from navigator.connection */}
+      <NetworkQualityCard />
+      {/* RUM — Real User Monitoring data from public pages */}
+      <RUMLiveCard />
+
       <Card dot="#34d399" title="Core Web Vitals · live PerformanceObserver">
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
           {VITAL_NAMES.map((name) => {
@@ -319,6 +896,73 @@ export function PerformanceTab({
         )}
       </Card>
 
+      {resourceSummary && Object.keys(resourceSummary.byType).length > 0 && (
+        <Card dot="#a78bfa" title="Resource type breakdown · decoded KB + avg load time">
+          <div className="space-y-2">
+            {(() => {
+              const entries = Object.entries(resourceSummary.byType).sort((a, b) => b[1].kb - a[1].kb)
+              const maxKB = Math.max(...entries.map(([, s]) => s.kb), 1)
+              const typeColor: Record<string, string> = {
+                script: '#38bdf8', link: '#a78bfa', img: '#34d399', font: '#f59e0b', other: 'rgba(255,255,255,0.25)',
+              }
+              return entries.map(([type, stats]) => {
+                const pct = Math.round((stats.kb / maxKB) * 100)
+                const color = typeColor[type] ?? 'rgba(255,255,255,0.25)'
+                return (
+                  <div key={type} className="flex items-center gap-3">
+                    <span className="w-16 shrink-0 font-mono text-[8.5px] uppercase text-white/45">{type}</span>
+                    <div className="flex-1 h-2 overflow-hidden rounded-full bg-white/6">
+                      <div className="h-full rounded-full transition-all" style={{ width: `${Math.max(pct, 2)}%`, background: color + '80' }} />
+                    </div>
+                    <span className="w-14 shrink-0 font-mono text-[8.5px] text-right tabular-nums text-white/50">{stats.kb} KB</span>
+                    <span className="w-10 shrink-0 font-mono text-[7.5px] text-right tabular-nums text-white/30">{stats.count}×</span>
+                    <span className="w-16 shrink-0 font-mono text-[7.5px] text-right tabular-nums text-white/22">~{stats.avgMs}ms</span>
+                  </div>
+                )
+              })
+            })()}
+          </div>
+          <div className="mt-2 font-mono text-[7.5px] text-white/18 text-right">
+            script · link (CSS) · img · font · other — decoded size from Performance API
+          </div>
+        </Card>
+      )}
+
+      {resourceSummary && resourceSummary.entries.length >= 3 && (() => {
+        const filtered = resourceSummary.entries.filter((e) => e.duration > 10).sort((a, b) => a.startTime - b.startTime).slice(0, 30)
+        if (filtered.length < 2) return null
+        const maxEnd = Math.max(...filtered.map((e) => e.startTime + e.duration), 1)
+        const typeColor: Record<string, string> = {
+          script: '#38bdf8', link: '#a78bfa', img: '#34d399', font: '#f59e0b', other: 'rgba(255,255,255,0.35)',
+        }
+        return (
+          <Card dot="#818cf8" title={`Resource waterfall · ${filtered.length} resources · sorted by start time`}>
+            <div className="space-y-0.5 max-h-72 overflow-y-auto pr-1">
+              {filtered.map((r, i) => {
+                const startPct = Math.round((r.startTime / maxEnd) * 100)
+                const widthPct = Math.max(Math.round((r.duration / maxEnd) * 100), 1)
+                const color = r.slow ? '#f43f5e' : r.cached ? '#34d399' : (typeColor[r.type] ?? '#818cf8')
+                return (
+                  <div key={i} className="flex items-center gap-2 py-0.5">
+                    <span className="w-28 shrink-0 truncate font-mono text-[7.5px] text-white/30">{r.name}</span>
+                    <div className="relative flex-1 h-3 bg-white/[0.02] rounded-sm overflow-hidden">
+                      <div
+                        className="absolute top-0 h-full rounded-sm"
+                        style={{ left: `${startPct}%`, width: `${widthPct}%`, background: color + '60' }}
+                      />
+                    </div>
+                    <span className="w-16 shrink-0 text-right font-mono text-[7.5px] tabular-nums text-white/30">{r.duration}ms</span>
+                  </div>
+                )
+              })}
+            </div>
+            <div className="mt-2 font-mono text-[7.5px] text-white/18">
+              red = slow (&gt;500ms) · green = cached · bar width = duration · bar offset = start time · max end {Math.round(maxEnd)}ms
+            </div>
+          </Card>
+        )
+      })()}
+
       <Card dot="#34d399" title={bundleSummary ? `Bundle budget · live resource data · ${bundleSummary.totalDecodedKB}KB total decoded` : 'Bundle budget · gzip targets'}>
         <div className="space-y-3">
           {(bundleSummary ? [
@@ -410,6 +1054,8 @@ export function PerformanceTab({
           </div>
         </Card>
       )}
+
+      <SectionProfilerCard />
     </div>
   )
 }

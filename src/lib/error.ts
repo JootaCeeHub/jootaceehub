@@ -61,7 +61,7 @@ export function reportError(err: unknown, context?: Record<string, unknown>) {
   try {
     if (isAppError(err)) {
       if (process.env.NODE_ENV === 'development') {
-        console.error('[AppError]', err.toJSON())
+        console.error('[AppError]', err.toJSON()) // ok — dev-only error sink
       }
       // Route to Sentry — dynamic import keeps bundle clean when DSN is absent
       if (process.env.NEXT_PUBLIC_SENTRY_DSN && typeof window !== 'undefined') {
@@ -78,7 +78,7 @@ export function reportError(err: unknown, context?: Record<string, unknown>) {
         : { name: 'Unknown', message: String(err), stack: undefined }
 
     if (process.env.NODE_ENV === 'development') {
-      console.error('[Unhandled]', { ...normalized, context })
+      console.error('[Unhandled]', { ...normalized, context }) // ok — dev-only error sink
     }
 
     if (process.env.NEXT_PUBLIC_SENTRY_DSN && typeof window !== 'undefined') {

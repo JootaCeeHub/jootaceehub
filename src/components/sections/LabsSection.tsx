@@ -10,10 +10,15 @@ import { useLabsOverview } from '@/hooks/useLabsOverview'
 import { cn } from '@/lib/utils'
 import { useTranslations } from '@/lib/i18n/context'
 import type { LabModule } from '@/lib/labs/types'
+import dynamic from 'next/dynamic'
 import { TradingLab } from '@/components/labs/TradingLab'
-import { STLLab } from '@/components/labs/STLLab'
 import { ERPLab } from '@/components/labs/ERPLab'
 import { CRMLab } from '@/components/labs/CRMLab'
+
+const STLLab = dynamic(
+  () => import('@/components/labs/STLLab').then(m => ({ default: m.STLLab })),
+  { ssr: false }
+)
 import { SectionExploreCta } from '@/components/shared/SectionExploreCta'
 
 const iconMap = {

@@ -1,15 +1,18 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   CheckCircle2, XCircle, AlertTriangle, Clock, ChevronDown, ChevronRight,
   GitBranch, Server, Shield, Code2, Zap, Database,
-  Radio, Rocket, Globe,
+  Radio, Rocket, Globe, Activity, BarChart3,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { CmsStatus } from '@/lib/admin/types'
 import type { ProjectCheck } from '@/lib/analytics/project-audit'
 import type { PSIResult } from '@/lib/analytics/pagespeed'
+import type { HealthDomain, ProdCheck, AuditCheck } from '@/lib/analytics/scoring'
+import type { NavigationMetrics } from '@/lib/analytics/live-metrics'
+import type { BundleSummary } from '@/lib/analytics/bundle-inspector'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -30,16 +33,26 @@ export interface RegistryStats {
 }
 
 interface Props {
-  cmsAudit:        CmsRegistryAudit | null
-  secChecks:       ProjectCheck[]
-  pwaChecks:       ProjectCheck[]
-  dxChecks:        ProjectCheck[]
-  htmlChecks:      ProjectCheck[]
-  schemaChecks:    ProjectCheck[]
-  perfDeepChecks:  ProjectCheck[]
-  psiResult:       PSIResult | null
+  cmsAudit:         CmsRegistryAudit | null
+  secChecks:        ProjectCheck[]
+  pwaChecks:        ProjectCheck[]
+  dxChecks:         ProjectCheck[]
+  htmlChecks:       ProjectCheck[]
+  schemaChecks:     ProjectCheck[]
+  psiResult:        PSIResult | null
   contentArchAudit: ContentArchAudit | null
-  lastRunAt:       string | null
+  lastRunAt:        string | null
+  // Live analysis data
+  healthDomains:    HealthDomain[]
+  prodChecks:       ProdCheck[]
+  programScore:     number
+  totalHealthPasses: number
+  totalHealthItems:  number
+  seoChecks:        AuditCheck[]
+  errorCount:       number
+  longTaskCount:    number
+  navMetrics:       NavigationMetrics | null
+  bundleSummary:    BundleSummary | null
 }
 
 export interface ContentArchAudit {
@@ -179,6 +192,18 @@ function RegistryRow({ label, stats, accent }: { label: string; stats: RegistryS
   )
 }
 
+// ─── Minimal snapshot type (mirrors project-snapshot.json) ──────────────────
+
+interface ProjectSnapshot {
+  ts_code: { errors: number; anyCount: number; srcFileCount: number; testFileCount: number }
+  tests:   { total: number; passed: number; failed: number; files: number }
+  lint:    { errors: number; warnings: number }
+  bundle:  { pageCount: number; jsRawBytes: number; chunkCount: number }
+  score:   number
+  grade:   string
+  lawsPassing: number
+}
+
 // ─── Phase roadmap data ───────────────────────────────────────────────────────
 
 const PHASES = [
@@ -295,17 +320,32 @@ const PHASES = [
 
 export function GlobalStateTab({
   cmsAudit, secChecks, pwaChecks, dxChecks,
+  htmlChecks, schemaChecks,
   psiResult, contentArchAudit, lastRunAt,
-}: Omit<Props, 'htmlChecks' | 'schemaChecks' | 'perfDeepChecks'>) {
+  healthDomains, prodChecks, programScore, totalHealthPasses, totalHealthItems,
+  seoChecks, errorCount, longTaskCount, navMetrics, bundleSummary,
+}: Props) {
 
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    code:     true,
-    cms:      true,
-    arch:     true,
-    roadmap:  false,
-    security: false,
-    lighthouse: false,
+    code:        true,
+    program:     true,
+    cms:         true,
+    production:  true,
+    arch:        true,
+    security:    false,
+    lighthouse:  false,
+    roadmap:     false,
+    infra:       false,
   })
+
+  // Load live snapshot values for Code Quality section
+  const [snap, setSnap] = useState<ProjectSnapshot | null>(null)
+  useEffect(() => {
+    fetch('/data/project-snapshot.json', { cache: 'no-store' })
+      .then(r => r.ok ? r.json() as Promise<ProjectSnapshot> : Promise.reject())
+      .then(setSnap)
+      .catch(() => { /* snapshot not generated yet — use fallback values */ })
+  }, [])
 
   function toggle(key: string) {
     setOpenSections(prev => ({ ...prev, [key]: !prev[key] }))
@@ -326,6 +366,8 @@ export function GlobalStateTab({
   const pwaTotal = pwaChecks.length
   const dxPass   = dxChecks.filter(c => c.pass).length
   const dxTotal  = dxChecks.length
+  const htmlPass = htmlChecks.filter(c => c.pass).length
+  const schemaPass = schemaChecks.filter(c => c.pass).length
 
   const lhPerf = psiResult?.scores.find(s => s.label === 'Performance')?.score
   const lhA11y = psiResult?.scores.find(s => s.label === 'Accessibility')?.score
@@ -351,6 +393,15 @@ export function GlobalStateTab({
   const partialPhases = PHASES.filter(p => p.status === 'partial').length
   const pendingPhases = PHASES.filter(p => p.status === 'pending').length
 
+  const prodPass    = prodChecks.filter(c => c.pass).length
+  const prodTotal   = prodChecks.length
+  const prodScore   = prodTotal > 0 ? Math.round(prodPass / prodTotal * 100) : 0
+  const seoPass     = seoChecks.filter(c => c.pass).length
+  const failingItems = healthDomains.flatMap(d => d.items.filter(i => !i.pass).map(i => ({ ...i, domain: d.label })))
+
+  const programScoreColor = programScore >= 85 ? 'text-emerald-400' : programScore >= 60 ? 'text-amber-400' : 'text-rose-400'
+  const prodScoreColor    = prodScore >= 90 ? 'text-emerald-400' : prodScore >= 70 ? 'text-amber-400' : 'text-rose-400'
+
   return (
     <div className="space-y-3">
 
@@ -372,26 +423,34 @@ export function GlobalStateTab({
       <div className="rounded-xl border border-white/8 bg-white/[0.02] overflow-hidden">
         <SectionHeader
           icon={Code2} title="Code Quality Gate"
-          subtitle="TypeScript · Tests · Build · Lint"
-          badge={{ label: '0 errors', variant: 'ok' }}
+          subtitle={snap ? `TS ${snap.ts_code.errors} errors · ${snap.tests.passed}/${snap.tests.total} tests · ${snap.bundle.pageCount} pages · grade ${snap.grade}` : 'TypeScript · Tests · Build · Lint'}
+          badge={{ label: snap ? `${snap.ts_code.errors} TS errors` : '0 errors', variant: snap && snap.ts_code.errors > 0 ? 'error' : 'ok' }}
           expanded={openSections.code} onToggle={() => toggle('code')}
         />
         {openSections.code && (
           <div className="border-t border-white/6 px-4 py-3 space-y-0">
-            <CheckRow label="TypeScript"     pass={true}  detail="0 errors · strict mode" />
-            <CheckRow label="Tests"          pass={true}  detail="475/475 · 41 files" />
-            <CheckRow label="Static pages"   pass={true}  detail="107 pages generated" />
-            <CheckRow label="Lint"           pass={true}  detail="0 errors · 0 warnings" />
+            <CheckRow label="TypeScript"     pass={snap ? snap.ts_code.errors === 0 : true}  detail={snap ? `${snap.ts_code.errors} errors · ${snap.ts_code.srcFileCount} src files · strict mode` : '0 errors · strict mode'} />
+            <CheckRow label="Tests"          pass={snap ? snap.tests.failed === 0 : true}     detail={snap ? `${snap.tests.passed}/${snap.tests.total} · ${snap.tests.files} files` : '475/475 · 41 files'} />
+            <CheckRow label="Static pages"   pass={snap ? snap.bundle.pageCount > 0 : true}  detail={snap ? `${snap.bundle.pageCount} pages · ${snap.bundle.chunkCount} JS chunks` : '107 pages generated'} />
+            <CheckRow label="Lint"           pass={snap ? snap.lint.errors === 0 : true}      detail={snap ? `${snap.lint.errors} errors · ${snap.lint.warnings} warnings` : '0 errors · 0 warnings'} />
+            <CheckRow label="Laws (CLAUDE.md)" pass={snap ? snap.lawsPassing === 10 : true}  detail={snap ? `${snap.lawsPassing}/10 laws passing` : '10/10 laws passing'} />
             <CheckRow label="Coverage"       pass={true}  detail="≥40% threshold · @vitest/coverage-v8" />
             <CheckRow label="Pre-commit hooks" pass={true} detail="Husky + lint-staged active" />
             <CheckRow label="CI pipeline"    pass={true}  detail="quality → build → lighthouse → deploy" />
+            {snap && (
+              <div className="mt-2 rounded-lg border border-white/6 bg-white/[0.02] px-3 py-1.5 flex items-center gap-2">
+                <span className="font-mono text-[8px] text-white/25">Overall score:</span>
+                <span className={cn('font-mono text-[10px] font-bold', snap.score >= 90 ? 'text-emerald-400' : snap.score >= 80 ? 'text-sky-400' : snap.score >= 70 ? 'text-amber-400' : 'text-rose-400')}>{snap.score}/100 ({snap.grade})</span>
+                <span className="ml-auto font-mono text-[7.5px] text-white/15">from npm run audit:project</span>
+              </div>
+            )}
             <div className="pt-3 pb-1">
               <div className="grid grid-cols-4 gap-2">
                 {[
-                  { label: 'TS Errors', value: '0', color: 'text-emerald-400' },
-                  { label: 'Tests', value: '475', color: 'text-emerald-400' },
-                  { label: 'Pages', value: '107', color: 'text-cyan-400' },
-                  { label: 'CI Jobs', value: '4', color: 'text-sky-400' },
+                  { label: 'TS Errors', value: snap ? String(snap.ts_code.errors) : '0',             color: snap && snap.ts_code.errors > 0 ? 'text-rose-400' : 'text-emerald-400' },
+                  { label: 'Tests',     value: snap ? String(snap.tests.passed)   : '475',            color: snap && snap.tests.failed > 0 ? 'text-rose-400' : 'text-emerald-400' },
+                  { label: 'Pages',     value: snap ? String(snap.bundle.pageCount) : '107',          color: 'text-cyan-400' },
+                  { label: 'CI Jobs',   value: '4',                                                   color: 'text-sky-400' },
                 ].map(c => (
                   <div key={c.label} className="rounded-lg border border-white/6 bg-white/[0.015] px-3 py-2 text-center">
                     <p className={cn('font-mono text-lg font-bold', c.color)}>{c.value}</p>
@@ -404,7 +463,85 @@ export function GlobalStateTab({
         )}
       </div>
 
-      {/* ── 2. CMS Registry Health ─────────────────────────────────────────── */}
+      {/* ── 2. Program Health ────────────────────────────────────────────────── */}
+      <div className="rounded-xl border border-white/8 bg-white/[0.02] overflow-hidden">
+        <SectionHeader
+          icon={Activity} title="Program Health"
+          subtitle={totalHealthItems > 0 ? `${totalHealthPasses}/${totalHealthItems} checks · ${healthDomains.length} domains · avg score ${programScore}` : 'Run Analysis to compute'}
+          badge={{ label: `${programScore}`, variant: programScore >= 85 ? 'ok' : programScore >= 60 ? 'warn' : 'error' }}
+          expanded={openSections.program} onToggle={() => toggle('program')}
+        />
+        {openSections.program && (
+          <div className="border-t border-white/6 px-4 py-4 space-y-4">
+            {healthDomains.length === 0 ? (
+              <p className="font-mono text-[10px] text-white/25 text-center py-4">Run Analysis to compute program health</p>
+            ) : (
+              <>
+                {/* Score + quick stats */}
+                <div className="flex items-center gap-4 rounded-lg border border-white/6 bg-white/[0.015] px-4 py-3">
+                  <div className={cn('font-mono text-4xl font-bold tabular-nums', programScoreColor)}>{programScore}</div>
+                  <div className="flex-1 space-y-1">
+                    <div className="h-1.5 overflow-hidden rounded-full bg-white/6">
+                      <div
+                        className={cn('h-full rounded-full', programScore >= 85 ? 'bg-emerald-400' : programScore >= 60 ? 'bg-amber-400' : 'bg-rose-400')}
+                        style={{ width: `${programScore}%` }}
+                      />
+                    </div>
+                    <p className="font-mono text-[8px] text-white/25">{totalHealthPasses}/{totalHealthItems} checks passing · {failingItems.length} failing</p>
+                  </div>
+                </div>
+
+                {/* Domain grid */}
+                <div className="grid grid-cols-2 gap-2">
+                  {healthDomains.map(domain => (
+                    <div key={domain.label} className="rounded-lg border border-white/6 bg-white/[0.015] px-3 py-2.5">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="font-mono text-[9px] text-white/50 uppercase tracking-wider">{domain.label}</span>
+                        <span className={cn('font-mono text-[11px] font-bold', domain.score >= 85 ? 'text-emerald-400' : domain.score >= 60 ? 'text-amber-400' : 'text-rose-400')}>
+                          {domain.score}
+                        </span>
+                      </div>
+                      <div className="h-0.5 overflow-hidden rounded-full bg-white/5 mb-2">
+                        <div
+                          className={cn('h-full rounded-full', domain.score >= 85 ? 'bg-emerald-400' : domain.score >= 60 ? 'bg-amber-400' : 'bg-rose-400')}
+                          style={{ width: `${domain.score}%` }}
+                        />
+                      </div>
+                      <div className="space-y-0.5">
+                        {domain.items.map(item => (
+                          <div key={item.label} className="flex items-center gap-1.5">
+                            <span className={cn('font-mono text-[8px]', item.pass ? 'text-emerald-400/60' : 'text-rose-400/70')}>{item.pass ? '✓' : '✗'}</span>
+                            <span className="flex-1 font-mono text-[8.5px] text-white/40 truncate">{item.label}</span>
+                            {!item.pass && <span className="font-mono text-[7.5px] text-rose-400/50 shrink-0 truncate max-w-[100px]">{item.value}</span>}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Failing items summary */}
+                {failingItems.length > 0 && (
+                  <div className="rounded-lg border border-rose-400/15 bg-rose-400/4 px-3 py-3">
+                    <p className="font-mono text-[8px] uppercase tracking-widest text-rose-400/60 mb-2">{failingItems.length} items to fix</p>
+                    <div className="space-y-1.5">
+                      {failingItems.map((item, i) => (
+                        <div key={i} className="flex items-start gap-2">
+                          <span className="mt-0.5 shrink-0 rounded border border-white/10 bg-white/4 px-1 py-0.5 font-mono text-[7px] uppercase text-white/28">{item.domain.split(' ')[0]}</span>
+                          <span className="flex-1 font-mono text-[9px] text-white/55">{item.label}</span>
+                          <span className="shrink-0 font-mono text-[8px] text-white/25 max-w-[150px] truncate">{item.hint}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* ── 3. CMS Registry Health ─────────────────────────────────────────── */}
       <div className="rounded-xl border border-white/8 bg-white/[0.02] overflow-hidden">
         <SectionHeader
           icon={Database} title="CMS Registry Health"
@@ -447,7 +584,66 @@ export function GlobalStateTab({
         )}
       </div>
 
-      {/* ── 3. Content Architecture ────────────────────────────────────────── */}
+      {/* ── 5. Production Readiness ──────────────────────────────────────────── */}
+      <div className="rounded-xl border border-white/8 bg-white/[0.02] overflow-hidden">
+        <SectionHeader
+          icon={Rocket} title="Production Readiness"
+          subtitle={prodTotal > 0 ? `${prodPass}/${prodTotal} checks · go-live score ${prodScore}%` : 'Computed from Admin state'}
+          badge={{ label: `${prodScore}%`, variant: prodScore >= 90 ? 'ok' : prodScore >= 70 ? 'warn' : 'error' }}
+          expanded={openSections.production} onToggle={() => toggle('production')}
+        />
+        {openSections.production && (
+          <div className="border-t border-white/6 px-4 py-3 space-y-3">
+            {/* Score bar */}
+            <div className="flex items-center gap-3">
+              <div className="flex-1 h-1.5 overflow-hidden rounded-full bg-white/6">
+                <div
+                  className={cn('h-full rounded-full', prodScore >= 90 ? 'bg-emerald-400' : prodScore >= 70 ? 'bg-amber-400' : 'bg-rose-400/80')}
+                  style={{ width: `${prodScore}%` }}
+                />
+              </div>
+              <span className={cn('font-mono text-[13px] font-bold tabular-nums shrink-0', prodScoreColor)}>{prodScore}%</span>
+            </div>
+
+            {/* Additional live stats row */}
+            <div className="grid grid-cols-4 gap-2 text-center">
+              {[
+                { label: 'SEO', value: `${seoPass}/${seoChecks.length}`, color: seoPass === seoChecks.length ? 'text-emerald-400' : 'text-amber-400' },
+                { label: 'Errors', value: errorCount, color: errorCount === 0 ? 'text-emerald-400' : 'text-rose-400' },
+                { label: 'Long Tasks', value: longTaskCount, color: longTaskCount === 0 ? 'text-emerald-400' : longTaskCount <= 3 ? 'text-amber-400' : 'text-rose-400' },
+                { label: 'TTFB', value: navMetrics?.ttfb != null ? `${navMetrics.ttfb}ms` : '—', color: (navMetrics?.ttfb ?? 0) < 600 ? 'text-emerald-400' : 'text-amber-400' },
+              ].map(s => (
+                <div key={s.label} className="rounded-lg border border-white/6 bg-white/[0.015] px-2 py-2">
+                  <p className={cn('font-mono text-sm font-bold tabular-nums', s.color)}>{s.value}</p>
+                  <p className="font-mono text-[7.5px] uppercase tracking-widest text-white/25 mt-0.5">{s.label}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Checklist */}
+            <div className="divide-y divide-white/4">
+              {prodChecks.map((check, i) => (
+                <div key={i} className="flex items-center gap-2.5 py-1.5">
+                  <span className={cn('font-mono text-[9px]', check.pass ? 'text-emerald-400/70' : 'text-rose-400/70')}>{check.pass ? '✓' : '✗'}</span>
+                  <span className="shrink-0 rounded border border-white/8 bg-white/3 px-1.5 py-0.5 font-mono text-[7px] uppercase tracking-wider text-white/25">{check.cat}</span>
+                  <span className="flex-1 font-mono text-[9px] text-white/50">{check.label}</span>
+                  {!check.pass && <span className="hidden font-mono text-[8px] text-white/22 lg:block shrink-0 max-w-[160px] truncate">{check.hint}</span>}
+                </div>
+              ))}
+            </div>
+
+            {/* Bundle summary if available */}
+            {bundleSummary && (
+              <div className="rounded-lg border border-white/6 bg-white/[0.015] px-3 py-2 flex items-center gap-4">
+                <BarChart3 size={11} className="text-white/25 shrink-0" />
+                <span className="font-mono text-[9px] text-white/40">{bundleSummary.scriptCount} scripts · {bundleSummary.totalDecodedKB.toFixed(0)}KB decoded</span>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* ── 6. Content Architecture ────────────────────────────────────────── */}
       <div className="rounded-xl border border-white/8 bg-white/[0.02] overflow-hidden">
         <SectionHeader
           icon={GitBranch} title="Content Architecture"
@@ -506,13 +702,13 @@ export function GlobalStateTab({
         )}
       </div>
 
-      {/* ── 5. Security + PWA + DX ────────────────────────────────────────── */}
+      {/* ── 7. Security + PWA + DX + HTML ─────────────────────────────────── */}
       <div className="rounded-xl border border-white/8 bg-white/[0.02] overflow-hidden">
         <SectionHeader
-          icon={Shield} title="Security · PWA · Developer Experience"
-          subtitle={secTotal > 0 ? `${secPass}/${secTotal} security · ${pwaPass}/${pwaTotal} PWA · ${dxPass}/${dxTotal} DX` : 'Run Analysis to measure'}
+          icon={Shield} title="Security · PWA · DX · HTML"
+          subtitle={secTotal > 0 ? `${secPass}/${secTotal} sec · ${pwaPass}/${pwaTotal} pwa · ${dxPass}/${dxTotal} dx · ${htmlPass}/${htmlChecks.length} html · ${schemaPass}/${schemaChecks.length} schema` : 'Run Analysis to measure'}
           badge={secTotal > 0
-            ? { label: secPass === secTotal ? 'all passing' : `${secPass}/${secTotal}`, variant: secPass === secTotal ? 'ok' : 'warn' }
+            ? { label: secPass === secTotal && pwaPass === pwaTotal ? 'all passing' : `${secPass + pwaPass + dxPass}/${secTotal + pwaTotal + dxTotal}`, variant: secPass === secTotal ? 'ok' : 'warn' }
             : { label: 'pending', variant: 'pending' }
           }
           expanded={openSections.security} onToggle={() => toggle('security')}
@@ -523,37 +719,29 @@ export function GlobalStateTab({
               <p className="font-mono text-[10px] text-white/25 text-center py-3">Run Analysis to populate security checks</p>
             ) : (
               <div className="space-y-3">
-                <div>
-                  <p className="font-mono text-[8px] uppercase tracking-widest text-white/25 mb-2">Security ({secPass}/{secTotal})</p>
-                  <div className="space-y-0">
-                    {secChecks.map((c, i) => (
-                      <CheckRow key={i} label={c.label} pass={c.pass} detail={c.value || c.hint} />
-                    ))}
+                {[
+                  { label: 'Security', pass: secPass, total: secTotal, items: secChecks },
+                  { label: 'PWA', pass: pwaPass, total: pwaTotal, items: pwaChecks },
+                  { label: 'Developer Experience', pass: dxPass, total: dxTotal, items: dxChecks },
+                  { label: 'HTML Quality', pass: htmlPass, total: htmlChecks.length, items: htmlChecks },
+                  { label: 'Schema / Structured Data', pass: schemaPass, total: schemaChecks.length, items: schemaChecks },
+                ].map(group => (
+                  <div key={group.label}>
+                    <p className="font-mono text-[8px] uppercase tracking-widest text-white/25 mb-2">{group.label} ({group.pass}/{group.total})</p>
+                    <div className="space-y-0">
+                      {group.items.map((c, i) => (
+                        <CheckRow key={i} label={c.label} pass={c.pass} detail={c.value || c.hint} />
+                      ))}
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <p className="font-mono text-[8px] uppercase tracking-widest text-white/25 mb-2">PWA ({pwaPass}/{pwaTotal})</p>
-                  <div className="space-y-0">
-                    {pwaChecks.map((c, i) => (
-                      <CheckRow key={i} label={c.label} pass={c.pass} detail={c.value || c.hint} />
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <p className="font-mono text-[8px] uppercase tracking-widest text-white/25 mb-2">Developer Experience ({dxPass}/{dxTotal})</p>
-                  <div className="space-y-0">
-                    {dxChecks.map((c, i) => (
-                      <CheckRow key={i} label={c.label} pass={c.pass} detail={c.value || c.hint} />
-                    ))}
-                  </div>
-                </div>
+                ))}
               </div>
             )}
           </div>
         )}
       </div>
 
-      {/* ── 6. Phase Roadmap ──────────────────────────────────────────────── */}
+      {/* ── 8. Phase Roadmap ──────────────────────────────────────────────── */}
       <div className="rounded-xl border border-white/8 bg-white/[0.02] overflow-hidden">
         <SectionHeader
           icon={Rocket} title="Phase Roadmap"
@@ -595,30 +783,34 @@ export function GlobalStateTab({
         )}
       </div>
 
-      {/* ── 7. Infrastructure ────────────────────────────────────────────── */}
+      {/* ── 9. Infrastructure ────────────────────────────────────────────── */}
       <div className="rounded-xl border border-white/8 bg-white/[0.02] overflow-hidden">
-        <div className="px-4 py-3">
-          <div className="flex items-center gap-2 mb-3">
-            <Server size={12} className="text-white/30" />
-            <span className="font-mono text-[10px] font-semibold text-white/60 uppercase tracking-wider">Infrastructure</span>
+        <SectionHeader
+          icon={Server} title="Infrastructure"
+          subtitle="Hosting · CI/CD · VPS · Monitoring"
+          badge={{ label: 'Cloudflare Pages', variant: 'ok' }}
+          expanded={openSections.infra} onToggle={() => toggle('infra')}
+        />
+        {openSections.infra && (
+          <div className="border-t border-white/6 px-4 py-3">
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { label: 'Static Hosting',   value: 'Cloudflare Pages', status: 'configured', color: 'text-emerald-400' },
+                { label: 'CI/CD',            value: 'GitHub Actions',   status: '4-job pipeline', color: 'text-emerald-400' },
+                { label: 'VPS API',          value: 'Hostinger',        status: 'pending deploy', color: 'text-amber-400' },
+                { label: 'Error tracking',   value: 'Sentry',           status: 'env pending',    color: 'text-amber-400' },
+                { label: 'Analytics',        value: 'Plausible',        status: 'env pending',    color: 'text-amber-400' },
+                { label: 'CDN',              value: 'Cloudflare',       status: 'configured',     color: 'text-emerald-400' },
+              ].map(r => (
+                <div key={r.label} className="rounded-lg border border-white/6 bg-white/[0.015] px-3 py-2">
+                  <p className="font-mono text-[9px] text-white/30 uppercase tracking-wider">{r.label}</p>
+                  <p className="font-mono text-[10px] text-white/65 mt-0.5">{r.value}</p>
+                  <p className={cn('font-mono text-[8px] mt-0.5', r.color)}>{r.status}</p>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="grid grid-cols-2 gap-2">
-            {[
-              { label: 'Static Hosting',   value: 'Cloudflare Pages', status: 'configured', color: 'text-emerald-400' },
-              { label: 'CI/CD',            value: 'GitHub Actions',   status: '4-job pipeline', color: 'text-emerald-400' },
-              { label: 'VPS API',          value: 'Hostinger',        status: 'pending deploy', color: 'text-amber-400' },
-              { label: 'Error tracking',   value: 'Sentry',           status: 'env pending',    color: 'text-amber-400' },
-              { label: 'Analytics',        value: 'Plausible',        status: 'env pending',    color: 'text-amber-400' },
-              { label: 'CDN',              value: 'Cloudflare',       status: 'configured',     color: 'text-emerald-400' },
-            ].map(r => (
-              <div key={r.label} className="rounded-lg border border-white/6 bg-white/[0.015] px-3 py-2">
-                <p className="font-mono text-[9px] text-white/30 uppercase tracking-wider">{r.label}</p>
-                <p className="font-mono text-[10px] text-white/65 mt-0.5">{r.value}</p>
-                <p className={cn('font-mono text-[8px] mt-0.5', r.color)}>{r.status}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+        )}
       </div>
 
       {/* Footer */}

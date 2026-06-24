@@ -1,6 +1,6 @@
 'use client'
 
-import { CheckCircle2 } from 'lucide-react'
+import { CheckCircle2, Terminal } from 'lucide-react'
 import { Card, ScoreRing } from '../shared-components'
 import type { HealthDomain, ProdCheck } from '@/lib/analytics/scoring'
 import type { ChangeEntry } from '../types'
@@ -40,8 +40,69 @@ export function ProgramTab({
   totalHealthPasses, totalHealthItems, lighthouseScores,
   changeLog, psiResult,
 }: Props) {
+  const codeQuality = healthDomains.find(d => d.label === 'Code Quality')
+  const ciGates = [
+    {
+      label:   'TypeScript',
+      cmd:     'npm run typecheck',
+      pass:    (codeQuality?.score ?? 0) >= 85,
+      detail:  (codeQuality?.score ?? 0) >= 85 ? '0 errors' : 'check tsc --noEmit',
+      color:   '#3b82f6',
+    },
+    {
+      label:   'ESLint',
+      cmd:     'npm run lint',
+      pass:    (codeQuality?.score ?? 0) >= 75,
+      detail:  (codeQuality?.score ?? 0) >= 75 ? '0 violations' : 'check eslint output',
+      color:   '#a78bfa',
+    },
+    {
+      label:   'Tests',
+      cmd:     'npm run test',
+      pass:    (codeQuality?.score ?? 0) >= 70,
+      detail:  (codeQuality?.score ?? 0) >= 70 ? 'all pass' : 'check vitest',
+      color:   '#34d399',
+    },
+    {
+      label:   'Build',
+      cmd:     'npm run build',
+      pass:    prodScore >= 75,
+      detail:  prodScore >= 75 ? 'export clean' : `${prodChecks.filter(c => !c.pass).length} blockers`,
+      color:   '#f59e0b',
+    },
+  ]
+  const ciPassing = ciGates.filter(g => g.pass).length
+  const ciScore   = Math.round((ciPassing / ciGates.length) * 100)
+
   return (
     <div className="space-y-4">
+
+      {/* ── CI Gate simulation ─────────────────────────────────────────── */}
+      <Card dot={ciScore === 100 ? '#34d399' : '#f43f5e'} title={`CI Gates · ${ciPassing}/${ciGates.length} passing · derived from health domain scores`}>
+        <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
+          {ciGates.map(gate => (
+            <div key={gate.label} className={`flex flex-col gap-1.5 rounded-xl border p-3 ${gate.pass ? 'border-emerald-400/15 bg-emerald-400/[0.03]' : 'border-rose-400/20 bg-rose-400/[0.04]'}`}>
+              <div className="flex items-center gap-1.5">
+                <span className={`h-2 w-2 shrink-0 rounded-full ${gate.pass ? 'bg-emerald-400' : 'bg-rose-400'}`} />
+                <span className="font-mono text-[10px] font-medium text-white/70">{gate.label}</span>
+              </div>
+              <code className="font-mono text-[8px] text-white/20">{gate.cmd}</code>
+              <span className={`font-mono text-[8px] ${gate.pass ? 'text-emerald-400/60' : 'text-rose-400/60'}`}>{gate.detail}</span>
+            </div>
+          ))}
+        </div>
+        <div className="flex items-center gap-3 pt-1">
+          <Terminal className="h-3 w-3 shrink-0 text-white/20" />
+          <div className="flex-1 h-1 overflow-hidden rounded-full bg-white/6">
+            <div className={`h-full rounded-full transition-all ${ciScore === 100 ? 'bg-emerald-400/60' : 'bg-rose-400/50'}`} style={{ width: `${ciScore}%` }} />
+          </div>
+          <span className="font-mono text-[8px] text-white/30">{ciScore}% CI confidence</span>
+        </div>
+        <p className="font-mono text-[7.5px] text-white/18">
+          Derived from health domain scores — run <code>npm run typecheck &amp;&amp; npm run test &amp;&amp; npm run build</code> to verify
+        </p>
+      </Card>
+
       <div className="flex items-center justify-between rounded-xl border border-violet-400/15 bg-violet-400/4 px-5 py-4">
         <div>
           <div className="font-mono text-[9px] uppercase tracking-[0.2em] text-violet-400/60">Program Health · Full Audit</div>
